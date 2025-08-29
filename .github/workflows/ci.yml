@@ -1,0 +1,30 @@
+name: Junto pipeline
+on: 
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node ⚙️
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 24
+
+      - name: Install dependencies 💾
+        run: npm ci
+        working-directory: ./
+
+      - name: Run lint 🧹
+        run: npm run lint
+        working-directory: ./
+
+      - name: Build code 🔧
+        run: npm run build
+        working-directory: ./
+
