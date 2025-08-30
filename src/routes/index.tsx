@@ -1,8 +1,17 @@
 import { type RouteObject } from 'react-router'
-import App from '../App.tsx'
-import { authRoutes } from './auth'
+import DefaultLayout from '@/layouts/DefaultLayout.tsx'
+
+import App from '@/App.tsx'
+import { authRoutes } from '@/routes/auth'
 
 export const routes: RouteObject[] = [
-    { path: '/', element: <App /> },
-    ...authRoutes
+    {
+        path: '/',
+        element: <DefaultLayout />,
+        children: [
+            { path: '/', element: <App /> },
+            ...authRoutes
+        ]
+    }
+
 ]
