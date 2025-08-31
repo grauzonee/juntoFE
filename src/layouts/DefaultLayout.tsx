@@ -1,12 +1,22 @@
 import { Outlet } from "react-router"
+import GuestTopbar from "@/components/topbar/GuestTopbar"
+import Footer from "@/components/Footer"
 
 function DefaultLayout() {
     return (
-        <div className="w-full h-screen bg-gray-800 px-[2rem]" >
-            <div className="w-full md:w-3/4 h-full mx-auto">
-                <Outlet />
+        <>
+            <div className="w-full flex flex-col min-h-[120vh]">
+                <GuestTopbar />
+
+                <div
+                    className="flex-1 flex flex-col items-center w-5/6 md:w-3/4 mx-auto"
+                >
+                    <Outlet />
+                </div>
+
+                <Footer />
             </div>
-        </div >
+        </>
     )
 }
 
