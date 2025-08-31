@@ -1,9 +1,9 @@
 function Login() {
     return (
-        <div className="bg-emerald-200 h-full">
-
+        <>
             <h1>Login page</h1>
-        </div>
+            <div className="w-2/4 bg-red-100 h-40">Form</div>
+        </>
     )
 }
 
