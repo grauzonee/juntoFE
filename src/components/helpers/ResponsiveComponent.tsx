@@ -13,7 +13,7 @@ function ResponsiveComponent(props: ResponsiveProps) {
         const resolution = window.innerWidth;
         const isMobile = resolution >= 320 && resolution <= 480;
         const isTablet = resolution >= 768 && resolution <= 1024;
-        const isDesktop = !isMobile && !isTablet;
+        const isDesktop = resolution > 1024;
 
         const canRender = (isMobile && props.isMobile) || (isDesktop && props.isDesktop) || (isTablet && props.isTablet) as boolean
         setCanRender(canRender)
