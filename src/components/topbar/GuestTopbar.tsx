@@ -1,10 +1,10 @@
 import logo from '/logo.png'
+import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu-style'
 import {
     NavigationMenu,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu"
 import { Input } from '@/components/ui/input'
 import ResponsiveComponent from '../helpers/ResponsiveComponent'
