@@ -5,7 +5,7 @@ import Footer from "@/components/Footer"
 function DefaultLayout() {
     return (
         <>
-            <div className="w-full flex flex-col min-h-[120vh]">
+            <div className="w-full flex flex-col min-h-[120vh] bg-gradient-to-b from-gradient-from to-gradient-to">
                 <GuestTopbar />
 
                 <div
