@@ -22,12 +22,13 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@/routes/*": ["routes/*"],
-      "@/pages/*": ["pages/*"],
-      "@/layouts/*": ["layouts/*"],
+      "@/*": ["./src/*"],
+      "@/routes/*": ["./src/routes/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/layouts/*": ["./src/layouts/*"],
+      "@/components/*": ["./src/components/*"],
     }
   },
   "include": ["src"]
