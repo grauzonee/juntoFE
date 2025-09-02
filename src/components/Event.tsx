@@ -6,24 +6,49 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import event_example from "/event_example.jpg"
+import { Badge } from "@/components/ui/badge"
 
-function Event() {
-    return (
-        <Card className="p-3 backdrop-blur-lg shadow-lg md:shadow border-white/20 flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer">
-            <div className="rounded-lg md:max-h-18 md:w-40 w-full overflow-hidden shadow">
-                <img src={event_example} alt="Event" className="object-cover" />
+type EventProps =
+    {
+        variant?: "full" | "short"
+    }
+
+function Event({ variant = 'full' }: EventProps) {
+    if (variant === "full") {
+        return (
+            <Card className="p-3 backdrop-blur-lg shadow-lg md:shadow border-white/20 flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer">
+                <div className="rounded-lg md:max-h-18 md:w-40 w-full overflow-hidden shadow">
+                    <img src={event_example} alt="Event" className="object-cover" />
+                </div>
+                <div className="flex flex-col flex-1 items">
+                    <CardHeader className="items-start text-left">
+                        <CardTitle>September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</CardTitle>
+                        <CardDescription>NoCrastination Club • Vienna, AT • 4.9</CardDescription>
+                    </CardHeader>
+                    <CardFooter className="px-3 py-1 bg-accent text-white shadow font-semibold rounded-sm">
+                        <p>Mon, Sep 1 · 12:50 PM GMT+2</p>
+                    </CardFooter>
+                </div>
+            </Card>
+        )
+    } else {
+
+        return (
+            <div className="md:shadow flex flex-col gap-3 justify-between items-center cursor-pointer">
+                <div className="flex flex-col flex-1 items">
+                    <div className="items-start text-left p-5">
+                        <p className="text-md font-semibold">September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</p>
+                        <div className="flex flex-row justify-between items-center">
+                            <p className="text-xs text-gray-700">NoCrastination Club • Vienna, AT • 4.9</p>
+                            <Badge variant="outline">12.09.2024</Badge>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="flex flex-col flex-1 items">
-                <CardHeader className="items-start text-left">
-                    <CardTitle>September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</CardTitle>
-                    <CardDescription>NoCrastination Club • Vienna, AT • 4.9</CardDescription>
-                </CardHeader>
-                <CardFooter className="px-3 py-1 bg-accent text-white shadow font-semibold rounded-sm">
-                    <p>Mon, Sep 1 · 12:50 PM GMT+2</p>
-                </CardFooter>
-            </div>
-        </Card>
-    )
+        )
+
+    }
+
 }
 
 export default Event
