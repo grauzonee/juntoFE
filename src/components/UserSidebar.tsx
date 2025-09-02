@@ -1,8 +1,9 @@
+import { lazy } from "react";
 import {
     Card,
     CardContent,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+const Badge = lazy(() => import("@/components/ui/badge").then(m => ({ default: m.Badge })));
 import { MdOutlineEditNote } from "react-icons/md";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
