@@ -6,15 +6,14 @@ import {
 const Badge = lazy(() => import("@/components/ui/badge").then(m => ({ default: m.Badge })));
 const EditProfileDialog = lazy(() => import("@/components/dialogs/EditProfileDialog"))
 import { Separator } from "@/components/ui/separator"
-import ImageContainer from "@/components/ImageContainer"
+const ChangeImageContainer = lazy(() => import("@/components/ChangeImageContainer"))
 import avatar_placeholder from '/avatar-placeholder.png'
-
 
 function UserSidebar() {
     return (
         <Card className="py-3 h-fit">
             <CardContent>
-                <ImageContainer src={avatar_placeholder} />
+                <ChangeImageContainer src={avatar_placeholder} />
                 <Separator className="my-2" />
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-row justify-between items-center">
