@@ -22,7 +22,7 @@ function MyEventsCard() {
                         <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/2">
                             <div className="p-1">
                                 <Card>
-                                    <CardContent className="flex aspect-[2/3] md:aspect-[7/3] items-center justify-center p-6">
+                                    <CardContent className="flex aspect-[2/3] md:aspect-[7/3] items-center justify-center p-6 flex-col">
                                         <Event />
                                     </CardContent>
                                 </Card>

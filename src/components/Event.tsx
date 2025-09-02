@@ -1,5 +1,4 @@
 import {
-    Card,
     CardDescription,
     CardFooter,
     CardHeader,
@@ -16,7 +15,7 @@ type EventProps =
 function Event({ variant = 'full' }: EventProps) {
     if (variant === "full") {
         return (
-            <Card className="p-3 backdrop-blur-lg shadow-lg md:shadow border-white/20 flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer">
+            <>
                 <div className="rounded-lg md:max-h-18 md:w-40 w-full overflow-hidden shadow">
                     <img src={event_example} alt="Event" className="object-cover" />
                 </div>
@@ -29,7 +28,7 @@ function Event({ variant = 'full' }: EventProps) {
                         <p>Mon, Sep 1 · 12:50 PM GMT+2</p>
                     </CardFooter>
                 </div>
-            </Card>
+            </>
         )
     } else {
 
