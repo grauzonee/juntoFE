@@ -4,11 +4,11 @@ import {
     CardContent,
 } from "@/components/ui/card"
 const Badge = lazy(() => import("@/components/ui/badge").then(m => ({ default: m.Badge })));
-import { MdOutlineEditNote } from "react-icons/md";
+const EditProfileDialog = lazy(() => import("@/components/dialogs/EditProfileDialog"))
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button";
 import ImageContainer from "@/components/ImageContainer"
 import avatar_placeholder from '/avatar-placeholder.png'
+
 
 function UserSidebar() {
     return (
@@ -19,9 +19,7 @@ function UserSidebar() {
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-row justify-between items-center">
                         <p className="text-xl font-bold block">Grauzone</p>
-                        <Button variant="link">
-                            <MdOutlineEditNote />Edit profile
-                        </Button>
+                        <EditProfileDialog />
                     </div>
                     <p>trake1524@gmail.com</p>
                     <div className="flex flex-col gap-1">

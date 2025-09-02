@@ -7,6 +7,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import { IoMdAdd } from "react-icons/io";
+import Event from "@/components/Event"
 
 function MyEventsCard() {
     return (
@@ -22,7 +23,7 @@ function MyEventsCard() {
                             <div className="p-1">
                                 <Card>
                                     <CardContent className="flex aspect-[2/3] md:aspect-[7/3] items-center justify-center p-6">
-                                        <span className="text-xl font-semibold">{index + 1}</span>
+                                        <Event />
                                     </CardContent>
                                 </Card>
                             </div>

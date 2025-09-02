@@ -24,8 +24,8 @@ function TagsInput({ tags, onTagAdd, onTagRemove }: TagsInputProps) {
         <div className="flex flex-col gap-3">
             <Input placeholder="Type tags separated by space..." onChange={handleInput} value={currentTag} />
             <div className="w-full flex-wrap flex flex-row gap-1">
-                {tags.map((tag) => (
-                    <Badge variant="secondary" className="relative px-4">{tag}
+                {tags.map((tag, index) => (
+                    <Badge variant="secondary" className="relative px-4" key={index}>{tag}
                         <RxCrossCircled className="absolute top-0 right-0 bg-red-600 text-white rounded-full cursor-pointer" onClick={() => onTagRemove(tag)} />
                     </Badge>
                 ))}
