@@ -1,9 +1,18 @@
+import EventsHistoryCard from "@/components/EventsHistoryCard"
+import MyEventsCard from "@/components/MyEventsCard"
+import UserSidebar from "@/components/UserSidebar"
+
 function User() {
     return (
-        <div className="flex flex-row w-full h-full gap-1 py-2">
-            <div className="w-1/3 bg-red-100 h-full text-black text-center">Info</div>
-            <div className="flex-1 bg-green-100 text-black text-center">Etc</div>
-        </div>
+        <div className=" w-full h-full py-2">
+            <div className="flex flex-col md:flex-row gap-3 mb-2 items-stretch">
+                <UserSidebar />
+                <div className="flex-1 flex flex-col gap-3">
+                    <EventsHistoryCard className="h-full" />
+                </div>
+            </div>
+            <MyEventsCard />
+        </div >
     )
 }
 
