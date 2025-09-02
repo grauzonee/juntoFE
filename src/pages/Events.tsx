@@ -3,6 +3,7 @@ import Event from "@/components/Event"
 import { Calendar } from "@/components/ui/calendar"
 import EventFilters from "@/components/EventFilters"
 import { Separator } from "@/components/ui/separator"
+import { Card } from "@/components/ui/card"
 
 function Events() {
     return (
@@ -14,8 +15,12 @@ function Events() {
                     <Calendar className="rounded-lg w-1/4" />
                 </ResponsiveComponent>
                 <div className="flex flex-col text-center flex-1 gap-3">
-                    <Event />
-                    <Event />
+                    <Card className="p-3 backdrop-blur-lg shadow-lg md:shadow border-white/20 flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer">
+                        <Event />
+                    </Card>
+                    <Card className="p-3 backdrop-blur-lg shadow-lg md:shadow border-white/20 flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer">
+                        <Event />
+                    </Card>
                 </div>
             </div>
         </>

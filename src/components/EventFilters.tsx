@@ -17,10 +17,9 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
+import { type HTMLAttributes } from "react";
 
-type EventFiltersProps = React.HTMLAttributes<HTMLDivElement>
-
-function EventFilters({ className }: EventFiltersProps) {
+function EventFilters({ className }: HTMLAttributes<HTMLDivElement>) {
     const filters = (<>
         <Select>
             <SelectTrigger>
