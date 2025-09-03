@@ -4,29 +4,36 @@ const Badge = lazy(() => import("@/components/ui/badge").then(m => ({ default: m
 import { RxCrossCircled } from "react-icons/rx";
 
 type TagsInputProps = {
-    tags: string[],
-    onTagAdd: (val: string) => void,
-    onTagRemove: (val: string) => void,
+    value: string[],
+    onChange: (val: string[]) => void
 }
 
-function TagsInput({ tags, onTagAdd, onTagRemove }: TagsInputProps) {
+function TagsInput({ value = [], onChange }: TagsInputProps) {
     const [currentTag, setCurrentTag] = useState('')
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value?.toLowerCase()
         if (newValue.endsWith(' ')) {
-            onTagAdd(currentTag.replace(' ', ''));
-            setCurrentTag('')
+            const cleaned = currentTag.trim()
+            if (cleaned && !value.includes(cleaned)) {
+                onChange([...value, cleaned])
+            }
+            setCurrentTag("")
         } else {
             setCurrentTag(newValue)
         }
     }
+
+    const handleRemove = (tag: string) => {
+        onChange(value.filter((t) => t !== tag))
+    }
+
     return (
         <div className="flex flex-col gap-3">
             <Input placeholder="Type tags separated by space..." onChange={handleInput} value={currentTag} />
             <div className="w-full flex-wrap flex flex-row gap-1">
-                {tags.map((tag, index) => (
+                {value.map((tag, index) => (
                     <Badge variant="secondary" className="relative px-4" key={index}>{tag}
-                        <RxCrossCircled className="absolute top-0 right-0 bg-red-600 text-white rounded-full cursor-pointer" onClick={() => onTagRemove(tag)} />
+                        <RxCrossCircled className="absolute top-0 right-0 bg-red-600 text-white rounded-full cursor-pointer" onClick={() => handleRemove(tag)} />
                     </Badge>
                 ))}
             </div>
