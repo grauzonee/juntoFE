@@ -1,3 +1,4 @@
+import { lazy } from "react"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import {
     Carousel,
@@ -6,7 +7,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
-import { IoMdAdd } from "react-icons/io";
+const CreateEventDialog = lazy(() => import("@/components/dialogs/CreateEventDialog"))
 import Event from "@/components/Event"
 
 function MyEventsCard() {
@@ -14,7 +15,7 @@ function MyEventsCard() {
         <Card className="pb-3">
             <CardHeader className="flex flex-row justify-between">
                 <CardTitle>Events I've organized:</CardTitle>
-                <IoMdAdd className="bg-white rounded-full cursor-pointer" />
+                <CreateEventDialog />
             </CardHeader>
             <Carousel className="w-2/3 md:w-5/6 mx-auto">
                 <CarouselContent className="-ml-1">

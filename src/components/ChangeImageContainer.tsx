@@ -3,8 +3,9 @@ import Croppie from "croppie";
 import "croppie/croppie.css";
 import ImageContainer from "@/components/ImageContainer";
 import { Button } from "@/components/ui/button";
-import { FaPencilAlt } from "react-icons/fa";
+import { Pencil } from 'lucide-react';
 import { type CroppieOptions } from "croppie";
+import img_placeholder from '/img-placeholder.png'
 
 const windowWidth = window.innerWidth
 
@@ -16,7 +17,7 @@ const croppieOptions: CroppieOptions = {
     boundary: { width: windowWidth > 480 ? 400 : 300, height: 400 }
 };
 
-function ChangeImageContainer({ src }: { src: string }) {
+function ChangeImageContainer({ src = img_placeholder }: { src?: string }) {
     const [currentSrc, setCurrentSrc] = useState(src);
     const [isCropping, setIsCropping] = useState(false);
     const croppieRef = useRef<Croppie | null>(null);
@@ -78,7 +79,7 @@ function ChangeImageContainer({ src }: { src: string }) {
                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-b from-transparent to-gray-800/80 flex items-end justify-end p-2">
                     <Button variant="link" className="text-primary-foreground text-xs" onClick={openFileDialog}>
                         <p>Change image</p>
-                        <FaPencilAlt className="h-2" />
+                        <Pencil className="h-2" />
                     </Button>
                     <input
                         type="file"

@@ -1,5 +1,5 @@
 import ResponsiveComponent from "./helpers/ResponsiveComponent"
-import { FaFilter } from "react-icons/fa";
+import { Funnel } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -60,7 +60,7 @@ function EventFilters({ className }: HTMLAttributes<HTMLDivElement>) {
                 <Dialog>
                     <DialogTrigger>
                         <div className="w-[83vw] flex flex-row justify-between">
-                            <FaFilter className="text-gray-800 hover:text-accent cursor-pointer block" />
+                            <Funnel className="text-gray-800 hover:text-accent cursor-pointer block" />
                             <div>
                                 <p className="font-semibold cursor-pointer">Reset filters</p>
                             </div>
