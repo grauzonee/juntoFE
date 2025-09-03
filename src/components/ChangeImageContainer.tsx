@@ -17,8 +17,14 @@ const croppieOptions: CroppieOptions = {
     boundary: { width: windowWidth > 480 ? 400 : 300, height: 400 }
 };
 
-function ChangeImageContainer({ src = img_placeholder }: { src?: string }) {
-    const [currentSrc, setCurrentSrc] = useState(src);
+type ChangeImageContainerProps = {
+    value?: File | null,
+    src?: string,
+    onChange: (file?: File) => void
+}
+
+function ChangeImageContainer({ value = null, src = img_placeholder, onChange }: ChangeImageContainerProps) {
+    const [currentSrc, setCurrentSrc] = useState(value ? URL.createObjectURL(value) : src);
     const [isCropping, setIsCropping] = useState(false);
     const croppieRef = useRef<Croppie | null>(null);
     const croppieContainerRef = useRef<HTMLDivElement>(null);
@@ -60,14 +66,17 @@ function ChangeImageContainer({ src = img_placeholder }: { src?: string }) {
     const onCropConfirm = async () => {
         if (!croppieRef.current) return;
 
-        const base64 = await croppieRef.current.result({
-            type: "base64",
+        const blob = await croppieRef.current.result({
+            type: "blob",
             size: "viewport",
             format: "png",
             quality: 1,
         });
+        const newFile = new File([blob], 'filename.png', { lastModified: new Date().getTime(), type: blob.type })
 
-        setCurrentSrc(base64);
+        onChange(newFile)
+        const url = URL.createObjectURL(newFile);
+        setCurrentSrc(url);
         setIsCropping(false);
     };
 
@@ -77,7 +86,7 @@ function ChangeImageContainer({ src = img_placeholder }: { src?: string }) {
         <div className="relative">
             <ImageContainer src={currentSrc}>
                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-b from-transparent to-gray-800/80 flex items-end justify-end p-2">
-                    <Button variant="link" className="text-primary-foreground text-xs" onClick={openFileDialog}>
+                    <Button type="button" variant="link" className="text-primary-foreground text-xs" onClick={openFileDialog}>
                         <p>Change image</p>
                         <Pencil className="h-2" />
                     </Button>
@@ -101,8 +110,8 @@ function ChangeImageContainer({ src = img_placeholder }: { src?: string }) {
                         ></div>
 
                         <div className="flex gap-2 mt-12">
-                            <Button onClick={onCropConfirm}>Confirm</Button>
-                            <Button variant="secondary" onClick={onCropCancel}>
+                            <Button type="button" onClick={onCropConfirm}>Confirm</Button>
+                            <Button type="button" variant="secondary" onClick={onCropCancel}>
                                 Cancel
                             </Button>
                         </div>

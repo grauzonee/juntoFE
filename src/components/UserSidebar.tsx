@@ -10,10 +10,13 @@ const ChangeImageContainer = lazy(() => import("@/components/ChangeImageContaine
 import avatar_placeholder from '/avatar-placeholder.png'
 
 function UserSidebar() {
+    function onImageChange(file?: File) {
+        console.log(file)
+    }
     return (
         <Card className="py-3 h-fit">
             <CardContent>
-                <ChangeImageContainer src={avatar_placeholder} />
+                <ChangeImageContainer src={avatar_placeholder} onChange={onImageChange} />
                 <Separator className="my-2" />
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-row justify-between items-center">
