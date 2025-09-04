@@ -5,6 +5,11 @@ import ResponsiveComponent from '@/components/helpers/ResponsiveComponent'
 import type React from "react"
 
 function BaseTopbar({ children }: { children: React.ReactNode }) {
+    function onSearch(searchStr: string) {
+        console.log(searchStr)
+        window.location.href = '/events'
+    }
+
     return (
         <div className="h-20 bg-transparent backdrop-blur-lg text-white w-full flex flex-row items-center justify-between p-[4rem] gap-5">
             <Link to="/">
@@ -13,7 +18,7 @@ function BaseTopbar({ children }: { children: React.ReactNode }) {
                 </div>
             </Link>
             <ResponsiveComponent isDesktop={true} isTablet={true}>
-                <SearchForm />
+                <SearchForm onChange={onSearch} />
             </ResponsiveComponent>
             {children}
         </div>
