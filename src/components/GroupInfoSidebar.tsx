@@ -34,7 +34,7 @@ function GroupInfoSidebar() {
                 </CardHeader>
                 <Separator className="my-3" />
                 <CardContent>
-                    <Map coordinates={{ lat: 51, lng: 100 }} />
+                    <Map coordinates={[{ lat: 51, lng: 100 }]} />
                 </CardContent>
             </Card>
         </div>
