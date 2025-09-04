@@ -11,7 +11,7 @@ function ResponsiveComponent(props: ResponsiveProps) {
     const [canRender, setCanRender] = useState(false)
     function handleResize() {
         const resolution = window.innerWidth;
-        const isMobile = resolution >= 320 && resolution <= 480;
+        const isMobile = resolution >= 320 && resolution <= 767;
         const isTablet = resolution >= 768 && resolution <= 1024;
         const isDesktop = resolution > 1024;
 

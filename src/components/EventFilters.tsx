@@ -46,7 +46,7 @@ function EventFilters({ className }: HTMLAttributes<HTMLDivElement>) {
     return (
         <>
             <ResponsiveComponent isDesktop={true} isTablet={true}>
-                <div className={cn('w-full flex flex-row justify-between items-end px-3', className)}>
+                <div className={cn('flex flex-row items-end justify-end gap-2 px-3', className)}>
                     <div className="w-3/4 md:w-1/2 flex flex-row gap-2">
                         {filters}
                     </div>
