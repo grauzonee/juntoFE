@@ -1,7 +1,7 @@
 import { lazy, useState } from "react"
 import { Input } from "@/components/ui/input"
 const Badge = lazy(() => import("@/components/ui/badge").then(m => ({ default: m.Badge })));
-import { RxCrossCircled } from "react-icons/rx";
+import { X } from 'lucide-react';
 
 type TagsInputProps = {
     value: string[],
@@ -33,7 +33,7 @@ function TagsInput({ value = [], onChange }: TagsInputProps) {
             <div className="w-full flex-wrap flex flex-row gap-1">
                 {value.map((tag, index) => (
                     <Badge variant="secondary" className="relative px-4" key={index}>{tag}
-                        <RxCrossCircled className="absolute top-0 right-0 bg-red-600 text-white rounded-full cursor-pointer" onClick={() => handleRemove(tag)} />
+                        <X className="absolute top-0 right-0 bg-red-600 text-white rounded-full cursor-pointer" onClick={() => handleRemove(tag)} />
                     </Badge>
                 ))}
             </div>
