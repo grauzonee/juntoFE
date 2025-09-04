@@ -7,23 +7,23 @@ import {
 } from "@/components/ui/navigation-menu"
 import BaseTopbar from '@/components/topbar/BaseTopbar'
 
-function GuestTopbar() {
+function AuthTopbar() {
     return (
         <BaseTopbar>
-            <NavigationMenu className='w-1/4'>
+            <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            About
+                            My profile
                         </NavigationMenuLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Login</NavigationMenuLink>
+                            Logout</NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
         </BaseTopbar>
     )
 }
-export default GuestTopbar
+export default AuthTopbar
