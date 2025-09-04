@@ -10,7 +10,6 @@ import {
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -46,8 +45,8 @@ function EventFilters({ className }: HTMLAttributes<HTMLDivElement>) {
     return (
         <>
             <ResponsiveComponent isDesktop={true} isTablet={true}>
-                <div className={cn('w-full flex flex-row justify-between items-end px-3', className)}>
-                    <div className="w-3/4 md:w-1/2 flex flex-row gap-2">
+                <div className={cn('flex flex-row items-end md:items-center justify-end gap-2 px-3', className)}>
+                    <div className="md:w-1/2 flex flex-row gap-2">
                         {filters}
                     </div>
                     <div>
@@ -59,7 +58,7 @@ function EventFilters({ className }: HTMLAttributes<HTMLDivElement>) {
             <ResponsiveComponent isMobile={true}>
                 <Dialog>
                     <DialogTrigger>
-                        <div className="w-[83vw] flex flex-row justify-between">
+                        <div className="flex flex-row justify-between">
                             <Funnel className="text-gray-800 hover:text-accent cursor-pointer block" />
                             <div>
                                 <p className="font-semibold cursor-pointer">Reset filters</p>
@@ -70,12 +69,11 @@ function EventFilters({ className }: HTMLAttributes<HTMLDivElement>) {
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Select filters</DialogTitle>
-                            <DialogDescription>
-                                <div className="flex flex-col gap-2">
-                                    {filters}
-                                </div>
-                            </DialogDescription>
+
                         </DialogHeader>
+                        <div className="flex flex-col gap-2">
+                            {filters}
+                        </div>
                         <Button variant="secondary" className="w-1/2 mx-auto">Done</Button>
                     </DialogContent>
                 </Dialog>

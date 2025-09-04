@@ -1,3 +1,5 @@
+import { lazy } from "react"
+const Map = lazy(() => import("@/components/Map"))
 import avatar_placeholder from '/avatar-placeholder.png'
 import {
     Card,
@@ -31,18 +33,8 @@ function GroupInfoSidebar() {
                     </div>
                 </CardHeader>
                 <Separator className="my-3" />
-                <CardFooter><p className="text-xs">Member since: 100 days</p></CardFooter>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <div className='text-left'>
-                        <CardTitle>Map</CardTitle>
-                        <CardDescription>Some description</CardDescription>
-                    </div>
-                </CardHeader>
-                <Separator className="my-3" />
                 <CardContent>
-                    <div className='w-full h-40 bg-gray-600 cursor-pointer'></div>
+                    <Map coordinates={[{ lat: 51, lng: 100 }]} />
                 </CardContent>
             </Card>
         </div>

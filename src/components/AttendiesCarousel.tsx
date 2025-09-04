@@ -14,7 +14,7 @@ function AttendiesCarousel() {
             <Carousel className="w-5/6 mx-auto">
                 <CarouselContent className="-ml-1">
                     {Array.from({ length: 5 }).map((_, index) => (
-                        <CarouselItem key={index} className="pl-1 md:basis-1/4 lg:basis-1/6">
+                        <CarouselItem key={index} className="pl-1 basis-1/4 md:basis-1/6">
                             <div className="p-1">
                                 <Card>
                                     <CardContent className="flex aspect-square items-center justify-center p-6">

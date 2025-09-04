@@ -26,8 +26,6 @@ type MapWithGeocoderProps = {
 const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
     const map = useMap();
 
-
-
     useEffect(() => {
         const provider = new OpenStreetMapProvider()
 
@@ -75,8 +73,6 @@ const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
     return null;
 }
 function MapWithGeocoder({ value, onChange }: MapWithGeocoderProps) {
-
-
     return (
         <MapContainer
             center={[value?.coordinates.lat || 51, value?.coordinates.lng || -1]}

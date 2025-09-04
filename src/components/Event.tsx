@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import {
     CardDescription,
     CardFooter,
@@ -21,7 +22,9 @@ function Event({ variant = 'full' }: EventProps) {
                 </div>
                 <div className="flex flex-col flex-1 items">
                     <CardHeader className="items-start text-left">
-                        <CardTitle>September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</CardTitle>
+                        <Link to="/event">
+                            <CardTitle>September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</CardTitle>
+                        </Link>
                         <CardDescription>NoCrastination Club • Vienna, AT • 4.9</CardDescription>
                     </CardHeader>
                     <CardFooter className="px-3 py-1 bg-accent text-white shadow font-semibold rounded-sm">
