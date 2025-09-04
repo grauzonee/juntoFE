@@ -8,6 +8,7 @@
       "@/layouts/*": ["./src/layouts/*"],
       "@/components/*": ["./src/components/*"],
       "@/schemas/*": ["./src/schemas/*"],
+      "react": ["./node_modules/@types/react"],
     }
   },
   "files": [],

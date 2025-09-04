@@ -1,4 +1,10 @@
 import { z } from "zod"
+import type { LatLngLiteral } from "leaflet"
+
+export type EventAddress = {
+    coordinates: LatLngLiteral,
+    value: string
+}
 export const createEventSchema = z.object({
     title: z.string().min(5).max(50),
     description: z.string().min(20).max(500),
@@ -10,7 +16,10 @@ export const createEventSchema = z.object({
         .refine((file) => ["image/jpeg", "image/png"].includes(file?.type), "Only JPG and PNG files are allowed"),
     address: z.object({
         value: z.string(),
-        coordinates: z.array(z.string())
+        coordinates: z.object({
+            lat: z.number(),
+            lng: z.number()
+        })
     })
 })
 

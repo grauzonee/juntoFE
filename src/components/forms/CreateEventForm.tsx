@@ -1,17 +1,24 @@
-import { lazy } from "react";
+import { lazy, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createEventSchema, type CreateEventSchema } from "@/schemas/EventSchemas"
-import { Form, FormField, FormControl, FormLabel, FormMessage, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import DatePicker from "@/components/DatePicker";
-const TagsInput = lazy(() => import("@/components/TagsInput"));
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-const ChangeImageContainer = lazy(() => import("@/components/ChangeImageContainer"))
+const StaticData = lazy(() => import("@/components/forms/createEvent/StaticData"))
+const MapData = lazy(() => import("@/components/forms/createEvent/MapData"))
 
 function CreateEventForm() {
+    const formSteps = [StaticData, MapData]
+    const [step, setStep] = useState(0)
+
+    const goToStep = (newStep: number) => {
+        if (newStep < 0) return
+        if (newStep > formSteps.length - 1) return
+        setStep(newStep)
+    }
+
+    const StepComponent = formSteps[step]
     const form = useForm<CreateEventSchema>({
         resolver: zodResolver(createEventSchema)
     })
@@ -20,65 +27,34 @@ function CreateEventForm() {
         console.log(values)
     }
 
+    const FormButtons = () => {
+        if (step == 0) {
+            return (<>
+                <Button type="button" onClick={() => goToStep(step + 1)}>Next</Button>
+            </>)
+        }
+        if (step == formSteps.length - 1) {
+            return (<>
+                <Button type="button" variant="secondary" onClick={() => goToStep(step - 1)}>Back</Button>
+                <Button type="submit" onClick={() => toast('Event has been created')}>Submit</Button>
+            </>)
+        }
+        if (step < formSteps.length - 1) {
+            return (<>
+                <Button type="button" variant="secondary" onClick={() => goToStep(step - 1)}>Back</Button>
+                <Button type="button" onClick={() => goToStep(step + 1)}>Next</Button>
+            </>)
+        }
+    }
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row gap-5 justify-between">
-                <FormField control={form.control} name="image" render={({ field }) => (
-                    <FormItem className="h-fit w-2/5">
-                        <FormLabel>Image</FormLabel>
-                        <FormControl>
-                            <ChangeImageContainer {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-
-                )} />
-                <div>
-                    <FormField control={form.control} name="title" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                                <Input type="text" placeholder="title..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-
-                    )} />
-                    <FormField control={form.control} name="description" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="description..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-
-                    )} />
-                    <FormField control={form.control} name="date" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Date</FormLabel>
-                            <FormControl>
-                                <DatePicker {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-
-                    )} />
-                    <FormField control={form.control} name="topics" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Topic</FormLabel>
-                            <FormControl>
-                                <TagsInput {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-
-                    )} />
-                    <Button type="submit" onClick={() => toast('Event has been created')}>Save</Button>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                {<StepComponent form={form} />}
+                <div className="flex flex-row gap-3 mt-5">
+                    <FormButtons />
                 </div>
-
             </form>
-        </Form>
+        </Form >
     )
 }
 
