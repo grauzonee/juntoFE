@@ -41,7 +41,7 @@ function SingleEvent() {
                         <AttendiesCarousel />
                     </div>
                 </div>
-                <div className="w-full md:w-1/3 text-center flex flex-row md:flex-col sticky md:top-24 bottom-0 gap-3 py-2 px-1 h-fit">
+                <div className="w-full md:w-1/3 text-center flex flex-row flex-col md:sticky md:top-24 bottom-0 gap-3 py-2 px-1 h-fit">
                     <GroupInfoSidebar />
                 </div>
             </div>
