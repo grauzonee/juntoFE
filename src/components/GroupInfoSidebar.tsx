@@ -10,13 +10,16 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Link } from "react-router"
 
 function GroupInfoSidebar() {
     return (
         <div className="flex flex-col w-full gap-3">
             <Card>
                 <CardHeader className="flex flex-row w-full gap-2 items-center">
-                    <img className="mask block mask-circle size-20" src={avatar_placeholder} alt="user avatar" />
+                    <Link to="/profile">
+                        <img className="mask block mask-circle size-20" src={avatar_placeholder} alt="user avatar" />
+                    </Link>
                     <div className='text-left'>
                         <CardTitle>Description</CardTitle>
                         <CardDescription>Some description</CardDescription>

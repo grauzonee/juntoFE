@@ -6,6 +6,7 @@ import {
     NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import BaseTopbar from '@/components/topbar/BaseTopbar'
+import { Link } from 'react-router'
 
 function GuestTopbar() {
     return (
@@ -18,12 +19,14 @@ function GuestTopbar() {
                         </NavigationMenuLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Login</NavigationMenuLink>
+                        <Link to="/login" >
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                Login</NavigationMenuLink>
+                        </Link>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
-        </BaseTopbar>
+        </BaseTopbar >
     )
 }
 export default GuestTopbar
