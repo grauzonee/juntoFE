@@ -1,6 +1,9 @@
+import { lazy } from "react"
 import { type RouteObject } from "react-router"
-import Login from "@/pages/Login"
+const Login = lazy(() => import("@/pages/Login"))
+const Register = lazy(() => import("@/pages/Register"))
 
 export const authRoutes: RouteObject[] = [
-    { path: 'login', element: <Login /> }
+    { path: 'login', element: <Login /> },
+    { path: 'register', element: <Register /> },
 ]
