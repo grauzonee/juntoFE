@@ -1,5 +1,6 @@
 import { Outlet } from "react-router"
 import { Toaster } from "@/components/ui/sonner"
+import { Link } from "react-router"
 
 function AuthLayout() {
     return (
@@ -10,12 +11,15 @@ function AuthLayout() {
                 >
                     <Toaster />
                     <div className="w-full flex flex-col py-5 md:flex-row justify-between gapx-12 items-center">
+
                         <div className="relative flex items-center justify-center md:w-1/2">
 
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-400 via-yellow-300 to-blue-400 opacity-40 blur-2xl z-0 animate-pulse"></div>
 
-                            <img src="/logo.png" alt="Logo" className="w-full h-auto relative z-10 blur-[3px] animate-spin [animation-duration:20s]" />
+                            <Link to="/">
+                                <img src="/logo.png" alt="Logo" className="w-full h-auto relative z-10 blur-[3px] animate-spin [animation-duration:20s]" />
 
+                            </Link>
                             <div className="absolute text-background/80 z-30 flex flex-col items-center text-center">
                                 <p className="block text-[2rem] font-bold">
                                     Making events easier
@@ -25,6 +29,7 @@ function AuthLayout() {
                                 </p>
                             </div>
                         </div>
+
                         <Outlet />
                     </div>
                 </div>
