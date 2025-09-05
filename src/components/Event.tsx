@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 
 type EventProps =
     {
-        variant?: "full" | "short"
+        variant?: "full" | "short" | "medium"
     }
 
 function Event({ variant = 'full' }: EventProps) {
@@ -37,9 +37,13 @@ function Event({ variant = 'full' }: EventProps) {
 
         return (
             <div className="md:shadow flex flex-col gap-3 justify-between items-center cursor-pointer">
+                {variant == 'medium' && <img src={event_example} alt="Event" className="object-cover" />}
+
                 <div className="flex flex-col flex-1 items">
                     <div className="items-start text-left p-5">
-                        <p className="text-md font-semibold">September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</p>
+                        <Link to="/event">
+                            <p className="text-md font-semibold">September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</p>
+                        </Link>
                         <div className="flex flex-row justify-between items-center">
                             <p className="text-xs text-gray-700">NoCrastination Club • Vienna, AT • 4.9</p>
                             <Badge variant="outline">12.09.2024</Badge>
