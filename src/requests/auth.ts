@@ -1,0 +1,33 @@
+import type { RegisterSchema, LoginSchema } from "@/schemas/AuthSchemas"
+import type { User } from "@/types/User"
+import { api as axios, setToken } from '@/lib/axios'
+
+export async function logIn(formData: LoginSchema): Promise<User | null> {
+    const response = await axios.post('/auth/login', formData);
+    const responseData = response.data;
+    if (response.status === 200 && responseData.data?.token) {
+        const token = responseData.data.token;
+        const userId = responseData.data.id;
+        setToken(token);
+        localStorage.setItem('userId', userId);
+        return responseData.data
+    }
+    return null;
+}
+
+export async function signUp(formData: RegisterSchema): Promise<User | null> {
+    const response = await axios.post('/auth/register', formData);
+    const responseData = response.data;
+    if (response.status === 201 && responseData.data?.token) {
+        const token = responseData.data.token;
+        const userId = responseData.data.userId;
+        setToken(token);
+        localStorage.setItem('userId', userId);
+        return responseData.data;
+    }
+    return null;
+}
+
+export function getCurrentUserId() {
+    return localStorage.getItem('userId');
+}

@@ -1,5 +1,6 @@
 import { type RouteObject } from 'react-router'
 import DefaultLayout from '@/layouts/DefaultLayout.tsx'
+import AuthLayout from '@/layouts/AuthLayout.tsx'
 import Hero from '@/pages/Hero'
 
 import { authRoutes } from '@/routes/auth'
@@ -12,10 +13,16 @@ export const routes: RouteObject[] = [
         element: <DefaultLayout />,
         children: [
             { path: '/', element: <Hero /> },
-            ...authRoutes,
             ...profileViews,
             ...eventsRoutes
         ]
-    }
+    },
 
+    {
+        path: '/',
+        element: <AuthLayout />,
+        children: [
+            ...authRoutes,
+        ]
+    }
 ]

@@ -6,19 +6,20 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import Event from "@/components/Event"
 
-function AttendiesCarousel() {
+function EventsCarousel() {
     return (
         <>
-            <span className="font-semibold text-lg">Attendies</span>
+            <span className="font-semibold text-lg">Events</span>
             <Carousel className="w-5/6 mx-auto">
                 <CarouselContent className="-ml-1">
                     {Array.from({ length: 5 }).map((_, index) => (
-                        <CarouselItem key={index} className="pl-1 basis-1/4 lg:basis-1/6">
+                        <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
                             <div className="p-1">
                                 <Card>
                                     <CardContent className="flex aspect-square items-center justify-center p-6">
-                                        <span className="text-xl font-semibold">{index + 1}</span>
+                                        <Event variant="medium" />
                                     </CardContent>
                                 </Card>
                             </div>
@@ -32,4 +33,4 @@ function AttendiesCarousel() {
     )
 }
 
-export default AttendiesCarousel
+export default EventsCarousel
