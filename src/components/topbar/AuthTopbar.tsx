@@ -8,6 +8,11 @@ import {
 import BaseTopbar from '@/components/topbar/BaseTopbar'
 
 function AuthTopbar() {
+    function logout() {
+        localStorage.removeItem('token')
+        window.location.reload()
+    }
+
     return (
         <BaseTopbar>
             <NavigationMenu>
@@ -18,8 +23,9 @@ function AuthTopbar() {
                         </NavigationMenuLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Logout</NavigationMenuLink>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()} onClick={logout}>
+                            Logout
+                        </NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>

@@ -25,16 +25,24 @@ export async function logIn(formData: LoginSchema): Promise<User | null> {
 }
 
 export async function signUp(formData: RegisterSchema): Promise<User | null> {
-    const response = await axios.post('/auth/register', formData);
-    const responseData = response.data;
-    if (response.status === 201 && responseData.data?.token) {
-        const token = responseData.data.token;
-        const userId = responseData.data.userId;
-        setToken(token);
-        localStorage.setItem('userId', userId);
-        return responseData.data;
+    try {
+        const response = await axios.post("/auth/register", formData)
+
+        const responseData = response.data
+        if (response.status === 201 && responseData.data?.token) {
+            const { token, id: userId, ...user } = responseData.data
+            setToken(token)
+            localStorage.setItem("userId", userId)
+            return user as User
+        }
+
+        return null
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data?.data.message || "Login failed")
+        }
+        throw new Error("Network error")
     }
-    return null;
 }
 
 export function getCurrentUserId() {
