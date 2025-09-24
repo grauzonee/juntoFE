@@ -8,18 +8,27 @@ const EditProfileDialog = lazy(() => import("@/components/dialogs/EditProfileDia
 import { Separator } from "@/components/ui/separator"
 const ChangeImageContainer = lazy(() => import("@/components/ChangeImageContainer"))
 import avatar_placeholder from '/avatar-placeholder.png'
-import { getUser } from "@/helpers/user";
+import { getUser, updateUser } from "@/helpers/user";
 import type { User } from "@/types/User";
+import { uploadMedia } from "@/helpers/media";
 
 function UserSidebar() {
     const [user, setUser] = useState<User | null>(null)
-    useEffect(() => {
+
+    function loadUser() {
         getUser().then((response) => {
             setUser(response)
-        })
+        });
+    }
+    useEffect(() => {
+        loadUser()
     }, [])
-    function onImageChange(file?: File) {
-        console.log(file)
+    async function onImageChange(file?: File) {
+        if (file) {
+            const avatarUrl = await uploadMedia(file);
+            await updateUser({ avatarUrl })
+            setUser((prev) => prev ? { ...prev, avatarUrl } : prev);
+        }
     }
     function getMemberSince() {
         if (!user) {
