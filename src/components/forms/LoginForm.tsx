@@ -5,18 +5,31 @@ import { Input } from "@/components/ui/input"
 import { FormField, FormControl, FormLabel, FormMessage, FormItem, Form } from "@/components/ui/form";
 import { Button } from "../ui/button"
 import { Link } from "react-router";
+import { logIn } from "@/requests/auth";
+import { useNavigate } from "react-router";
 
 function LoginForm() {
+    const navigate = useNavigate()
     const form = useForm<LoginSchema>({
         resolver: zodResolver(loginSchema)
     })
 
-    function onSubmit(values: LoginSchema) {
-        console.log(values)
+    async function onSubmit(values: LoginSchema) {
+        try {
+            await logIn(values)
+            navigate("/")
+        } catch (error) {
+            form.setError("root", { type: "manual", message: error instanceof Error ? error.message : undefined })
+        }
     }
 
     return (
         <Form {...form}>
+            {form.formState.errors.root && (
+                <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.root.message}
+                </p>
+            )}
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 items-stretch">
                 <FormField control={form.control} name="email" render={({ field }) => (
                     <FormItem>
