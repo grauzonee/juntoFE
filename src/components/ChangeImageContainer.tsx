@@ -1,125 +1,171 @@
-import { useState, useRef, useEffect } from "react";
-import Croppie from "croppie";
-import "croppie/croppie.css";
-import ImageContainer from "@/components/ImageContainer";
-import { Button } from "@/components/ui/button";
-import { Pencil } from 'lucide-react';
-import { type CroppieOptions } from "croppie";
-import img_placeholder from '/img-placeholder.png'
-
-const windowWidth = window.innerWidth
-
-const croppieOptions: CroppieOptions = {
-    showZoomer: true,
-    enableOrientation: true,
-    mouseWheelZoom: "ctrl",
-    viewport: { width: 200, height: 200, type: "square" },
-    boundary: { width: windowWidth > 480 ? 400 : 300, height: 400 }
-};
+import { useState, useRef, useCallback } from "react"
+import Cropper from "react-easy-crop"
+import ImageContainer from "@/components/ImageContainer"
+import { Button } from "@/components/ui/button"
+import { Pencil } from "lucide-react"
+import img_placeholder from "/img-placeholder.png"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
+import type { Point, Area } from "react-easy-crop"
 
 type ChangeImageContainerProps = {
-    value?: File | null,
-    src?: string,
-    onChange: (file?: File) => void
+    value?: File | null
+    src?: string
+    onChange: (file?: File) => void,
+    aspect: number
 }
 
-function ChangeImageContainer({ value = null, src = img_placeholder, onChange }: ChangeImageContainerProps) {
-    const [currentSrc, setCurrentSrc] = useState(value ? URL.createObjectURL(value) : src);
-    const [isCropping, setIsCropping] = useState(false);
-    const croppieRef = useRef<Croppie | null>(null);
-    const croppieContainerRef = useRef<HTMLDivElement>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+function ChangeImageContainer({
+    value = null,
+    src = img_placeholder,
+    onChange,
+    aspect
+}: ChangeImageContainerProps) {
+    const [currentSrc, setCurrentSrc] = useState(
+        value ? URL.createObjectURL(value) : src
+    )
+    const [isCropping, setIsCropping] = useState(false)
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
+    const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1)
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const openFileDialog = () => {
-        fileInputRef.current?.click();
-    };
+        fileInputRef.current?.click()
+    }
 
     const onSelectFile = () => {
-        const file = fileInputRef.current?.files?.[0];
-        if (!file) return;
+        const file = fileInputRef.current?.files?.[0]
+        if (!file) return
 
         if (!file.type.startsWith("image/")) {
-            alert("Please select a valid image file (jpg, png, gif, etc.)");
-            fileInputRef.current!.value = "";
-            return;
+            alert("Please select a valid image file (jpg, png, gif, etc.)")
+            fileInputRef.current!.value = ""
+            return
         }
 
-        setIsCropping(true);
-    };
+        const url = URL.createObjectURL(file)
+        setSelectedImage(url)
+        setIsCropping(true)
+    }
 
-    useEffect(() => {
-        if (isCropping && croppieContainerRef.current && fileInputRef.current?.files?.[0]) {
-            const reader = new FileReader();
-            reader.readAsDataURL(fileInputRef.current.files[0]);
-            reader.onload = () => {
-                croppieRef.current = new Croppie(croppieContainerRef.current!, croppieOptions);
-                croppieRef.current.bind({ url: reader.result as string });
-            };
-        }
-
-        return () => {
-            croppieRef.current?.destroy();
-            croppieRef.current = null;
-        };
-    }, [isCropping]);
+    const onCropComplete = useCallback(
+        (_: Area, croppedPixels: Area) => {
+            setCroppedAreaPixels(croppedPixels)
+        },
+        []
+    )
 
     const onCropConfirm = async () => {
-        if (!croppieRef.current) return;
+        if (!croppedAreaPixels || !selectedImage) return
 
-        const blob = await croppieRef.current.result({
-            type: "blob",
-            size: "viewport",
-            format: "png",
-            quality: 1,
-        });
-        const newFile = new File([blob], 'filename.png', { lastModified: new Date().getTime(), type: blob.type })
+        const croppedBlob = await getCroppedImg(selectedImage, croppedAreaPixels)
 
-        onChange(newFile)
-        const url = URL.createObjectURL(newFile);
-        setCurrentSrc(url);
-        setIsCropping(false);
-    };
+        if (croppedBlob) {
+            const newFile = new File([croppedBlob], "cropped.png", {
+                type: "image/png",
+                lastModified: Date.now(),
+            })
+            onChange(newFile)
+            setCurrentSrc(URL.createObjectURL(newFile))
+        }
 
-    const onCropCancel = () => setIsCropping(false);
+        setIsCropping(false)
+    }
+
+    const onCropCancel = () => setIsCropping(false)
 
     return (
-        <div className="relative">
+        <>
             <ImageContainer src={currentSrc}>
                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-b from-transparent to-gray-800/80 flex items-end justify-end p-2">
-                    <Button type="button" variant="link" className="text-primary-foreground text-xs" onClick={openFileDialog}>
-                        <p>Change image</p>
-                        <Pencil className="h-2" />
-                    </Button>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        className="hidden"
-                        onChange={onSelectFile}
-                    />
+                    <div className="flex flex-row text-sm items-center gap-1">
+                        <Button
+                            type="button"
+                            variant="link"
+                            className="text-primary-foreground text-xs"
+                            onClick={openFileDialog}
+                        >
+                            <p>Change image</p>
+                            <Pencil className="h-2" />
+                        </Button>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            className="hidden"
+                            onChange={onSelectFile}
+                        />
+                    </div>
                 </div>
             </ImageContainer>
+            <Dialog open={isCropping} onOpenChange={setIsCropping}>
+                <DialogContent className="px-4">
+                    <DialogHeader>
+                        <DialogTitle>Edit profile</DialogTitle>
+                    </DialogHeader>
 
-            {isCropping && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg p-4 max-w-lg w-full flex flex-col items-center">
-                        <div
-                            ref={croppieContainerRef}
-                            className="w-full"
-                            style={{ height: "400px" }}
-                        ></div>
+                        <div className="relative w-full h-[400px]">
+                            {selectedImage && <Cropper
+                                image={selectedImage}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={aspect}
+                                onCropChange={setCrop}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                            />}
+                        </div>
 
                         <div className="flex gap-2 mt-12">
-                            <Button type="button" onClick={onCropConfirm}>Confirm</Button>
+                            <Button type="button" onClick={onCropConfirm}>
+                                Confirm
+                            </Button>
                             <Button type="button" variant="secondary" onClick={onCropCancel}>
                                 Cancel
                             </Button>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
-    );
+                </DialogContent>
+            </Dialog>
+        </>
+    )
 }
 
-export default ChangeImageContainer;
+export default ChangeImageContainer
+
+async function getCroppedImg(imageSrc: string, crop: Area): Promise<Blob | null> {
+    const image = new Image()
+    image.src = imageSrc
+    await new Promise((res) => (image.onload = res))
+
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return null
+
+    canvas.width = crop.width
+    canvas.height = crop.height
+
+    ctx.drawImage(
+        image,
+        crop.x,
+        crop.y,
+        crop.width,
+        crop.height,
+        0,
+        0,
+        crop.width,
+        crop.height
+    )
+
+    return new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), "image/png", 1)
+    })
+}
