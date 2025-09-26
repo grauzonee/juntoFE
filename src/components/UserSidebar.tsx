@@ -48,9 +48,9 @@ function UserSidebar() {
     }
     return (
         <>
-            {user && user.id && <Card className="py-3 h-fit">
+            {user && user.id && <Card className="py-3 h-fit md:w-1/3">
                 <CardContent>
-                    <ChangeImageContainer src={user.avatarUrl ?? avatar_placeholder} onChange={onImageChange} />
+                    <ChangeImageContainer src={user.avatarUrl ?? avatar_placeholder} onChange={onImageChange} aspect={3 / 4} />
                     <Separator className="my-2" />
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-row justify-between items-center">

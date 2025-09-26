@@ -15,7 +15,7 @@ function StaticData({ form }: { form: UseFormReturn<CreateEventSchema> }) {
                 <FormItem className="h-fit md:w-2/5">
                     <FormLabel>Image</FormLabel>
                     <FormControl>
-                        <ChangeImageContainer {...field} />
+                        <ChangeImageContainer {...field} aspect={4 / 3} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>

@@ -6,6 +6,7 @@ import {
     NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import BaseTopbar from '@/components/topbar/BaseTopbar'
+import { Link } from 'react-router'
 
 function AuthTopbar() {
     function logout() {
@@ -18,9 +19,11 @@ function AuthTopbar() {
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            My profile
-                        </NavigationMenuLink>
+                        <Link to="/profile" >
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                My profile
+                            </NavigationMenuLink>
+                        </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()} onClick={logout}>
