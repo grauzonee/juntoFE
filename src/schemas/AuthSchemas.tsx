@@ -1,12 +1,13 @@
 import { z } from "zod"
 
 export const loginSchema = z.object({
-    email: z.email(),
+    email: z.email().transform((val) => val.toLowerCase()),
     password: z.string()
 })
 
 export const registerSchema = z.object({
-    email: z.email(),
+    username: z.string(),
+    email: z.email().transform((val) => val.toLowerCase()),
     password: z.string().min(5).max(25),
     passwordRepeat: z.string().min(5).max(25),
 }).refine((data) => data.password === data.passwordRepeat, {
