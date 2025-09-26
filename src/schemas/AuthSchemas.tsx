@@ -9,10 +9,10 @@ export const registerSchema = z.object({
     username: z.string(),
     email: z.email().transform((val) => val.toLowerCase()),
     password: z.string().min(5).max(25),
-    passwordRepeat: z.string().min(5).max(25),
-}).refine((data) => data.password === data.passwordRepeat, {
+    repeatPassword: z.string().min(5).max(25),
+}).refine((data) => data.password === data.repeatPassword, {
     message: "Passwords do not match",
-    path: ["passwordRepeat"]
+    path: ["repeatPassword"]
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>

@@ -1,5 +1,9 @@
+import { jwtDecode } from "jwt-decode";
+
 export const isLoggedIn = (): boolean => {
     const token = window.localStorage.getItem("token");
-    console.log(token)
-    return !!(token && token.length > 1)
+    if (!token) return false;
+    const { exp } = jwtDecode(token);
+    if (!exp) return false;
+    return Date.now() < exp * 1000;
 }
