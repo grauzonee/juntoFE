@@ -13,38 +13,53 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 const TagsInput = lazy(() => import('@/components/TagsInput'));
+import { updateUser, getUser } from '@/helpers/user';
+import type { User } from '@/types/User';
+import { useState, useEffect } from 'react';
 
-function EditProfileForm() {
+type EditProfileFormProps = {
+    onSubmit?: () => void
+}
+
+function EditProfileForm({ onSubmit }: EditProfileFormProps) {
+    const [user, setUser] = useState<User | null>(null)
     const form = useForm<EditProfileSchema>({
-        resolver: zodResolver(editProfileSchema),
-        defaultValues: {
-            username: "Grauzone",
-            email: "trake1524@gmail.com",
-            interests: ['drawing']
-        }
+        resolver: zodResolver(editProfileSchema)
     })
 
-    function onSubmit(values: EditProfileSchema) {
-        console.log(values)
+    useEffect(() => {
+        getUser().then((response) => {
+            setUser(response)
+            form.reset({
+                username: response.username,
+                interests: response.interests
+            });
+        });
+    }, [form])
+
+
+    async function onFormSubmit(values: EditProfileSchema) {
+        try {
+            await updateUser(values)
+            onSubmit?.()
+        } catch (error) {
+            form.setError("root", { type: "manual", message: error instanceof Error ? error.message : undefined })
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-3'>
+            {form.formState.errors.root && (
+                <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.root.message}
+                </p>
+            )}
+            {user && <form onSubmit={form.handleSubmit(onFormSubmit)} className='flex flex-col gap-3'>
                 <FormField control={form.control} name="username" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Username</FormLabel>
                         <FormControl>
                             <Input placeholder="username..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                            <Input placeholder="email..." {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -59,7 +74,7 @@ function EditProfileForm() {
                     </FormItem>
                 )} />
                 <Button type="submit">Save</Button>
-            </form>
+            </form>}
         </Form>
     )
 }
