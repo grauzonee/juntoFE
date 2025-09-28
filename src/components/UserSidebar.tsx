@@ -1,4 +1,5 @@
-import { lazy, useEffect, useState } from "react";
+import { lazy, useContext } from "react";
+import { UserContext } from "@/contexts/UserContext"
 import {
     Card,
     CardContent,
@@ -8,26 +9,17 @@ const EditProfileDialog = lazy(() => import("@/components/dialogs/EditProfileDia
 import { Separator } from "@/components/ui/separator"
 const ChangeImageContainer = lazy(() => import("@/components/ChangeImageContainer"))
 import avatar_placeholder from '/avatar-placeholder.png'
-import { getUser, updateUser } from "@/helpers/user";
-import type { User } from "@/types/User";
+import { updateUser } from "@/helpers/user";
 import { uploadMedia } from "@/helpers/media";
 
 function UserSidebar() {
-    const [user, setUser] = useState<User | null>(null)
+    const { user, refreshUser } = useContext(UserContext)
 
-    function loadUser() {
-        getUser().then((response) => {
-            setUser(response)
-        });
-    }
-    useEffect(() => {
-        loadUser()
-    }, [])
     async function onImageChange(file?: File) {
         if (file) {
             const avatarUrl = await uploadMedia(file);
             await updateUser({ avatarUrl })
-            setUser((prev) => prev ? { ...prev, avatarUrl } : prev);
+            refreshUser()
         }
     }
     function getMemberSince() {

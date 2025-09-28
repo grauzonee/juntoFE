@@ -1,6 +1,7 @@
 import { api as axios } from "@/lib/axios"
 import { type EditProfileSchema } from "@/schemas/ProfileSchemas"
 import { isAxiosError } from "axios"
+import { FormError } from "@/types/FormError"
 
 export async function getUser() {
     try {
@@ -26,9 +27,9 @@ export async function updateUser(formData: EditProfileSchema | { avatarUrl: stri
 
     } catch (error) {
         if (isAxiosError(error)) {
-            throw new Error(error.response?.data.message)
+            throw new FormError(error.response?.data.data.field, error.response?.data.data.message)
         }
-        throw new Error(error instanceof Error ? error.message : "Network error")
+        throw new FormError("root", error instanceof Error ? error.message : "Network error")
     }
 }
 
