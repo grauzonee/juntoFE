@@ -11,11 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import ResponsiveComponent from "@/components/helpers/ResponsiveComponent";
 const ChangePasswordForm = lazy(() => import("@/components/forms/ChangePasswordForm"))
 const EditProfileForm = lazy(() => import("@/components/forms/EditProfileForm"))
-import { useState } from "react";
 
 
 function EditProfileDialog() {
-    const [open, setOpen] = useState(false)
     const [open, setOpen] = useState<boolean>(false)
     return (
         <Dialog open={open} onOpenChange={setOpen}>

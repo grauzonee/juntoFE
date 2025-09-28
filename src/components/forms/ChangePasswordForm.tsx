@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
-
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type ChangePasswordSchema, changePasswordSchema } from "@/schemas/ProfileSchemas";
