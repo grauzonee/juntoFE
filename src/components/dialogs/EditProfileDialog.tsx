@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -14,8 +14,9 @@ const EditProfileForm = lazy(() => import("@/components/forms/EditProfileForm"))
 
 
 function EditProfileDialog() {
+    const [open, setOpen] = useState(false)
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
                 <div className="flex flex-row text-sm items-center gap-1">
                     <Settings2 /><span>Edit profile</span>
@@ -26,7 +27,7 @@ function EditProfileDialog() {
                     <DialogTitle>Edit profile</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3 md:flex-row justify-between">
-                    <EditProfileForm />
+                    <EditProfileForm onSubmit={() => setOpen(false)} />
                     <ChangePasswordForm className="row-span-2 order-4 md:order-none" />
                     <ResponsiveComponent isMobile={true} isTablet={true}><Separator className="my-2 order-3" /></ResponsiveComponent>
                 </div>

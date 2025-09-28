@@ -1,4 +1,5 @@
-import { lazy } from 'react';
+import { lazy, useContext } from 'react';
+import { UserContext } from '@/contexts/UserContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
 import { type EditProfileSchema, editProfileSchema } from "@/schemas/ProfileSchemas"
@@ -13,38 +14,61 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 const TagsInput = lazy(() => import('@/components/TagsInput'));
+import { updateUser } from '@/helpers/user';
+import { useEffect } from 'react';
+import { isFormError } from '@/types/FormError';
+import { toast } from "sonner";
 
-function EditProfileForm() {
+type EditProfileFormProps = {
+    onSubmit?: () => void
+}
+
+function EditProfileForm({ onSubmit }: EditProfileFormProps) {
+    const { user, refreshUser } = useContext(UserContext)
     const form = useForm<EditProfileSchema>({
         resolver: zodResolver(editProfileSchema),
         defaultValues: {
-            username: "Grauzone",
-            email: "trake1524@gmail.com",
-            interests: ['drawing']
+            username: user?.username ?? '',
+            interests: user?.interests ?? [],
         }
     })
+    useEffect(() => {
+        form.reset({
+            username: user ? user.username : '',
+            interests: user ? user.interests : []
+        });
 
-    function onSubmit(values: EditProfileSchema) {
-        console.log(values)
+    }, [form, user])
+
+
+    async function onFormSubmit(values: EditProfileSchema) {
+        try {
+            await updateUser(values)
+            refreshUser()
+            onSubmit?.()
+            toast('Data updated!')
+        } catch (error) {
+            if (isFormError<EditProfileSchema>(error)) {
+                form.setError(error.field, { type: "manual", message: error.message ?? 'Validation error' })
+            } else {
+                form.setError("root", { type: "manual", message: error instanceof Error ? error.message : undefined })
+            }
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-3'>
+            {user && <form onSubmit={form.handleSubmit(onFormSubmit)} className='flex flex-col gap-3'>
+                {form.formState.errors.root && (
+                    <p className="text-red-500 text-sm mt-1 text-center">
+                        {form.formState.errors.root.message}
+                    </p>
+                )}
                 <FormField control={form.control} name="username" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Username</FormLabel>
                         <FormControl>
                             <Input placeholder="username..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                            <Input placeholder="email..." {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -58,8 +82,8 @@ function EditProfileForm() {
                         <FormMessage />
                     </FormItem>
                 )} />
-                <Button type="submit">Save</Button>
-            </form>
+                <Button type="submit">Savee</Button>
+            </form>}
         </Form>
     )
 }
