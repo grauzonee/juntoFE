@@ -40,7 +40,6 @@ function EditProfileForm({ onSubmit }: EditProfileFormProps) {
 
     }, [form, user])
 
-
     async function onFormSubmit(values: EditProfileSchema) {
         try {
             await updateUser(values)
@@ -82,7 +81,7 @@ function EditProfileForm({ onSubmit }: EditProfileFormProps) {
                         <FormMessage />
                     </FormItem>
                 )} />
-                <Button type="submit">Savee</Button>
+                <Button type="submit">Save</Button>
             </form>}
         </Form>
     )
