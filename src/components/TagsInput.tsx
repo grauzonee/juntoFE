@@ -33,7 +33,7 @@ function TagsInput({ value = [], onChange }: TagsInputProps) {
             <div className="w-full flex-wrap flex flex-row gap-1">
                 {value.map((tag, index) => (
                     <Badge variant="secondary" className="relative px-4" key={index}>{tag}
-                        <X className="absolute top-0 right-0 bg-red-600 text-white rounded-full cursor-pointer" onClick={() => handleRemove(tag)} />
+                        <X className="absolute top-0 right-0 bg-red-500 text-white rounded-full cursor-pointer h-3 w-3" onClick={() => handleRemove(tag)} />
                     </Badge>
                 ))}
             </div>
