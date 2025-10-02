@@ -2,7 +2,9 @@ import { api as axios } from "@/lib/axios"
 import { type CreateEventSchema } from "@/schemas/EventSchemas"
 import { isAxiosError } from "axios"
 
-export async function createEvent(formData: CreateEventSchema) {
+type CreateEventBody = Omit<CreateEventSchema, 'image' | 'date'> & { imageUrl: string, date: number }
+
+export async function createEvent(formData: CreateEventBody) {
     try {
         const response = await axios.post("/event", formData)
 

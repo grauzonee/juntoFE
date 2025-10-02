@@ -7,11 +7,13 @@ import {
 } from "@/components/ui/dialog"
 import { Plus } from 'lucide-react';
 import CreateEventForm from "../forms/CreateEventForm";
+import { useState } from "react";
 
 function CreateEventDialog() {
-    return (
+    const [open, setOpen] = useState<boolean>(false)
 
-        <Dialog>
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
                 <div className="flex flex-row text-sm items-center gap-1">
                     <Plus className="bg-white rounded-full cursor-pointer" />
@@ -21,7 +23,7 @@ function CreateEventDialog() {
                 <DialogHeader>
                     <DialogTitle>Add event</DialogTitle>
                 </DialogHeader>
-                <CreateEventForm />
+                <CreateEventForm onSubmit={() => setOpen(false)} />
             </DialogContent>
         </Dialog>
     )

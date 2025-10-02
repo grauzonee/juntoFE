@@ -16,12 +16,9 @@ const TagsInput = lazy(() => import('@/components/TagsInput'));
 import { updateUser, getUser } from '@/helpers/user';
 import type { User } from '@/types/User';
 import { useState, useEffect } from 'react';
+import { type FormProps } from '@/types/props';
 
-type EditProfileFormProps = {
-    onSubmit?: () => void
-}
-
-function EditProfileForm({ onSubmit }: EditProfileFormProps) {
+function EditProfileForm({ onSubmit }: FormProps) {
     const [user, setUser] = useState<User | null>(null)
     const form = useForm<EditProfileSchema>({
         resolver: zodResolver(editProfileSchema)
