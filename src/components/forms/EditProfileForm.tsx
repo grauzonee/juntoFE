@@ -1,4 +1,5 @@
-import { lazy } from 'react';
+import { lazy, useContext } from 'react';
+import { UserContext } from '@/contexts/UserContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
 import { type EditProfileSchema, editProfileSchema } from "@/schemas/ProfileSchemas"
@@ -13,45 +14,55 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 const TagsInput = lazy(() => import('@/components/TagsInput'));
-import { updateUser, getUser } from '@/helpers/user';
-import type { User } from '@/types/User';
-import { useState, useEffect } from 'react';
-import { type FormProps } from '@/types/props';
+import { updateUser } from '@/helpers/user';
+import { useEffect } from 'react';
+import { isFormError } from '@/types/FormError';
+import { toast } from "sonner";
 
-function EditProfileForm({ onSubmit }: FormProps) {
-    const [user, setUser] = useState<User | null>(null)
+type EditProfileFormProps = {
+    onSubmit?: () => void
+}
+
+function EditProfileForm({ onSubmit }: EditProfileFormProps) {
+    const { user, refreshUser } = useContext(UserContext)
     const form = useForm<EditProfileSchema>({
-        resolver: zodResolver(editProfileSchema)
+        resolver: zodResolver(editProfileSchema),
+        defaultValues: {
+            username: user?.username ?? '',
+            interests: user?.interests ?? [],
+        }
     })
-
     useEffect(() => {
-        getUser().then((response) => {
-            setUser(response)
-            form.reset({
-                username: response.username,
-                interests: response.interests
-            });
+        form.reset({
+            username: user ? user.username : '',
+            interests: user ? user.interests : []
         });
-    }, [form])
 
+    }, [form, user])
 
     async function onFormSubmit(values: EditProfileSchema) {
         try {
             await updateUser(values)
+            refreshUser()
             onSubmit?.()
+            toast('Data updated!')
         } catch (error) {
-            form.setError("root", { type: "manual", message: error instanceof Error ? error.message : undefined })
+            if (isFormError<EditProfileSchema>(error)) {
+                form.setError(error.field, { type: "manual", message: error.message ?? 'Validation error' })
+            } else {
+                form.setError("root", { type: "manual", message: error instanceof Error ? error.message : undefined })
+            }
         }
     }
 
     return (
         <Form {...form}>
-            {form.formState.errors.root && (
-                <p className="text-red-500 text-sm mt-1">
-                    {form.formState.errors.root.message}
-                </p>
-            )}
             {user && <form onSubmit={form.handleSubmit(onFormSubmit)} className='flex flex-col gap-3'>
+                {form.formState.errors.root && (
+                    <p className="text-red-500 text-sm mt-1 text-center">
+                        {form.formState.errors.root.message}
+                    </p>
+                )}
                 <FormField control={form.control} name="username" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Username</FormLabel>
