@@ -7,7 +7,7 @@ import { type CreateEventSchema } from "@/schemas/EventSchemas"
 function MapData({ form }: { form: UseFormReturn<CreateEventSchema> }) {
     return (
         <div>
-            <FormField control={form.control} name="address" render={({ field }) => (
+            <FormField control={form.control} name="location" render={({ field }) => (
                 <FormItem>
                     <FormControl>
                         <MapWithGeocoder {...field} />

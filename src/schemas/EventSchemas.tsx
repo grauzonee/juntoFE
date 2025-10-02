@@ -14,7 +14,7 @@ export const createEventSchema = z.object({
         .refine((file) => file && file instanceof File, "File is required")
         .refine((file) => file?.size <= 5 * 1024 * 1024, "Max file size is 5MB")
         .refine((file) => ["image/jpeg", "image/png"].includes(file?.type), "Only JPG and PNG files are allowed"),
-    address: z.object({
+    location: z.object({
         value: z.string(),
         coordinates: z.object({
             lat: z.number(),

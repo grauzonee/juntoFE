@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 const StaticData = lazy(() => import("@/components/forms/createEvent/StaticData"))
 const MapData = lazy(() => import("@/components/forms/createEvent/MapData"))
+import { createEvent } from "@/helpers/events";
+import { type FormProps } from "@/types/props";
+import { uploadMedia } from "@/helpers/media";
 
-function CreateEventForm() {
+function CreateEventForm({ onSubmit }: FormProps) {
     const formSteps = [StaticData, MapData]
     const [step, setStep] = useState(0)
 
@@ -23,9 +26,20 @@ function CreateEventForm() {
         resolver: zodResolver(createEventSchema)
     })
 
-    function onSubmit(values: CreateEventSchema) {
-        console.log(values)
+    async function onFormSubmit(values: CreateEventSchema) {
+        try {
+            const imageUrl = await uploadMedia(values.image)
+            const formData = { ...values, imageUrl, date: Math.floor(values.date.getTime() / 1000) }
+            delete formData.image
+            await createEvent(formData)
+            toast('Event has been created')
+            onSubmit?.()
+        } catch (error) {
+            form.setError("root", { type: "manual", message: error instanceof Error ? error.message : undefined })
+
+        }
     }
+    console.log("form errors", form.formState.errors);
 
     const FormButtons = () => {
         if (step == 0) {
@@ -36,7 +50,7 @@ function CreateEventForm() {
         if (step == formSteps.length - 1) {
             return (<>
                 <Button type="button" variant="secondary" onClick={() => goToStep(step - 1)}>Back</Button>
-                <Button type="submit" onClick={() => toast('Event has been created')}>Submit</Button>
+                <Button type="submit">Submit</Button>
             </>)
         }
         if (step < formSteps.length - 1) {
@@ -48,7 +62,7 @@ function CreateEventForm() {
     }
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onFormSubmit)}>
                 {<StepComponent form={form} />}
                 <div className="flex flex-row gap-3 mt-5">
                     <FormButtons />
