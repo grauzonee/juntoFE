@@ -13,7 +13,7 @@ export const buttonVariants = cva(
                 outline:
                     "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
                 secondary:
-                    "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                    "bg-secondary-background text-secondary-foreground hover:bg-secondary/80",
                 ghost:
                     "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
                 link: "text-primary underline-offset-4 hover:underline",
@@ -21,6 +21,8 @@ export const buttonVariants = cva(
                     "bg-secondary-background text-foreground border-2 border-border shadow-shadow hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none",
                 reverse:
                     "text-main-foreground bg-main border-2 border-border hover:translate-x-reverseBoxShadowX hover:translate-y-reverseBoxShadowY hover:shadow-shadow",
+                accent:
+                    "bg-accent text-secondary-foreground hover:bg-secondary/80",
             },
             size: {
                 default: "h-10 px-4 py-2",
