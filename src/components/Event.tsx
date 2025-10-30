@@ -1,9 +1,7 @@
 import { Link } from "react-router"
 import {
-    CardDescription,
     CardFooter,
     CardHeader,
-    CardTitle,
 } from "@/components/ui/card"
 import event_example from "/event_example.jpg"
 import { Badge } from "@/components/ui/badge"
@@ -17,15 +15,10 @@ function Event({ variant = 'full' }: EventProps) {
     if (variant === "full") {
         return (
             <>
-                <div className="rounded-lg md:max-h-18 md:w-40 w-full overflow-hidden">
-                    <img src={event_example} alt="Event" className="object-cover" />
-                </div>
                 <div className="flex flex-col flex-1 items">
                     <CardHeader className="items-start text-left">
-                        <Link to="/event">
-                            <CardTitle>September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</CardTitle>
-                        </Link>
-                        <CardDescription>NoCrastination Club • Vienna, AT • 4.9</CardDescription>
+
+
                     </CardHeader>
                     <CardFooter className="px-3 py-1 bg-accent text-white font-semibold rounded-sm">
                         <p>Mon, Sep 1 · 12:50 PM GMT+2</p>
