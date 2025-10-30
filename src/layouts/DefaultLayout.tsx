@@ -9,7 +9,7 @@ import { UserProvider } from "@/providers/UserProvider"
 function DefaultLayout() {
     return (
         <>
-            <div className="w-full flex flex-col min-h-[120vh] bg-gradient-to-b from-gradient-from to-gradient-to">
+            <div className="w-full flex flex-col min-h-[120v]">
                 {!isLoggedIn() && <GuestTopbar />}
                 {isLoggedIn() && <AuthTopbar />}
 

@@ -13,14 +13,11 @@ import GroupInfoSidebar from "@/components/GroupInfoSidebar"
 function SingleEvent() {
     return (
         <>
-            <div className="border-b mb-[3rem] shadow-b py-[2rem] text-center w-full sticky top-0 bg-white/20 z-20 h-24 relative">
-                <p className="text-2xl font-bold">September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</p>
-            </div>
-            <div className="w-full flex flex-col md:flex-row md:gap-5">
+            <Card className="w-full flex flex-col md:flex-row md:gap-5 bg-main p-3">
                 <div className="md:flex-1 flex flex-col gap-3">
                     <ImageContainer src={event_example} />
                     <div className="w-full flex flex-col gap-4">
-                        <Card>
+                        <Card variant={'ghost'} className="border-2 border-border inset-shadow-md">
                             <CardHeader>
                                 <CardTitle>Description</CardTitle>
                             </CardHeader>
@@ -44,7 +41,7 @@ function SingleEvent() {
                 <div className="w-full md:w-1/3 text-center flex flex-row flex-col md:sticky md:top-24 bottom-0 gap-3 py-2 px-1 h-fit">
                     <GroupInfoSidebar />
                 </div>
-            </div>
+            </Card>
         </>
     )
 }

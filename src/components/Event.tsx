@@ -17,7 +17,7 @@ function Event({ variant = 'full' }: EventProps) {
     if (variant === "full") {
         return (
             <>
-                <div className="rounded-lg md:max-h-18 md:w-40 w-full overflow-hidden shadow">
+                <div className="rounded-lg md:max-h-18 md:w-40 w-full overflow-hidden">
                     <img src={event_example} alt="Event" className="object-cover" />
                 </div>
                 <div className="flex flex-col flex-1 items">
@@ -27,7 +27,7 @@ function Event({ variant = 'full' }: EventProps) {
                         </Link>
                         <CardDescription>NoCrastination Club • Vienna, AT • 4.9</CardDescription>
                     </CardHeader>
-                    <CardFooter className="px-3 py-1 bg-accent text-white shadow font-semibold rounded-sm">
+                    <CardFooter className="px-3 py-1 bg-accent text-white font-semibold rounded-sm">
                         <p>Mon, Sep 1 · 12:50 PM GMT+2</p>
                     </CardFooter>
                 </div>
@@ -36,7 +36,7 @@ function Event({ variant = 'full' }: EventProps) {
     } else {
 
         return (
-            <div className="md:shadow flex flex-col gap-3 justify-between items-center cursor-pointer">
+            <div className="flex flex-col gap-3 justify-between items-center cursor-pointer">
                 {variant == 'medium' && <img src={event_example} alt="Event" className="object-cover" />}
 
                 <div className="flex flex-col flex-1 items">
