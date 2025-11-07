@@ -10,13 +10,12 @@ export default {
         extend: {
             boxShadow: {
                 shadow: 'var(--shadow)',
+                accent: 'var(--shadow-accent)',
+                inset: 'var(--inset)',
             },
             fontFamily: {
-                sans: [
-                    'Poppins',
-                    'ui-sans-serif',
-                    'system-ui'
-                ]
+                sans: ["DM Sans", "sans-serif"],
+                title: ["Public Sans", "sans-serif"],
             },
             borderRadius: {
                 base: 'var(--radius)',
