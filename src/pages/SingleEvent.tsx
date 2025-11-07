@@ -1,42 +1,65 @@
-import {
-    Card,
-} from "@/components/ui/card"
-import AttendiesCarousel from "@/components/AttendiesCarousel"
-import EventCard from "@/components/cards/EventCard"
+import { Card } from "@/components/ui/card"
+import EventCard from "@/components/event/EventCard"
+import Discussion from "@/components/comment/Discussion"
+import { event } from "@/data"
+import ResponsiveComponent from "@/components/helpers/ResponsiveComponent"
+import SimilarEvents from "@/components/event/SimilarEvents"
 
 function SingleEvent() {
-    const event = {
-        id: '123',
-        title: 'Drawing club',
-        description: 'This is a non-profit international life drawing group for everyone interested in learning or brushing up on drawing! Since 2015 we have met weekly in the very center of Vienna. We are almost a big artistic family now. :)',
-        locationValue: 'Pickwick’s, Marc Aurel street, 10-12, 1010',
-        location: {
-            longitude: 123.567,
-            latitude: 43.562
-        },
-        date: 1767083631,
-        imageUrl: 'http://localhost:3000/uploads/1761818188823-The_Drawing_Club_-_2.jpg',
-        topics: ['drawing', 'painting', 'learning']
-    }
+
     return (
         <>
-            <Card className="w-full flex flex-col md:flex-row md:gap-5 bg-main p-3">
-                <div className="md:flex-1 flex flex-col gap-3">
-                    <EventCard event={event} className="p-5">
-                        <div className="flex flex-row w-100 gap-5">
-                            <div className="w-1/2 flex flex-col gap-3">
-                                <EventCard.Title />
+            <Card className="w-full flex flex-col md:gap-5 md:bg-main md:p-3 p-0 border-0 shadow-0 md:shadow-shadow md:border-border md:border-2 bg-transparent">
+                <EventCard event={event} className="w-full flex flex-col gap-5 px-3">
+                    <div className="flex flex-col lg:flex-row gap-3 h-fit lg:order-1 order-2">
+                        <ResponsiveComponent isDesktop={true}>
+                            <div className="w-full lg:w-1/2 flex flex-col gap-3">
                                 <EventCard.Image />
                             </div>
-                            <div className="w-1/3">
-                                <EventCard.Buttons />
+                        </ResponsiveComponent>
+                        <div className="lg:w-1/2 w-full relative flex flex-col md:flex-row justify-between">
+                            <div className="w-full lg:w-2/3 flex flex-col justify-start gap-4">
+                                <div>
+                                    <small className="font-bold">Organizer</small>
+                                    <div className="flex flex-row items-center gap-2">
+                                        <EventCard.OrganizerAvatar />
+                                        <EventCard.OrganizerName />
+                                    </div>
+                                </div>
+                                <div>
+                                    <small className="font-bold">Location</small>
+                                    <EventCard.Address />
+                                </div>
+                                <div>
+                                    <small className="font-bold">Participants</small>
+                                    <div className="flex flex-row items-center">
+                                        <EventCard.Participants />
+                                        <EventCard.Buttons className="z-40 fixed bottom-0 left-0 right-0 bg-background flex flex-row justify-center py-3 lg:items-end border-2 border-border lg:relative lg:bg-transparent lg:h-full lg:border-none" />
+                                    </div>
+
+                                </div>
+
                             </div>
+                            <ResponsiveComponent isTablet={true} isDesktop={true}>
+                                <EventCard.Date variant={'box'} className="size-28" />
+                            </ResponsiveComponent>
                         </div>
-                        <EventCard.Description />
-                    </EventCard>
-                    <AttendiesCarousel />
-                </div>
+                    </div>
+                    <div className="lg:order-2 order-1 flex flex-col gap-3">
+                        <EventCard.Title />
+                        <ResponsiveComponent isTablet={true} isMobile={true}>
+                            <EventCard.Image />
+                        </ResponsiveComponent>
+                        <EventCard.Tags />
+                    </div>
+                    <EventCard.Description className="order-3" />
+                </EventCard >
+
+                <Discussion />
+                <h3 className="text-foreground">Similar Events</h3>
+                <SimilarEvents events={[event, event, event, event]} />
             </Card >
+
         </>
     )
 }

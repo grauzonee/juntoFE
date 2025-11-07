@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "react-router"
-import EventCard from "@/components/cards/EventCard"
+import EventCard from "@/components/event/EventCard"
 import hero from '/hero.png'
+import { event } from "@/data"
 
 function Hero() {
     return (
@@ -21,8 +22,8 @@ function Hero() {
             </div>
             <Separator className="my-2" />
             <div className="flex w-100 flex-row gap-5">
-                <EventCard />
-                <EventCard />
+                <EventCard event={event} />
+                <EventCard event={event} />
             </div>
 
         </>
