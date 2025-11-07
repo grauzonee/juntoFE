@@ -1,26 +1,45 @@
-import React, { useContext, lazy } from "react"
+import React, { useContext, lazy, createContext, type PropsWithChildren } from "react"
+import { type User } from "@/types/User"
 import { Card } from "@/components/ui/card"
-const ChangeImageContainer = lazy(() => import("@/components/ChangeImageContainer"))
+const ChangeImageContainer = lazy(() => import("@/components/profile/ChangeImageContainer"))
 import avatar_placeholder from '/avatar-placeholder.png'
 import { updateUser } from "@/helpers/user";
 import { uploadMedia } from "@/helpers/media";
-import { UserContext } from "@/contexts/UserContext"
 import { Link } from "react-router"
 import EditProfileDialog from "@/components/dialogs/EditProfileDialog"
 import { Badge } from "@/components/ui/badge"
+import { type VariantProps } from "class-variance-authority"
+import { cardVariants } from "@/components/ui/card"
 
+type UserCardContext = {
+    user: User;
+}
 
-function UserCard({ className, children }: React.ComponentProps<'div'>) {
+const UserCardContext = createContext<UserCardContext | undefined>(undefined)
 
+type UserCardProps = PropsWithChildren & React.ComponentProps<'div'> & VariantProps<typeof cardVariants> & {
+    user: User;
+}
+function useUserCardContext() {
+    const context = useContext(UserCardContext)
+    if (!context) {
+        throw new Error('useUserCardContext must be within an UserCard')
+    }
+    return context
+}
+
+function UserCard({ user, className, children, variant = 'default' }: UserCardProps) {
     return (
-        <Card className={className}>
-            {children}
+        <Card className={className} variant={variant}>
+            <UserCardContext.Provider value={{ user }}>
+                {children}
+            </UserCardContext.Provider>
         </Card>
     )
 }
 
 UserCard.Image = function UserCardImage() {
-    const { user } = useContext(UserContext)
+    const { user } = useUserCardContext()
     return (
         <Link to="/profile">
             <img className="mask block mask-circle size-20" src={user?.avatarUrl ?? avatar_placeholder} alt="user avatar" />
@@ -29,12 +48,13 @@ UserCard.Image = function UserCardImage() {
     )
 }
 UserCard.EditableImage = function UserCardEditableImage() {
-    const { user, refreshUser } = useContext(UserContext)
+    const { user } = useUserCardContext()
     async function onImageChange(file?: File) {
         if (file) {
             const avatarUrl = await uploadMedia(file);
             await updateUser({ avatarUrl })
-            refreshUser()
+            // TODO: Dispatch event
+            //refreshUser()
         }
     }
 
@@ -50,27 +70,27 @@ UserCard.EditProfile = function UserCardEditProfile() {
     )
 }
 UserCard.Name = function UserCardName() {
-    const { user } = useContext(UserContext)
+    const { user } = useUserCardContext()
     return (
-        <p className="text-xl font-bold block">{user?.username}</p>
+        <p className="font-bold block">{user?.username}</p>
 
     )
 }
 UserCard.Description = function UserCardDescription() {
-    const { user } = useContext(UserContext)
+    const { user } = useUserCardContext()
     return (
         <p>{user?.description}</p>
     )
 }
 UserCard.Email = function UserCardEmail() {
-    const { user } = useContext(UserContext)
+    const { user } = useUserCardContext()
     return (
         <p>{user?.email}</p>
 
     )
 }
 UserCard.Interests = function UserCardInterests() {
-    const { user } = useContext(UserContext)
+    const { user } = useUserCardContext()
     return (
         <div className="flex flex-row flex-wrap">
             {user?.interests && user?.interests.length > 0 && <span className="font-bold">Interests:</span>}
@@ -83,7 +103,7 @@ UserCard.Interests = function UserCardInterests() {
     )
 }
 UserCard.MemberSince = function UserCardMemberSince() {
-    const { user } = useContext(UserContext)
+    const { user } = useUserCardContext()
     function getMemberSince() {
         if (!user) {
             return 0;
