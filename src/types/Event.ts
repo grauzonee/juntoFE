@@ -1,3 +1,5 @@
+import { type User } from "@/types/User"
+
 export type Event = {
     id: string;
     title: string;
@@ -7,7 +9,8 @@ export type Event = {
         longitude: number;
         latitude: number;
     },
-    date: number;
+    date: string;
     imageUrl: string;
     topics: string[];
+    author: User;
 }
