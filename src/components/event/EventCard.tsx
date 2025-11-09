@@ -11,12 +11,12 @@ import ReadMore from "@/components/ReadMore"
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 const eventDateVariants = cva(
-    "bg-accent text-accent-foreground",
+    "",
     {
         variants: {
             variant: {
-                inline: "",
-                box: "aspect-square rounded-md shadow-shadow border-1 border-border"
+                inline: "h-full border-2 border-border bg-main shadow-shadow flex flex-row text-h4 md:text-h3 items-center justify-around gap-3",
+                box: "bg-accent aspect-square rounded-md shadow-shadow border-1 border-border bg-accent text-accent-foreground px-2 border-2 border-border h-full flex flex-col justify-center text-h2 items-center"
             }
         },
         defaultVariants: {
@@ -54,20 +54,30 @@ function EventCard({ children, event, className }: EventCardProps) {
 EventCard.Image = function EventCardImage({ className }: React.ComponentProps<'div'>) {
     const { event } = useEventCardContext()
     return (
-        <div className={cn("rounded-lg w-full overflow-hidden", className)}>
+        <div className={cn("rounded-lg w-full overflow-hidden border-2 border-border", className)}>
             <div className="absolute top-0 right-0 h-5 w-5 bg-gray-700 rounded-md"></div>
             <img src={event.imageUrl} alt="Event" className="object-cover" />
         </div>
 
     )
 }
-EventCard.Title = function EventCardTitle({ className }: React.ComponentProps<'div'>) {
-    const { event } = useEventCardContext()
-    return (
-        <Link to="/event" className={className}>
-            <h2>{event.title}</h2>
-        </Link>
 
+type EventCardTitleProps = React.ComponentProps<'div'> & {
+    isLink?: boolean,
+}
+
+EventCard.Title = function EventCardTitle({ isLink = true, className }: EventCardTitleProps) {
+    const { event } = useEventCardContext()
+
+    if (isLink) {
+        return (
+            <Link to="/event">
+                <p className={className}>{event.title}</p>
+            </Link>
+        )
+    }
+    return (
+        <p className={className}>{event.title}</p>
     )
 }
 EventCard.Description = function EventCardDescription({ className }: React.ComponentProps<'div'>) {
@@ -117,10 +127,8 @@ EventCard.Date = function EventCardDate({ variant, className }: VariantProps<typ
         <div className={cn(
             eventDateVariants({ variant, className })
         )}>
-            <div className="bg-accent text-accent-foreground px-2 border-2 border-border h-full flex flex-col justify-center">
-                <p className="text-3xl text-center w-full font-bold">{datePart}</p>
-                <p className="text-xl font-bold w-full text-center">{timePart}</p>
-            </div>
+            <span className="h-fit">{datePart}</span>
+            <span className="h-fit">{timePart}</span>
         </div>
     )
 }
