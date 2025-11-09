@@ -9,7 +9,8 @@ import { Link } from "react-router"
 import EditProfileDialog from "@/components/dialogs/EditProfileDialog"
 import { Badge } from "@/components/ui/badge"
 import { type VariantProps } from "class-variance-authority"
-import { cardVariants } from "@/components/ui/card"
+import { cardVariants } from "@/components/ui/card-variants"
+import { cn } from "@/lib/utils"
 
 type UserCardContext = {
     user: User;
@@ -69,35 +70,41 @@ UserCard.EditProfile = function UserCardEditProfile() {
 
     )
 }
-UserCard.Name = function UserCardName() {
+UserCard.Name = function UserCardName({ className }: React.ComponentProps<'div'>) {
     const { user } = useUserCardContext()
     return (
-        <p className="font-bold block">{user?.username}</p>
+        <p className={cn("font-bold block", className)}>{user?.username}</p>
 
     )
 }
-UserCard.Description = function UserCardDescription() {
+UserCard.Description = function UserCardDescription({ className }: React.ComponentProps<'div'>) {
     const { user } = useUserCardContext()
+    const classes = user?.description ? className : cn(className, 'text-date')
     return (
-        <p>{user?.description}</p>
+        <p className={classes}>{user?.description ?? 'No description yet'}</p>
     )
 }
-UserCard.Email = function UserCardEmail() {
+UserCard.Email = function UserCardEmail({ className }: React.ComponentProps<'div'>) {
     const { user } = useUserCardContext()
     return (
-        <p>{user?.email}</p>
-
+        <p className={className}>{user?.email}</p>
     )
 }
 UserCard.Interests = function UserCardInterests() {
     const { user } = useUserCardContext()
     return (
-        <div className="flex flex-row flex-wrap">
-            {user?.interests && user?.interests.length > 0 && <span className="font-bold">Interests:</span>}
+        <div className="flex flex-col gap-2 flex-wrap">
+            {user?.interests.length == 0 && (
+                <small className="text-date">No interests set</small>
+            )}
+            {user?.interests.length > 0 && (
+                <div className="flex flex-row">
+                    {user?.interests.map((interest: string, index: number) => (
+                        <Badge variant="secondary" key={index}>{interest}</Badge>
+                    ))}
+                </div>
+            )}
 
-            {user?.interests.map((interest: string, index: number) => (
-                <Badge variant="secondary" key={index}>{interest}</Badge>
-            ))}
         </div>
 
     )
