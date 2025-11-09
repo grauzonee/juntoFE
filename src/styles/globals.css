@@ -1,5 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sora:wght@100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Sora:wght@100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap');
 
 @tailwind base;
 @custom-variant dark (&:is(.dark *));
@@ -114,18 +115,25 @@
     @apply bg-background text-foreground;
   }
     h1{
-    @apply text-3xl font-bold
+    @apply text-4xl font-bold font-title
   }
-    h2{
-    @apply text-2xl font-bold
+    h2, 
+    .text-h2{
+    @apply text-3xl font-bold font-title
   }
-    h3{
+    h3, .text-h3{
+    @apply text-2xl font-semibold font-title
+  }
+    h4, .text-h4{
     @apply text-xl font-semibold
   }
     p{
-    @apply text-base
+    @apply text-[16px]
   }
     .text-date {
-    @apply text-xs text-gray-500
+    @apply text-sm text-gray-500
+  }
+    .text-label {
+    @apply text-sm font-bold
   }
 }

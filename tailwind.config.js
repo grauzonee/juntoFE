@@ -14,8 +14,8 @@ export default {
                 inset: 'var(--inset)',
             },
             fontFamily: {
-                sans: ["DM Sans", "sans-serif"],
-                title: ["Public Sans", "sans-serif"],
+                title: ["Sora", "sans-serif"],
+                sans: ["Public Sans", "sans-serif"],
             },
             borderRadius: {
                 base: 'var(--radius)',
