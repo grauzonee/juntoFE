@@ -8,19 +8,26 @@ export default {
     ],
     theme: {
         extend: {
+            boxShadow: {
+                shadow: 'var(--shadow)',
+                accent: 'var(--shadow-accent)',
+                inset: 'var(--inset)',
+            },
             fontFamily: {
-                sans: [
-                    'Poppins',
-                    'ui-sans-serif',
-                    'system-ui'
-                ]
+                title: ["Sora", "sans-serif"],
+                sans: ["Public Sans", "sans-serif"],
             },
             borderRadius: {
+                base: 'var(--radius)',
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)'
             },
             colors: {
+                main: {
+                    DEFAULT: 'hsl(var(--main))',
+                    foreground: 'hsl(var(--main-foreground))'
+                },
                 gradient: {
                     from: '#9890e3',
                     to: '#b1f4cf'
@@ -41,7 +48,11 @@ export default {
                 },
                 secondary: {
                     DEFAULT: 'hsl(var(--secondary))',
-                    foreground: 'hsl(var(--secondary-foreground))'
+                    foreground: 'hsl(var(--secondary-foreground))',
+                    background: 'hsl(var(--secondary-background))'
+                },
+                overlay: {
+                    DEFAULT: 'hsl(var(--overlay))'
                 },
                 muted: {
                     DEFAULT: 'hsl(var(--muted))',

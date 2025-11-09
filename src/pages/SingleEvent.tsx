@@ -1,50 +1,65 @@
-import event_example from "/event_example.jpg"
-import ImageContainer from "@/components/ImageContainer"
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import AttendiesCarousel from "@/components/AttendiesCarousel"
-import GroupInfoSidebar from "@/components/GroupInfoSidebar"
+import { Card } from "@/components/ui/card"
+import EventCard from "@/components/event/EventCard"
+import Discussion from "@/components/comment/Discussion"
+import { event } from "@/data"
+import ResponsiveComponent from "@/components/helpers/ResponsiveComponent"
+import EventCarousel from "@/components/event/EventCarousel"
 
 function SingleEvent() {
+
     return (
         <>
-            <div className="border-b mb-[3rem] shadow-b py-[2rem] text-center w-full sticky top-0 bg-white/20 z-20 h-24 relative">
-                <p className="text-2xl font-bold">September challenge: 3-Hour Art Focus Inspired by book: Four Thousand Weeks</p>
-            </div>
-            <div className="w-full flex flex-col md:flex-row md:gap-5">
-                <div className="md:flex-1 flex flex-col gap-3">
-                    <ImageContainer src={event_example} />
-                    <div className="w-full flex flex-col gap-4">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Description</CardTitle>
-                            </CardHeader>
-                            <CardContent className="text-sm">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae odio ac magna facilisis tempor et at mi. Fusce eu erat in tortor ullamcorper suscipit sit amet euismod tortor. Morbi egestas ullamcorper purus nec facilisis. Nullam a velit finibus nisl tincidunt maximus. Phasellus sapien quam, cursus dignissim neque nec, eleifend varius nisi. Donec molestie eros eget magna cursus volutpat. Nulla nec neque sit amet nisi bibendum bibendum ut vitae turpis.
+            <Card className="w-full flex flex-col md:gap-5 md:bg-main md:p-3 p-0 border-0 shadow-0 md:shadow-shadow md:border-border md:border-2 bg-transparent">
+                <EventCard event={event} className="w-full flex flex-col gap-5 px-3">
+                    <div className="flex flex-col lg:flex-row gap-3 h-fit lg:order-1 order-2">
+                        <ResponsiveComponent isDesktop={true}>
+                            <div className="w-full lg:w-1/2 flex flex-col gap-3">
+                                <EventCard.Image />
+                            </div>
+                        </ResponsiveComponent>
+                        <div className="lg:w-1/2 w-full relative flex flex-col md:flex-row justify-between">
+                            <div className="w-full lg:w-2/3 flex flex-col justify-start gap-4">
+                                <div>
+                                    <small className="text-label">Organizer</small>
+                                    <div className="flex flex-row items-center gap-2">
+                                        <EventCard.OrganizerAvatar />
+                                        <EventCard.OrganizerName />
+                                    </div>
+                                </div>
+                                <div>
+                                    <small className="text-label">Location</small>
+                                    <EventCard.Address />
+                                </div>
+                                <div>
+                                    <small className="text-label">Participants</small>
+                                    <div className="flex flex-row items-center">
+                                        <EventCard.Participants />
+                                        <EventCard.Buttons className="z-40 fixed bottom-0 left-0 right-0 bg-background flex flex-row justify-center py-3 lg:items-end border-2 border-border lg:relative lg:bg-transparent lg:h-full lg:border-none" />
+                                    </div>
 
-                                Nunc convallis urna et auctor elementum. Integer feugiat sit amet purus in aliquam. Nunc eget semper nibh. Donec at varius quam. Aliquam ac nisl id risus pretium accumsan a imperdiet tellus. Mauris nec leo non dui sollicitudin scelerisque. Etiam blandit dui ac arcu pretium suscipit ut vitae augue. Etiam pretium purus ipsum, sed blandit arcu cursus at. Donec aliquam, libero blandit tempor scelerisque, neque felis semper lacus, nec mattis orci eros quis purus. Vestibulum euismod ipsum libero, vel tincidunt arcu mattis at.
+                                </div>
 
-                                Integer commodo ipsum id tortor dignissim, a luctus lorem lacinia. Nulla urna nibh, mollis in nulla vitae, lacinia egestas est. Curabitur vitae dui tellus. Proin quis tincidunt sem, nec interdum dui. Vivamus eu lacinia ligula. Praesent laoreet lectus in congue egestas. Vestibulum tempus pellentesque nulla ac scelerisque. Proin consequat nibh risus, ut ultricies est vehicula iaculis. Sed imperdiet nunc quis elit viverra, quis dignissim arcu malesuada. Donec fringilla urna urna, a rhoncus magna tincidunt eu. Nam vitae enim rhoncus, fringilla ligula cursus, elementum lorem. Etiam sed mauris metus. Etiam consequat consequat massa, a tempus mi accumsan eget.
-
-                                Sed dapibus lorem at sodales congue. Curabitur tempor orci ut venenatis cursus. Donec vestibulum purus quis quam fermentum, id tristique nisi semper. Curabitur volutpat dolor quis tincidunt gravida. Praesent sed dignissim velit, ut pharetra quam. Duis vel aliquet felis. Aenean malesuada diam neque, in tincidunt dui vehicula nec. Nulla facilisis id urna fermentum consequat. In rhoncus posuere metus vel facilisis.
-
-                                Aliquam malesuada aliquam consequat. Donec sodales ornare augue, in convallis eros molestie vel. Praesent tempor lorem sit amet mollis venenatis. Aenean urna elit, ullamcorper at porta eu, fermentum vel augue. Ut bibendum quam vel lacus mattis ornare. Maecenas rutrum cursus nibh, ut sollicitudin purus vulputate id. Fusce sed mauris ac magna porttitor rutrum non nec justo. Vivamus id cursus enim. In neque turpis, mattis ut dui at, facilisis viverra purus. Pellentesque commodo pulvinar dapibus. Integer nec sodales orci. Morbi vitae posuere ex. Quisque aliquam, nisl eget sagittis elementum, nunc felis placerat libero, in laoreet leo urna sit amet ex. </CardContent>
-                            <CardFooter>
-                                <p className="text-xs">Mon, Sep 1 · 12:50 PM GMT+2</p>
-                            </CardFooter>
-                        </Card>
-                        <AttendiesCarousel />
+                            </div>
+                            <ResponsiveComponent isTablet={true} isDesktop={true}>
+                                <EventCard.Date variant={'box'} className="size-28" />
+                            </ResponsiveComponent>
+                        </div>
                     </div>
-                </div>
-                <div className="w-full md:w-1/3 text-center flex flex-row flex-col md:sticky md:top-24 bottom-0 gap-3 py-2 px-1 h-fit">
-                    <GroupInfoSidebar />
-                </div>
-            </div>
+                    <div className="lg:order-2 order-1 flex flex-col gap-3">
+                        <EventCard.Title className="text-h2" isLink={false} />
+                        <ResponsiveComponent isTablet={true} isMobile={true}>
+                            <EventCard.Image />
+                        </ResponsiveComponent>
+                        <EventCard.Tags />
+                    </div>
+                    <EventCard.Description className="order-3" />
+                </EventCard >
+
+                <Discussion />
+                <h3 className="text-foreground">Similar Events</h3>
+                <EventCarousel events={[event, event, event, event]} />
+            </Card >
+
         </>
     )
 }

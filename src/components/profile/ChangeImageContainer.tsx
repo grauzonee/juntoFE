@@ -83,7 +83,7 @@ function ChangeImageContainer({
 
     return (
         <>
-            <ImageContainer src={currentSrc}>
+            <ImageContainer src={currentSrc} className="aspect-[1/2]">
                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-b from-transparent to-gray-800/80 flex items-end justify-end p-2">
                     <div className="flex flex-row text-sm items-center gap-1">
                         <Button
