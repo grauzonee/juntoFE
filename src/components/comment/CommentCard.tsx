@@ -17,11 +17,11 @@ function CommentCard({ comment }: CommentCardProps) {
                     <AvatarImage src={comment.author.avatarUrl} />
                 </Avatar>
                 <div>
-                    <p className="font-semibold">{comment.author.username}</p>
+                    <p className="font-semibold text-h4 lg:text-base">{comment.author.username}</p>
                     <small className="text-date">{formattedCreatedAt}</small>
                 </div>
             </div>
-            <p className="text-xs">{comment.content}</p>
+            <p>{comment.content}</p>
         </div >
     )
 }
