@@ -7,32 +7,92 @@ import {
 } from "@/components/ui/navigation-menu"
 import BaseTopbar from '@/components/topbar/BaseTopbar'
 import { Link } from 'react-router'
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTrigger,
+    SheetTitle
+} from "@/components/ui/sheet"
+import { Button } from '@/components/ui/button'
+import { Menu, Search } from "lucide-react";
+import SearchForm from '@/components/SearchForm'
+import UserCard from '@/components/profile/UserCard'
+import { user } from '@/data'
+import ResponsiveComponent from '@/components/helpers/ResponsiveComponent'
+import { Label } from '@/components/ui/label'
 
 function AuthTopbar() {
-    function logout() {
-        localStorage.removeItem('token')
-        window.location.reload()
+
+    const menuItems = [
+        { title: "Create event", url: "/profile", desktop: false },
+        { title: "My profile", url: "/profile", desktop: true },
+        { title: "Logout", url: "/logout", desktop: true },
+    ]
+
+    function onSearch(searchStr: string) {
+        console.log(searchStr)
+        window.location.href = '/events'
     }
+
 
     return (
         <BaseTopbar>
-            <NavigationMenu>
-                <NavigationMenuList>
-                    <NavigationMenuItem>
-                        <Link to="/profile" >
-                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                My profile
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()} onClick={logout}>
-                            Logout
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
-                </NavigationMenuList>
-            </NavigationMenu>
-        </BaseTopbar>
+            {/* Desktop */}
+            <ResponsiveComponent isTablet={true} isDesktop={true}>
+                <SearchForm onChange={onSearch} />
+                <NavigationMenu>
+                    <NavigationMenuList>
+                        {menuItems.filter(item => item.desktop).map((item, key) => (
+                            <NavigationMenuItem key={key}>
+                                <Link to={item.url} >
+                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                        {item.title}
+                                    </NavigationMenuLink>
+                                </Link>
+                            </NavigationMenuItem>
+                        ))}
+                    </NavigationMenuList>
+                </NavigationMenu>
+            </ResponsiveComponent>
+            <ResponsiveComponent isMobile={true}>
+                <div className='flex gap-3'>
+                    <Sheet>
+                        <SheetTrigger><Search /></SheetTrigger>
+                        <SheetContent side="top">
+                            <SheetTitle>
+                                Search
+                            </SheetTitle>
+                            <SearchForm onChange={onSearch} />
+                        </SheetContent>
+                    </Sheet>
+                    <Sheet>
+                        <SheetTrigger><Menu /></SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle>
+                                    Menu
+                                </SheetTitle>
+                            </SheetHeader>
+                            <UserCard user={user} className='w-full p-5 gap-4 flex flex-row'>
+                                <UserCard.Avatar />
+                                <div className='flex flex-col'>
+                                    <Label>Logged in as:</Label>
+                                    <UserCard.Name />
+                                </div>
+                            </UserCard>
+                            <div className='flex flex-col gap-3 mt-4'>
+                                {menuItems.map((item, key) => (
+                                    <Link to={item.url} key={key} >
+                                        <Button className='w-full'>{item.title}</Button>
+                                    </Link>
+                                ))}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
+            </ResponsiveComponent>
+        </BaseTopbar >
     )
 }
 export default AuthTopbar

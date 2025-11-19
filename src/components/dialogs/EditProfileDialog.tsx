@@ -25,7 +25,7 @@ function EditProfileDialog() {
                 <DialogHeader>
                     <DialogTitle>Edit profile</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3 md:flex-row justify-between">
+                <div className="flex flex-col gap-5 lg:flex-row justify-between">
                     <EditProfileForm onSubmit={() => setOpen(false)} />
                     <ChangePasswordForm className="row-span-2 order-4 md:order-none" />
                     <ResponsiveComponent isMobile={true} isTablet={true}><Separator className="my-2 order-3" /></ResponsiveComponent>
