@@ -15,7 +15,7 @@ import {
     SheetTitle
 } from "@/components/ui/sheet"
 import { Button } from '@/components/ui/button'
-import { Menu } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import SearchForm from '@/components/SearchForm'
 import UserCard from '@/components/profile/UserCard'
 import { user } from '@/data'
@@ -39,8 +39,8 @@ function AuthTopbar() {
     return (
         <BaseTopbar>
             {/* Desktop */}
-            <SearchForm onChange={onSearch} />
             <ResponsiveComponent isTablet={true} isDesktop={true}>
+                <SearchForm onChange={onSearch} />
                 <NavigationMenu>
                     <NavigationMenuList>
                         {menuItems.filter(item => item.desktop).map((item, key) => (
@@ -56,30 +56,41 @@ function AuthTopbar() {
                 </NavigationMenu>
             </ResponsiveComponent>
             <ResponsiveComponent isMobile={true}>
-                <Sheet>
-                    <SheetTrigger><Menu /></SheetTrigger>
-                    <SheetContent>
-                        <SheetHeader>
+                <div className='flex gap-3'>
+                    <Sheet>
+                        <SheetTrigger><Search /></SheetTrigger>
+                        <SheetContent side="top">
                             <SheetTitle>
-                                Menu
+                                Search
                             </SheetTitle>
-                        </SheetHeader>
-                        <UserCard user={user} className='w-full p-5 gap-4 flex flex-row'>
-                            <UserCard.Avatar />
-                            <div className='flex flex-col'>
-                                <Label>Logged in as:</Label>
-                                <UserCard.Name />
+                            <SearchForm onChange={onSearch} />
+                        </SheetContent>
+                    </Sheet>
+                    <Sheet>
+                        <SheetTrigger><Menu /></SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle>
+                                    Menu
+                                </SheetTitle>
+                            </SheetHeader>
+                            <UserCard user={user} className='w-full p-5 gap-4 flex flex-row'>
+                                <UserCard.Avatar />
+                                <div className='flex flex-col'>
+                                    <Label>Logged in as:</Label>
+                                    <UserCard.Name />
+                                </div>
+                            </UserCard>
+                            <div className='flex flex-col gap-3 mt-4'>
+                                {menuItems.map((item, key) => (
+                                    <Link to={item.url} key={key} >
+                                        <Button className='w-full'>{item.title}</Button>
+                                    </Link>
+                                ))}
                             </div>
-                        </UserCard>
-                        <div className='flex flex-col gap-3 mt-4'>
-                            {menuItems.map((item, key) => (
-                                <Link to={item.url} key={key} >
-                                    <Button className='w-full'>{item.title}</Button>
-                                </Link>
-                            ))}
-                        </div>
-                    </SheetContent>
-                </Sheet>
+                        </SheetContent>
+                    </Sheet>
+                </div>
             </ResponsiveComponent>
         </BaseTopbar >
     )
