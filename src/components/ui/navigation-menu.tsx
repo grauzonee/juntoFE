@@ -21,7 +21,7 @@ export function NavigationMenu({
             data-slot="navigation-menu"
             data-viewport={viewport}
             className={cn(
-                "relative z-10 flex max-w-max rounded-base font-heading border-border border-2 p-1 bg-main flex-1 items-center justify-center",
+                "relative z-10 flex max-w-max rounded-base font-heading md:border-border md:border-2 p-1 bg-main flex-1 items-center justify-center",
                 className,
             )}
             {...props}

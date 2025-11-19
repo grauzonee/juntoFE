@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { type VariantProps } from "class-variance-authority"
 import { cardVariants } from "@/components/ui/card-variants"
 import { cn } from "@/lib/utils"
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 type UserCardContext = {
     user: User;
@@ -47,6 +48,14 @@ UserCard.Image = function UserCardImage() {
         </Link>
 
     )
+}
+UserCard.Avatar = function UserCardAvatar({ className }: React.ComponentProps<'div'>) {
+    const { user } = useUserCardContext();
+    return (
+        <Avatar className={className}>
+            <AvatarImage src={user.avatarUrl} />
+        </Avatar>)
+
 }
 UserCard.EditableImage = function UserCardEditableImage() {
     const { user } = useUserCardContext()
