@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
-import EventCard from "@/components/event/EventCard";
+import EventCard from "@/components/event/EventDataPanel/EventCard";
 import {
     Pagination,
     PaginationContent,
@@ -35,7 +35,7 @@ function EventsListCard({ className, title }: EventsListCardProps) {
                                 <EventCard.Title className="text-h4" />
                                 <div className="flex flex-col h-full justify-between">
                                     <EventCard.Address className="text-sm" />
-                                    <EventCard.Date className="h-[30px] w-[150px]" />
+                                    <EventCard.Time className="h-[30px] w-[150px]" />
                                 </div>
                             </div>
                         </EventCard>

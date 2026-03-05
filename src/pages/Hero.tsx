@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Link } from "react-router"
-import EventCard from "@/components/event/EventCard"
+import EventCard from "@/components/event/EventDataPanel/EventCard"
 import hero from '/hero.png'
 import { event } from "@/data"
 

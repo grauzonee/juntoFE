@@ -3,27 +3,13 @@ import { Card } from "@/components/ui/card"
 import React, { createContext, useContext, type PropsWithChildren } from "react"
 import { Link } from "react-router"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { cva, type VariantProps } from "class-variance-authority"
 import AvatarsGroup from "@/components/AvatarsGroup"
 import ReadMore from "@/components/ReadMore"
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Clock, MapPin } from 'lucide-react';
 
-const eventDateVariants = cva(
-    "",
-    {
-        variants: {
-            variant: {
-                inline: "h-full border-2 border-border bg-main shadow-shadow flex flex-row text-h4 md:text-h3 items-center justify-around gap-3",
-                box: "bg-accent aspect-square rounded-md shadow-shadow border-1 border-border bg-accent text-accent-foreground px-2 border-2 border-border h-full flex flex-col justify-center text-h2 items-center"
-            }
-        },
-        defaultVariants: {
-            variant: "inline"
-        }
-    }
-)
 type EventCardProps = PropsWithChildren & React.ComponentProps<'div'> & {
     event: Event
 }
@@ -71,7 +57,7 @@ EventCard.Title = function EventCardTitle({ isLink = true, className }: EventCar
 
     if (isLink) {
         return (
-            <Link to="/event">
+            <Link to={`/event/${event._id}`}>
                 <p className={className}>{event.title}</p>
             </Link>
         )
@@ -89,27 +75,14 @@ EventCard.Description = function EventCardDescription({ className }: React.Compo
 EventCard.Address = function EventCardAddress({ className }: React.ComponentProps<'div'>) {
     const { event } = useEventCardContext()
     return (
-        <p className={className}>{event.locationValue}</p>
-    )
-}
-EventCard.Tags = function EventCardTags({ className }: React.ComponentProps<'div'>) {
-    const { event } = useEventCardContext()
-    return (
-        <div className={cn("w-full flex flex-row gap-2", className)}>
-            {event.topics.map((topic) => (
-                <Badge>{topic}</Badge>
-            ))}
+        <div className="flex flex-row gap-1">
+            <MapPin />
+            <p className={className}>{event.fullAddress}</p>
         </div>
     )
 }
-EventCard.Buttons = function EventCardButtons({ className }: React.ComponentProps<'div'>) {
-    return (
-        <div className={cn("w-full", className)}>
-            <Button className="bg-accent aspect-[4/1]">Attend</Button>
-        </div>
-    )
-}
-EventCard.Date = function EventCardDate({ variant, className }: VariantProps<typeof eventDateVariants> & React.ComponentProps<'div'>) {
+
+EventCard.Time = function EventCardAddress({ className }: React.ComponentProps<'div'>) {
     const { event } = useEventCardContext()
     const date = new Date(event.date);
 
@@ -122,13 +95,37 @@ EventCard.Date = function EventCardDate({ variant, className }: VariantProps<typ
         minute: "2-digit",
         hour12: false,
     }).format(date);
-
     return (
-        <div className={cn(
-            eventDateVariants({ variant, className })
-        )}>
-            <span className="h-fit">{datePart}</span>
-            <span className="h-fit">{timePart}</span>
+        <div className="flex flex-row gap-1">
+            <Clock />
+            <p className={className}>{datePart}, {timePart}</p>
+        </div>
+    )
+}
+EventCard.Categories = function EventCardCategories({ className }: React.ComponentProps<'div'>) {
+    const { event } = useEventCardContext()
+    return (
+        <div className={cn("w-full flex flex-row gap-2", className)}>
+            {event.categories.map((category) => (
+                <Badge key={category.id}>{category.title}</Badge>
+            ))}
+        </div>
+    )
+}
+
+EventCard.Type = function EventCardType({ className }: React.ComponentProps<'div'>) {
+    const { event } = useEventCardContext()
+    return (
+        <div className={cn("w-full flex flex-row gap-2", className)}>
+            <Badge>{event.type.title}</Badge>
+        </div>
+    )
+}
+
+EventCard.Buttons = function EventCardButtons({ className }: React.ComponentProps<'div'>) {
+    return (
+        <div className={cn("w-full", className)}>
+            <Button className="bg-accent aspect-[4/1]">Attend</Button>
         </div>
     )
 }
