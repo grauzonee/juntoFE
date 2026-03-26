@@ -11,6 +11,18 @@ export function createEventResource(id: string) {
     return eventCache.get(id)!;
 }
 
+export async function fetchIncomingEvents(): Promise<Event[]> {
+    return []
+}
+
+export async function fetchPastEvents(): Promise<Event[]> {
+    return []
+}
+
+export async function fetchOrganizedEvents(): Promise<Event[]> {
+    return []
+}
+
 export async function fetchEvent(id: string): Promise<Event | null> {
     const response = await makeRequest<{ success: boolean; data: Event }>(() =>
         axios.get(`event/${id}`)

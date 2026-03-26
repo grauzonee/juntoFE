@@ -1,16 +1,15 @@
 import LoginForm from "@/components/forms/LoginForm"
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import AuthCardLayout from "@/components/auth/AuthCardLayout"
 
 function Login() {
     return (
-        <Card className="items-center flex flex-col md:w-1/2 max-w-80 px-5 py-7">
-            <CardHeader className="font-bold text-xl text-background/80">Nice to see you again</CardHeader>
-            <Separator className="mb-5" />
-            <CardContent>
-                <LoginForm />
-            </CardContent>
-        </Card>
+        <AuthCardLayout
+            eyebrow="Welcome back"
+            title="Pick up where your plans left off."
+            description="Log in to check upcoming events, message your groups, and jump back into your community."
+        >
+            <LoginForm />
+        </AuthCardLayout>
     )
 }
 

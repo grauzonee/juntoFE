@@ -2,11 +2,11 @@ import { type LoginSchema, loginSchema } from "@/schemas/AuthSchemas"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
-import { FormField, FormControl, FormLabel, FormMessage, FormItem, Form } from "@/components/ui/form";
-import { Button } from "../ui/button"
+import { FormField, FormControl, FormLabel, FormMessage, FormItem, Form, FormRootMessage } from "@/components/ui/form";
 import { Link } from "react-router";
 import { logIn } from "@/requests/auth";
 import { useNavigate } from "react-router";
+import BrutalButton from "@/components/landing/BrutalButton";
 
 function LoginForm() {
     const navigate = useNavigate()
@@ -25,38 +25,50 @@ function LoginForm() {
 
     return (
         <Form {...form}>
-            {form.formState.errors.root && (
-                <p className="text-red-500 text-sm mt-1">
-                    {form.formState.errors.root.message}
-                </p>
-            )}
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2 items-stretch">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 items-stretch">
+                <FormRootMessage message={form.formState.errors.root?.message} className="mb-1" />
                 <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email</FormLabel>
+                    <FormItem className="gap-2.5">
+                        <FormLabel className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
+                            Email
+                        </FormLabel>
                         <FormControl>
-                            <Input type="email" placeholder="email..." {...field} />
+                            <Input
+                                type="email"
+                                placeholder="you@example.com"
+                                className="h-12 rounded-none border-[3px] bg-cream px-4 text-base placeholder:text-foreground/40"
+                                {...field}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
 
                 )} />
                 <FormField control={form.control} name="password" render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Password</FormLabel>
+                    <FormItem className="gap-2.5">
+                        <FormLabel className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
+                            Password
+                        </FormLabel>
                         <FormControl>
-                            <Input type="password" placeholder="password..." {...field} />
+                            <Input
+                                type="password"
+                                placeholder="Enter your password"
+                                className="h-12 rounded-none border-[3px] bg-cream px-4 text-base placeholder:text-foreground/40"
+                                {...field}
+                            />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
 
                 )} />
 
-                <Button type="submit" className="mt-2">Log in</Button>
+                <BrutalButton type="submit" tone="violet" className="mt-2 w-full">
+                    Log in
+                </BrutalButton>
             </form>
-            <Link to="/register">
-                <Button type="button" variant="secondary" className="mt-2 w-full">Create an account</Button>
-            </Link>
+            <BrutalButton asChild type="button" tone="cream" className="mt-3 w-full">
+                <Link to="/register">Create an account</Link>
+            </BrutalButton>
         </Form>
     )
 }

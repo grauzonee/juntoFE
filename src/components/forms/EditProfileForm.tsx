@@ -11,6 +11,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    FormRootMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 const TagsInput = lazy(() => import('@/components/TagsInput'));
@@ -58,11 +59,7 @@ function EditProfileForm({ onSubmit }: EditProfileFormProps) {
     return (
         <Form {...form}>
             {user && <form onSubmit={form.handleSubmit(onFormSubmit)} className='flex flex-col gap-3'>
-                {form.formState.errors.root && (
-                    <p className="text-red-500 text-sm mt-1 text-center">
-                        {form.formState.errors.root.message}
-                    </p>
-                )}
+                <FormRootMessage message={form.formState.errors.root?.message} />
                 <FormField control={form.control} name="username" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Username</FormLabel>

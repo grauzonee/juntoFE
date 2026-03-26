@@ -1,4 +1,4 @@
-import { Form, FormField, FormControl, FormLabel, FormMessage, FormItem } from "@/components/ui/form";
+import { Form, FormField, FormControl, FormLabel, FormMessage, FormItem, FormRootMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { type HTMLAttributes } from "react";
@@ -29,11 +29,7 @@ function ChangePasswordForm({ className }: HTMLAttributes<HTMLDivElement>) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={cn(className, 'flex flex-col gap-3')}>
-                {form.formState.errors.root && (
-                    <p className="text-red-500 text-sm mt-1 text-center">
-                        {form.formState.errors.root.message}
-                    </p>
-                )}
+                <FormRootMessage message={form.formState.errors.root?.message} />
                 <FormField control={form.control} name="oldPassword" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Old password</FormLabel>

@@ -1,5 +1,6 @@
 "use client"
 
+import { AlertCircle } from "lucide-react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
 import {
@@ -97,7 +98,7 @@ export function FormLabel({
         <Label
             data-slot="form-label"
             data-error={!!error}
-            className={cn("font-heading", className)}
+            className={cn("font-heading data-[error=true]:text-coral", className)}
             htmlFor={formItemId}
             {...props}
         />
@@ -147,10 +148,44 @@ export function FormMessage({ className, ...props }: React.ComponentProps<"p">) 
         <p
             data-slot="form-message"
             id={formMessageId}
-            className={cn("text-sm font-base text-red-500", className)}
+            role="alert"
+            aria-live="polite"
+            className={cn(
+                "flex items-start gap-2 border-l-[3px] border-coral bg-coral/10 px-2 py-1 text-xs font-heading text-coral rounded-none motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:duration-200",
+                className,
+            )}
             {...props}
         >
-            {body}
+            <span aria-hidden="true" className="mt-1 block size-2 shrink-0 bg-coral" />
+            <span className="leading-snug">{body}</span>
         </p>
+    )
+}
+
+type FormRootMessageProps = React.ComponentProps<"div"> & {
+    message?: string | null
+}
+
+export function FormRootMessage({ message, className, children, ...props }: FormRootMessageProps) {
+    const body = message ?? children
+
+    if (!body) {
+        return null
+    }
+
+    return (
+        <div
+            data-slot="form-root-message"
+            role="alert"
+            aria-live="polite"
+            className={cn(
+                "flex items-start gap-2 border-2 border-border bg-coral px-3 py-2 text-sm font-heading text-white shadow-shadow rounded-none motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 motion-safe:duration-200",
+                className,
+            )}
+            {...props}
+        >
+            <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <span className="leading-snug">{body}</span>
+        </div>
     )
 }

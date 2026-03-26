@@ -1,11 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     darkMode: ["class"],
-    content: [
-        "./src/**/*.{js,jsx,ts,tsx}",
-        "./src/components/**/*.{js,jsx,ts,tsx}",
-        "./src/components/**/**/*.{js,jsx,ts,tsx}",
-    ],
+    content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
         extend: {
             boxShadow: {
@@ -13,9 +9,19 @@ export default {
                 accent: 'var(--shadow-accent)',
                 inset: 'var(--inset)',
             },
+            translate: {
+                boxShadowX: 'var(--shadow-offset)',
+                boxShadowY: 'var(--shadow-offset)',
+                reverseBoxShadowX: 'calc(var(--shadow-offset) * -1)',
+                reverseBoxShadowY: 'calc(var(--shadow-offset) * -1)',
+            },
             fontFamily: {
                 title: ["Sora", "sans-serif"],
+                heading: ["Sora", "sans-serif"],
+                base: ["Public Sans", "sans-serif"],
                 sans: ["Public Sans", "sans-serif"],
+                display: ["Syne", "sans-serif"],
+                mono: ["Space Mono", "monospace"],
             },
             borderRadius: {
                 base: 'var(--radius)',
@@ -24,6 +30,17 @@ export default {
                 sm: 'calc(var(--radius) - 4px)'
             },
             colors: {
+                violet: {
+                    DEFAULT: 'hsl(var(--violet))',
+                    light: 'hsl(var(--violet-light))',
+                },
+                mint: {
+                    DEFAULT: 'hsl(var(--mint))',
+                    light: 'hsl(var(--mint-light))',
+                },
+                yellow: 'hsl(var(--yellow))',
+                coral: 'hsl(var(--coral))',
+                cream: 'hsl(var(--cream))',
                 main: {
                     DEFAULT: 'hsl(var(--main))',
                     foreground: 'hsl(var(--main-foreground))'
@@ -70,15 +87,14 @@ export default {
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
                 chart: {
-                    '1': 'hsl(var(--chart-1))',
-                    '2': 'hsl(var(--chart-2))',
-                    '3': 'hsl(var(--chart-3))',
-                    '4': 'hsl(var(--chart-4))',
-                    '5': 'hsl(var(--chart-5))'
+                    '1': 'var(--chart-1)',
+                    '2': 'var(--chart-2)',
+                    '3': 'var(--chart-3)',
+                    '4': 'var(--chart-4)',
+                    '5': 'var(--chart-5)'
                 }
             }
         }
     },
     plugins: [require("tailwindcss-animate")],
 }
-
