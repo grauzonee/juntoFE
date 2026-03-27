@@ -4,6 +4,22 @@ import { makeRequest } from '@/requests/utils';
 
 const eventCache = new Map<string, Promise<Event | null>>();
 
+export type EventRsvpStatus = "confirmed" | "maybe";
+
+type EventRsvpPayload = {
+    eventId: string
+    status: EventRsvpStatus
+    additionalGuests?: number
+}
+
+type EventRsvp = {
+    id?: string
+    _id?: string
+    status: string
+    additionalGuests?: number
+    eventDate: string
+}
+
 export function createEventResource(id: string) {
     if (!eventCache.has(id)) {
         eventCache.set(id, fetchEvent(id));
@@ -32,4 +48,13 @@ export async function fetchEvent(id: string): Promise<Event | null> {
 
     return response.data;
 
+}
+
+export async function createEventRsvp(payload: EventRsvpPayload): Promise<EventRsvp> {
+    const response = await makeRequest<{ success: boolean; data: EventRsvp }>(() =>
+        axios.post("/event/attend", payload),
+        "rsvp",
+    )
+
+    return response.data
 }

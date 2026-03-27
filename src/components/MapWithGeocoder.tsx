@@ -1,9 +1,14 @@
 import type { EventAddress } from "@/schemas/EventSchemas"
 import { useEffect } from "react"
+import { Link } from "react-router"
 import L from "leaflet"
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 import { OpenStreetMapProvider, GeoSearchControl } from "leaflet-geosearch"
 import "leaflet-geosearch/assets/css/leaflet.css";
+import type { LatLngLiteral } from "leaflet"
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
+import markerIcon from "leaflet/dist/images/marker-icon.png"
+import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
 type GeoSearchLocation = {
     x: number;
@@ -20,8 +25,25 @@ type GeoSearchShowLocationEvent = L.LeafletEvent & {
 type MapWithGeocoderProps = {
     value?: EventAddress,
     onChange: (value: EventAddress) => void,
-    positions?: [{ address: string }]
+    markers?: {
+        id: string
+        position: LatLngLiteral
+        title: string
+        description?: string
+        href?: string
+    }[],
+    height?: string
 }
+
+const defaultMarkerIcon = new L.Icon({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+})
 
 const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
     const map = useMap();
@@ -34,12 +56,8 @@ const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
             style: "bar",
             autoComplete: true,
             autoCompleteDelay: 250,
-            showMarker: true,
-            showPopup: true,
-            marker: {
-                icon: new L.Icon.Default(),
-                draggable: false
-            },
+            showMarker: false,
+            showPopup: false,
             maxMarkers: 1,
             retainZoomLevel: false,
             animateZoom: true,
@@ -63,29 +81,95 @@ const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
     useEffect(() => {
         if (!value) return;
 
+        map.setView([value.coordinates.lat, value.coordinates.lng], 13)
+
         const input = document.querySelector<HTMLInputElement>(
-            ".glass"
+            ".leaflet-control-geosearch form input"
         );
         if (input) {
             input.value = value.value;
         }
-    }, [value]);
+    }, [map, value]);
     return null;
 }
-function MapWithGeocoder({ value, onChange }: MapWithGeocoderProps) {
+
+function MapViewportController({
+    value,
+    markers,
+}: Pick<MapWithGeocoderProps, "value" | "markers">) {
+    const map = useMap()
+
+    useEffect(() => {
+        const nextPoints: LatLngLiteral[] = []
+
+        if (value) {
+            nextPoints.push(value.coordinates)
+        }
+
+        if (markers && markers.length > 0) {
+            nextPoints.push(...markers.map((marker) => marker.position))
+        }
+
+        requestAnimationFrame(() => {
+            map.invalidateSize()
+
+            if (nextPoints.length > 1) {
+                map.fitBounds(nextPoints.map((point) => [point.lat, point.lng]), {
+                    padding: [40, 40],
+                    maxZoom: 14,
+                })
+                return
+            }
+
+            if (value) {
+                map.setView([value.coordinates.lat, value.coordinates.lng], 13)
+            }
+        })
+    }, [map, markers, value])
+
+    return null
+}
+
+function MapWithGeocoder({ value, onChange, markers = [], height = "400px" }: MapWithGeocoderProps) {
     return (
         <MapContainer
-            center={[value?.coordinates.lat || 51, value?.coordinates.lng || -1]}
+            center={[value?.coordinates.lat || 48.2082, value?.coordinates.lng || 16.3738]}
             zoom={13}
-            style={{ height: "400px", width: "100%" }}>
+            style={{ height, width: "100%" }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; OpenStreetMap contributors"
             />
             <SearchControl onChange={onChange} value={value} />
-            {value?.coordinates && (<Marker position={[value?.coordinates.lat, value?.coordinates.lng]}>
-                <Popup>Default Marker</Popup>
+            <MapViewportController value={value} markers={markers} />
+            {value?.coordinates && (<Marker
+                icon={defaultMarkerIcon}
+                position={[value.coordinates.lat, value.coordinates.lng]}
+                zIndexOffset={0}
+            >
+                <Popup>{value.value}</Popup>
             </Marker>)}
+            {markers.map((marker) => (
+                <Marker
+                    key={marker.id}
+                    icon={defaultMarkerIcon}
+                    position={[marker.position.lat, marker.position.lng]}
+                    zIndexOffset={1000}
+                >
+                    <Popup>
+                        <strong>{marker.title}</strong>
+                        {marker.description ? <p>{marker.description}</p> : null}
+                        {marker.href ? (
+                            <Link
+                                to={marker.href}
+                                className="mt-2 inline-block font-semibold underline underline-offset-2"
+                            >
+                                Open event
+                            </Link>
+                        ) : null}
+                    </Popup>
+                </Marker>
+            ))}
         </MapContainer>
     )
 }

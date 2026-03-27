@@ -3,9 +3,8 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
 import { FormField, FormControl, FormLabel, FormMessage, FormItem, Form, FormRootMessage } from "@/components/ui/form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { signUp } from "@/requests/auth";
-import { useNavigate } from "react-router";
 import BrutalButton from "@/components/landing/BrutalButton";
 
 function RegisterForm() {

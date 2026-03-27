@@ -1,4 +1,4 @@
-import { lazy, useContext } from 'react';
+import { lazy, useContext, useEffect } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from "react-hook-form";
@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input"
 const TagsInput = lazy(() => import('@/components/TagsInput'));
 import { updateUser } from '@/helpers/user';
-import { useEffect } from 'react';
 import { isFormError } from '@/types/FormError';
 import { toast } from "sonner";
 

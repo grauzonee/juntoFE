@@ -18,4 +18,10 @@ export type Event = {
     categories: Category[];
     author: Pick<User, "id" | "username" | "avatarUrl">;
     type: Eventtype;
+    maxAttendees?: number;
+    fee?: {
+        amount: number;
+        currency: string;
+    };
+    active?: boolean;
 }
