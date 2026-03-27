@@ -9,6 +9,7 @@ import {
 import { Settings2 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator";
 import ResponsiveComponent from "@/components/helpers/ResponsiveComponent";
+import { Button } from "@/components/ui/button";
 const ChangePasswordForm = lazy(() => import("@/components/forms/ChangePasswordForm"))
 const EditProfileForm = lazy(() => import("@/components/forms/EditProfileForm"))
 
@@ -18,9 +19,7 @@ function EditProfileDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
-                <div className="flex flex-row text-sm items-center gap-1">
-                    <Settings2 /><span>Edit profile</span>
-                </div>
+                <Button variant="accent" title="Edit profile"><Settings2 /></Button>
             </DialogTrigger>
             <DialogContent className="px-4">
                 <DialogHeader>

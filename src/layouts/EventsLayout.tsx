@@ -18,7 +18,7 @@ function EventsLayout({ children, button }: EventsLayoutProps) {
         <>
             <div className="w-full flex flex-col-reverse md:flex-row md:justify-between md:items-center">
                 <Link to={button.to}>
-                    <Button type="button" variant="secondary" className="mb-3 md:mb-0 w-full">{button.label}</Button>
+                    <Button type="button" className="mb-3 md:mb-0 w-full">Show on map</Button>
                 </Link>
                 <ResponsiveComponent isTablet={true} isMobile={true}>
                     <Separator className="my-4" />
@@ -30,7 +30,7 @@ function EventsLayout({ children, button }: EventsLayoutProps) {
             </ResponsiveComponent>
             <div className="h-full flex flex-row w-full gap-5">
                 <ResponsiveComponent isDesktop={true}>
-                    <Calendar className="rounded-lg w-1/4 h-fit" />
+                    <Calendar className="rounded-lg w-1/4" />
                 </ResponsiveComponent>
                 <div className="flex flex-col text-center flex-1 gap-3">
                     {children}

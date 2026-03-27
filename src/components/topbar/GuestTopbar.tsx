@@ -11,7 +11,7 @@ import { Link } from 'react-router'
 function GuestTopbar() {
     return (
         <BaseTopbar>
-            <NavigationMenu className='w-1/4'>
+            <NavigationMenu className="w-1/4">
                 <NavigationMenuList>
                     <NavigationMenuItem>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -24,7 +24,9 @@ function GuestTopbar() {
                                 Login</NavigationMenuLink>
                         </Link>
                     </NavigationMenuItem>
+
                 </NavigationMenuList>
+
             </NavigationMenu>
         </BaseTopbar >
     )

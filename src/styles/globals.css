@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Sora:wght@100..800&family=Space+Mono:wght@400;700&family=Syne:wght@400..800&display=swap');
+
+@tailwind base;
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1 {
+    @apply text-4xl font-bold font-title;
+  }
+  h2,
+  .text-h2 {
+    @apply text-3xl font-bold font-title;
+  }
+  h3,
+  .text-h3 {
+    @apply text-2xl font-semibold font-title;
+  }
+  h4,
+  .text-h4 {
+    @apply text-xl font-semibold;
+  }
+  p {
+    @apply text-[16px];
+  }
+  .text-date {
+    @apply text-sm text-gray-500;
+  }
+  .text-label {
+    @apply text-sm font-bold;
+  }
+}
