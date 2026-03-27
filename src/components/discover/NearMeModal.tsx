@@ -40,6 +40,7 @@ export default function NearMeModal({ open, onOpenChange, eventTypes }: NearMeMo
             return
         }
 
+        const currentLocation = selectedLocation
         let ignore = false
 
         async function loadNearbyEvents() {
@@ -48,8 +49,8 @@ export default function NearMeModal({ open, onOpenChange, eventTypes }: NearMeMo
 
             try {
                 const response = await fetchDiscoverNearbyEvents({
-                    lat: selectedLocation.coordinates.lat,
-                    lng: selectedLocation.coordinates.lng,
+                    lat: currentLocation.coordinates.lat,
+                    lng: currentLocation.coordinates.lng,
                     radius,
                 })
 
