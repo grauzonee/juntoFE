@@ -4,16 +4,15 @@ import DiscoverFilterBar from "@/components/discover/DiscoverFilterBar"
 import DiscoverResultsHeader from "@/components/discover/DiscoverResultsHeader"
 import NearMeModal from "@/components/discover/NearMeModal"
 import {
-    filterDiscoverEvents,
     getDiscoverCategoryTitles,
     getDiscoverCategoryTitleById,
     getDiscoverTypeTitle,
-    sortDiscoverEvents,
 } from "@/components/discover/discover-utils"
 import { fetchDiscoverCategories, fetchDiscoverEvents, fetchDiscoverEventTypes } from "@/requests/discover"
 import type {
     DiscoverActiveFilter,
     DiscoverCategoryOption,
+    DiscoverDateFilter,
     DiscoverEvent,
     DiscoverEventTypeOption,
     DiscoverFilters,
@@ -28,12 +27,12 @@ const defaultFilters: DiscoverFilters = {
     view: "grid",
 }
 
-const activeDateFilterLabels = {
+const activeDateFilterLabels: Record<Exclude<DiscoverDateFilter, "all">, string> = {
     today: "Today",
     week: "This Week",
     weekend: "This Weekend",
     month: "This Month",
-} as const
+}
 
 function Events() {
     const [filters, setFilters] = useState<DiscoverFilters>(defaultFilters)
@@ -103,8 +102,11 @@ function Events() {
                 const response = await fetchDiscoverEvents({
                     limit: 24,
                     page: 1,
+                    search: deferredSearch,
                     typeId: filters.selectedTypeId,
                     categoryId: filters.selectedCategoryId,
+                    dateFilter: filters.selectedDateFilter,
+                    sort: filters.sort,
                 })
 
                 if (!ignore) {
@@ -129,41 +131,37 @@ function Events() {
         return () => {
             ignore = true
         }
-    }, [filters.selectedCategoryId, filters.selectedTypeId])
+    }, [deferredSearch, filters.selectedCategoryId, filters.selectedDateFilter, filters.selectedTypeId, filters.sort])
 
-    const visibleEvents = sortDiscoverEvents(
-        filterDiscoverEvents(
-            events,
-            {
-                search: deferredSearch,
-                selectedDateFilter: filters.selectedDateFilter,
-                selectedCategoryId: filters.selectedCategoryId,
-            },
-            eventTypes,
-        ),
-        filters.sort,
-    )
+    const visibleEvents = events
+
+    const trimmedSearch = filters.search.trim()
+    const hasSelectedCategory = filters.selectedCategoryId !== "all"
+    const hasSelectedType = filters.selectedTypeId !== "all"
+    const selectedDateFilterLabel = filters.selectedDateFilter === "all"
+        ? null
+        : activeDateFilterLabels[filters.selectedDateFilter]
 
     const activeFilters = [
-        filters.search.trim()
+        trimmedSearch
             ? {
                 id: "search",
-                label: `Search: ${filters.search.trim()}`,
+                label: `Search: ${trimmedSearch}`,
             }
             : null,
-        filters.selectedCategoryId !== "all"
+        hasSelectedCategory
             ? {
                 id: "category",
                 label: getDiscoverCategoryTitleById(filters.selectedCategoryId, categories),
             }
             : null,
-        filters.selectedDateFilter !== "all"
+        selectedDateFilterLabel
             ? {
                 id: "date",
-                label: activeDateFilterLabels[filters.selectedDateFilter],
+                label: selectedDateFilterLabel,
             }
             : null,
-        filters.selectedTypeId !== "all"
+        hasSelectedType
             ? {
                 id: "type",
                 label: eventTypes.find((item) => item.id === filters.selectedTypeId)?.title ?? "Type",

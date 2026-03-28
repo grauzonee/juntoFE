@@ -61,8 +61,11 @@ export type DiscoverCategoryOption = {
 export type DiscoverEventsQuery = {
     limit?: number
     page?: number
+    search?: string
     typeId?: string
     categoryId?: string
+    dateFilter?: DiscoverDateFilter
+    sort?: DiscoverSortOption
 }
 
 export type DiscoverGeoSearchQuery = {

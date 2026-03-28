@@ -35,8 +35,24 @@ const baseEvent: DiscoverEvent = {
 
 test("buildDiscoverEventsParams includes server-backed filters", () => {
     assert.deepEqual(
-        buildDiscoverEventsParams({ limit: 24, page: 2, typeId: "type-1" }),
-        { limit: 24, page: 2, type_eq: "type-1" },
+        buildDiscoverEventsParams({
+            limit: 24,
+            page: 2,
+            search: "  community meetup  ",
+            typeId: "type-1",
+            categoryId: "cat-1",
+            dateFilter: "weekend",
+            sort: "latest",
+        }),
+        {
+            limit: 24,
+            page: 2,
+            search: "community meetup",
+            type_eq: "type-1",
+            categories_in: "[cat-1]",
+            date_eq: "this_weekend",
+            sortByDesc: "date",
+        },
     )
 })
 
