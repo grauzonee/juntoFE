@@ -1,5 +1,23 @@
 import { isAxiosError, type AxiosResponse } from "axios";
 
+export function normalizeApiDateValue(value: string | number): string {
+    const parsedValue = typeof value === "number"
+        ? value
+        : /^\d+$/.test(value.trim())
+            ? Number(value)
+            : value
+
+    const date = typeof parsedValue === "number"
+        ? new Date(parsedValue < 1_000_000_000_000 ? parsedValue * 1000 : parsedValue)
+        : new Date(parsedValue)
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value)
+    }
+
+    return date.toISOString()
+}
+
 export async function makeRequest<T>(
     callback: () => Promise<AxiosResponse<T>>, entityName = "resource"
 ): Promise<T> {

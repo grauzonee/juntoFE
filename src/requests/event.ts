@@ -1,6 +1,6 @@
 import { api as axios } from '@/lib/axios'
 import { type Event } from '@/types/Event';
-import { makeRequest } from '@/requests/utils';
+import { makeRequest, normalizeApiDateValue } from '@/requests/utils';
 
 const eventCache = new Map<string, Promise<Event | null>>();
 
@@ -18,6 +18,17 @@ type EventRsvp = {
     status: string
     additionalGuests?: number
     eventDate: string
+}
+
+type RawEvent = Omit<Event, "date"> & {
+    date: string | number
+}
+
+function normalizeEvent(event: RawEvent): Event {
+    return {
+        ...event,
+        date: normalizeApiDateValue(event.date),
+    }
 }
 
 export function createEventResource(id: string) {
@@ -40,13 +51,13 @@ export async function fetchOrganizedEvents(): Promise<Event[]> {
 }
 
 export async function fetchEvent(id: string): Promise<Event | null> {
-    const response = await makeRequest<{ success: boolean; data: Event }>(() =>
+    const response = await makeRequest<{ success: boolean; data: RawEvent }>(() =>
         axios.get(`event/${id}`)
     );
 
     if (!response) return null;
 
-    return response.data;
+    return normalizeEvent(response.data);
 
 }
 
