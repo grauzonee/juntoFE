@@ -16,17 +16,15 @@ import {
     getDiscoverEventPosition,
     getDiscoverTypeTitle,
 } from "@/components/discover/discover-utils"
-import type { DiscoverEventTypeOption } from "@/types/discover"
 import { Crosshair, LoaderCircle, MapPinned } from "lucide-react"
 import { useNavigate } from "react-router"
 
 type NearMeModalProps = {
     open: boolean
     onOpenChange: (value: boolean) => void
-    eventTypes: DiscoverEventTypeOption[]
 }
 
-export default function NearMeModal({ open, onOpenChange, eventTypes }: NearMeModalProps) {
+export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
     const navigate = useNavigate()
     const [radius, setRadius] = useState(3)
     const [selectedLocation, setSelectedLocation] = useState<DiscoverLocation>()
@@ -205,7 +203,7 @@ export default function NearMeModal({ open, onOpenChange, eventTypes }: NearMeMo
                                             <div>
                                                 <p className="font-heading text-base font-bold">{event.title}</p>
                                                 <p className="mt-1 text-xs uppercase tracking-[0.14em] text-foreground/55">
-                                                    {getDiscoverTypeTitle(event, eventTypes)}
+                                                    {getDiscoverTypeTitle(event)}
                                                 </p>
                                             </div>
                                             <MapPinned className="size-4 shrink-0" />
