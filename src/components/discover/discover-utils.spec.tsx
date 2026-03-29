@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import test from "node:test"
 import {
     filterDiscoverEvents,
+    getDiscoverCategoryTitles,
     getDiscoverEventPosition,
     getDiscoverCategoryTitleById,
     getDiscoverTypeTitle,
@@ -67,7 +68,6 @@ test("filterDiscoverEvents matches client-side search and category titles", () =
     const result = filterDiscoverEvents(
         [baseEvent],
         { search: "photo", selectedDateFilter: "all", selectedCategoryId: "c1" },
-        [{ id: "t1", title: "Workshop" }],
     )
 
     assert.equal(result.length, 1)
@@ -83,9 +83,34 @@ test("sortDiscoverEvents orders events by latest when requested", () => {
     const result = sortDiscoverEvents([olderEvent, baseEvent], "latest")
 
     assert.equal(result[0]._id, "1")
-    assert.equal(getDiscoverTypeTitle(baseEvent, []), "Workshop")
+    assert.equal(getDiscoverTypeTitle(baseEvent), "Workshop")
     assert.equal(getDiscoverCategoryTitleById("c1", [{ id: "c1", title: "Photography" }]), "Photography")
     assert.deepEqual(getDiscoverEventPosition(baseEvent), { lat: 48.2082, lng: 16.3738 })
+})
+
+test("getDiscoverTypeTitle logs and returns empty string when title is missing from response body", (t) => {
+    const eventWithoutTypeTitle: DiscoverEvent = {
+        ...baseEvent,
+        type: { _id: "t1" },
+    }
+    const consoleErrorMock = t.mock.method(console, "error")
+
+    assert.equal(getDiscoverTypeTitle(eventWithoutTypeTitle), "")
+    assert.equal(consoleErrorMock.mock.callCount(), 1)
+    assert.match(String(consoleErrorMock.mock.calls[0].arguments[0]), /missing title/i)
+})
+
+test("getDiscoverCategoryTitles logs and omits categories when title is missing from response body", (t) => {
+    const eventWithoutCategoryTitle: DiscoverEvent = {
+        ...baseEvent,
+        categories: [{ _id: "c1" }, "c2"],
+    }
+    const consoleErrorMock = t.mock.method(console, "error")
+
+    assert.deepEqual(getDiscoverCategoryTitles(eventWithoutCategoryTitle), [])
+    assert.equal(consoleErrorMock.mock.callCount(), 2)
+    assert.match(String(consoleErrorMock.mock.calls[0].arguments[0]), /missing title/i)
+    assert.match(String(consoleErrorMock.mock.calls[1].arguments[0]), /missing title/i)
 })
 
 test("getDiscoverEventPosition converts backend lng-lat points to leaflet lat-lng", () => {

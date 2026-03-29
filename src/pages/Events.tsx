@@ -260,7 +260,7 @@ function Events() {
                                 key={event._id}
                                 event={event}
                                 view={filters.view}
-                                typeTitle={getDiscoverTypeTitle(event, eventTypes)}
+                                typeTitle={getDiscoverTypeTitle(event)}
                                 categoryTitles={getDiscoverCategoryTitles(event)}
                             />
                         ))}
@@ -271,7 +271,6 @@ function Events() {
             <NearMeModal
                 open={isNearMeOpen}
                 onOpenChange={setIsNearMeOpen}
-                eventTypes={eventTypes}
             />
         </div>
     )

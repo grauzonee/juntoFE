@@ -26,6 +26,10 @@ Backend part of the app is located here: ~/projects/junto
 
 Backend is written usung nodejs (TypeScript), express and mongo db. Backend is always source of truth. If there is some endpoint/field missing on the backend, warn me and don't implement any calculation or typical BE logic on the FrontEnd.
 
+## Git workflow
+
+When told to switch to new branch, always create it from fresh origin/master unless explicitly instructed not to do so.
+
 ## Completing features[!!IMPORTANT, OVERWRITES GLOBAL INSTRUCTION]
 
 After feauture completion, don't automatically commit. When you done writing code, run `npm run lint:fix`, output list of files changed and suggest commit message for my commit.

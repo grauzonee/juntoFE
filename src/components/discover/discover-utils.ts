@@ -11,7 +11,6 @@ import type {
     DiscoverCategoryOption,
     DiscoverDateFilter,
     DiscoverEvent,
-    DiscoverEventTypeOption,
     DiscoverSortOption,
 } from "@/types/discover"
 
@@ -23,28 +22,53 @@ export function getDiscoverEntityId(value: DiscoverEvent["type"] | DiscoverEvent
     return value.id ?? value._id ?? ""
 }
 
-export function getDiscoverEntityTitle(value: DiscoverEvent["type"] | DiscoverEvent["categories"][number]) {
+function logMissingDiscoverEntityTitle(
+    eventId: DiscoverEvent["_id"],
+    entityKind: "type" | "category",
+    value: DiscoverEvent["type"] | DiscoverEvent["categories"][number],
+) {
+    console.error(`Discover event ${entityKind} is missing title in API response.`, {
+        eventId,
+        [entityKind]: value,
+    })
+}
+
+export function getDiscoverEntityTitle(
+    value: DiscoverEvent["type"] | DiscoverEvent["categories"][number],
+    {
+        eventId,
+        entityKind,
+    }: {
+        eventId: DiscoverEvent["_id"]
+        entityKind: "type" | "category"
+    },
+) {
     if (typeof value === "string") {
+        logMissingDiscoverEntityTitle(eventId, entityKind, value)
         return ""
     }
 
-    return value.title ?? ""
-}
-
-export function getDiscoverTypeTitle(event: DiscoverEvent, eventTypes: DiscoverEventTypeOption[]) {
-    const directTitle = getDiscoverEntityTitle(event.type)
-    if (directTitle) {
-        return directTitle
+    if (value.title) {
+        return value.title
     }
 
-    const typeId = getDiscoverEntityId(event.type)
-    const matchedType = eventTypes.find((item) => item.id === typeId)
-    return matchedType?.title ?? "Event"
+    logMissingDiscoverEntityTitle(eventId, entityKind, value)
+    return ""
+}
+
+export function getDiscoverTypeTitle(event: DiscoverEvent) {
+    return getDiscoverEntityTitle(event.type, {
+        eventId: event._id,
+        entityKind: "type",
+    })
 }
 
 export function getDiscoverCategoryTitles(event: DiscoverEvent) {
     return event.categories
-        .map((category) => getDiscoverEntityTitle(category))
+        .map((category) => getDiscoverEntityTitle(category, {
+            eventId: event._id,
+            entityKind: "category",
+        }))
         .filter(Boolean)
 }
 
@@ -99,12 +123,11 @@ export function filterDiscoverEvents(
         selectedDateFilter: DiscoverDateFilter
         selectedCategoryId: string
     },
-    eventTypes: DiscoverEventTypeOption[],
 ) {
     const normalizedSearch = search.trim().toLowerCase()
 
     return events.filter((event) => {
-        const typeTitle = getDiscoverTypeTitle(event, eventTypes).toLowerCase()
+        const typeTitle = getDiscoverTypeTitle(event).toLowerCase()
         const categoryTitles = getDiscoverCategoryTitles(event)
         const searchableContent = [
             event.title,
