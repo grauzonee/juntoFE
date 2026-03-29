@@ -1,4 +1,4 @@
-import { startTransition, useDeferredValue, useEffect, useState } from "react"
+import { startTransition, useDeferredValue, useEffect, useRef, useState } from "react"
 import DiscoverEventCard from "@/components/discover/DiscoverEventCard"
 import DiscoverFilterBar from "@/components/discover/DiscoverFilterBar"
 import DiscoverResultsHeader from "@/components/discover/DiscoverResultsHeader"
@@ -34,6 +34,8 @@ const activeDateFilterLabels: Record<Exclude<DiscoverDateFilter, "all">, string>
     month: "This Month",
 }
 
+const mobileSnapVisibilityThreshold = 0.15
+
 function Events() {
     const [filters, setFilters] = useState<DiscoverFilters>(defaultFilters)
     const [events, setEvents] = useState<DiscoverEvent[]>([])
@@ -42,6 +44,9 @@ function Events() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [isNearMeOpen, setIsNearMeOpen] = useState(false)
+    const eventCardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+    const lastScrollYRef = useRef(0)
+    const scrollDirectionRef = useRef<"up" | "down">("down")
 
     const deferredSearch = useDeferredValue(filters.search)
 
@@ -135,6 +140,150 @@ function Events() {
 
     const visibleEvents = events
 
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        const mobileMediaQuery = window.matchMedia("(max-width: 767px)")
+
+        if (!mobileMediaQuery.matches || loading || error || visibleEvents.length === 0) {
+            return
+        }
+
+        let scrollTimeout: number | undefined
+        let isSnapping = false
+        let hasUserScrollIntent = false
+
+        function getStickyOffset() {
+            const filterBar = document.querySelector<HTMLElement>("[data-discover-filter-bar]")
+            return filterBar ? filterBar.getBoundingClientRect().height + 8 : 0
+        }
+
+        function snapToVisibleCard() {
+            if (isSnapping) {
+                return
+            }
+
+            const scrollTop = window.scrollY
+            const stickyOffset = getStickyOffset()
+            const cardElements = visibleEvents
+                .map((event) => eventCardRefs.current.get(event._id))
+                .filter((element): element is HTMLDivElement => Boolean(element))
+
+            if (cardElements.length === 0) {
+                return
+            }
+
+            const visibleCards = cardElements
+                .map((card, index) => {
+                    const rect = card.getBoundingClientRect()
+                    const absoluteTop = rect.top + scrollTop
+                    const visibleTop = Math.max(rect.top, stickyOffset)
+                    const visibleBottom = Math.min(rect.bottom, window.innerHeight)
+                    const visibleHeight = Math.max(0, visibleBottom - visibleTop)
+                    const visibleRatio = rect.height > 0 ? visibleHeight / rect.height : 0
+                    const titleElement = card.querySelector<HTMLElement>("[data-discover-event-title]")
+                    const titleRect = titleElement?.getBoundingClientRect()
+                    const titleVisible = titleRect
+                        ? titleRect.bottom > stickyOffset && titleRect.top < window.innerHeight
+                        : false
+
+                    return {
+                        absoluteTop,
+                        index,
+                        visibleRatio,
+                        titleVisible,
+                    }
+                })
+                .filter((card) => card.visibleRatio >= mobileSnapVisibilityThreshold)
+
+            if (visibleCards.length === 0) {
+                return
+            }
+
+            const downwardCandidates = visibleCards.filter(
+                (card) => card.titleVisible && card.absoluteTop > scrollTop + 8,
+            )
+            const targetCard = scrollDirectionRef.current === "up"
+                ? visibleCards[0]
+                : downwardCandidates[downwardCandidates.length - 1]
+
+            if (!targetCard) {
+                return
+            }
+
+            if (scrollDirectionRef.current === "up" && targetCard.index === 0) {
+                return
+            }
+
+            const targetTop = Math.max(0, targetCard.absoluteTop - stickyOffset)
+
+            if (Math.abs(targetTop - scrollTop) < 12) {
+                return
+            }
+
+            isSnapping = true
+            window.scrollTo({
+                top: targetTop,
+                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            })
+
+            window.setTimeout(() => {
+                isSnapping = false
+            }, 220)
+        }
+
+        function handleScroll() {
+            if (isSnapping) {
+                return
+            }
+
+            const nextScrollY = window.scrollY
+
+            if (nextScrollY > lastScrollYRef.current) {
+                scrollDirectionRef.current = "down"
+            } else if (nextScrollY < lastScrollYRef.current) {
+                scrollDirectionRef.current = "up"
+            }
+
+            lastScrollYRef.current = nextScrollY
+
+            if (!hasUserScrollIntent) {
+                return
+            }
+
+            if (scrollTimeout) {
+                window.clearTimeout(scrollTimeout)
+            }
+
+            // Wait until user-driven scrolling settles, then snap once.
+            scrollTimeout = window.setTimeout(() => {
+                hasUserScrollIntent = false
+                snapToVisibleCard()
+            }, 120)
+        }
+
+        function markUserScrollIntent() {
+            hasUserScrollIntent = true
+        }
+
+        lastScrollYRef.current = window.scrollY
+        window.addEventListener("touchstart", markUserScrollIntent, { passive: true })
+        window.addEventListener("wheel", markUserScrollIntent, { passive: true })
+        window.addEventListener("scroll", handleScroll, { passive: true })
+
+        return () => {
+            if (scrollTimeout) {
+                window.clearTimeout(scrollTimeout)
+            }
+
+            window.removeEventListener("touchstart", markUserScrollIntent)
+            window.removeEventListener("wheel", markUserScrollIntent)
+            window.removeEventListener("scroll", handleScroll)
+        }
+    }, [error, loading, visibleEvents])
+
     const trimmedSearch = filters.search.trim()
     const hasSelectedCategory = filters.selectedCategoryId !== "all"
     const hasSelectedType = filters.selectedTypeId !== "all"
@@ -204,7 +353,7 @@ function Events() {
     }
 
     return (
-        <div className="w-full overflow-hidden border-[3px] border-border bg-cream shadow-[8px_8px_0_0_hsl(var(--border))]">
+        <div className="w-full overflow-hidden bg-transparent md:bg-cream md:border-[3px] md:border-border md:shadow-[8px_8px_0_0_hsl(var(--border))]">
             <DiscoverFilterBar
                 count={visibleEvents.length}
                 filters={filters}
@@ -227,7 +376,7 @@ function Events() {
                 activeFilterCount={activeFilters.length}
             />
 
-            <section className="px-4 py-6 md:px-6 md:py-8">
+            <section className="px-2 py-5 md:px-6 md:py-8">
                 {loading ? (
                     <div className="grid gap-6 lg:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, index) => (
@@ -256,13 +405,24 @@ function Events() {
                 {!loading && !error ? (
                     <div className={filters.view === "grid" ? "grid gap-6 xl:grid-cols-3" : "flex flex-col gap-4"}>
                         {visibleEvents.map((event) => (
-                            <DiscoverEventCard
+                            <div
                                 key={event._id}
-                                event={event}
-                                view={filters.view}
-                                typeTitle={getDiscoverTypeTitle(event)}
-                                categoryTitles={getDiscoverCategoryTitles(event)}
-                            />
+                                ref={(element) => {
+                                    if (element) {
+                                        eventCardRefs.current.set(event._id, element)
+                                        return
+                                    }
+
+                                    eventCardRefs.current.delete(event._id)
+                                }}
+                            >
+                                <DiscoverEventCard
+                                    event={event}
+                                    view={filters.view}
+                                    typeTitle={getDiscoverTypeTitle(event)}
+                                    categoryTitles={getDiscoverCategoryTitles(event)}
+                                />
+                            </div>
                         ))}
                     </div>
                 ) : null}

@@ -1,5 +1,7 @@
 import { isAxiosError, type AxiosResponse } from "axios";
 
+const genericServerErrorMessage = "Oops, something happened on our server!"
+
 export function normalizeApiDateValue(value: string | number): string {
     const parsedValue = typeof value === "number"
         ? value
@@ -40,10 +42,10 @@ export async function makeRequest<T>(
                     throw new Error(`${resorceName} not found`);
 
                 case 500:
-                    throw new Error("Server error");
+                    throw new Error(genericServerErrorMessage);
 
                 default:
-                    throw new Error(`Request failed with status ${status}`);
+                    throw new Error(status ? `Request failed with status ${status}` : genericServerErrorMessage);
             }
         }
 

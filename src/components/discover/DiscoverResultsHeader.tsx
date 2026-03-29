@@ -8,7 +8,7 @@ export default function DiscoverResultsHeader({
     activeFilterCount,
 }: DiscoverResultsHeaderProps) {
     return (
-        <div className="flex flex-col gap-2 border-b-[3px] border-border bg-card px-4 py-4 md:px-6 md:py-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="hidden flex-col gap-2 border-b-[3px] border-border bg-card px-4 py-4 md:flex md:px-6 md:py-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/55">
                     Discover results

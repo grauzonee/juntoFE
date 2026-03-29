@@ -11,6 +11,16 @@ test("Events page uses Discover building blocks", () => {
     assert.match(source, /NearMeModal/)
     assert.match(source, /fetchDiscoverEvents/)
     assert.match(source, /setIsNearMeOpen\(true\)/)
+    assert.match(source, /md:border-\[3px\] md:border-border/)
+})
+
+test("discover filter bar uses a mobile dialog-based search flow", () => {
+    const source = readFileSync(resolve(process.cwd(), "src/components/discover/DiscoverFilterBar.tsx"), "utf-8")
+
+    assert.match(source, /<Dialog open=\{isMobileSearchOpen\} onOpenChange=\{setIsMobileSearchOpen\}>/)
+    assert.match(source, /Open discover search/)
+    assert.match(source, /openNearMeFromMobileDialog/)
+    assert.doesNotMatch(source, /CollapsibleContent/)
 })
 
 test("events map route redirects back to discover page", () => {

@@ -1,6 +1,12 @@
 import { useState, type ReactNode } from "react"
 import BrutalButton from "@/components/landing/BrutalButton"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import {
     Select,
@@ -19,7 +25,7 @@ import type {
     DiscoverSortOption,
     DiscoverViewMode,
 } from "@/types/discover"
-import { ChevronDown, ChevronUp, Crosshair, LayoutGrid, List, Search, X } from "lucide-react"
+import { Crosshair, LayoutGrid, List, MapPin, Search, SlidersHorizontal, X } from "lucide-react"
 
 type DiscoverFilterBarProps = {
     count: number
@@ -93,7 +99,7 @@ export default function DiscoverFilterBar({
     onClearAll,
     onNearMeClick,
 }: DiscoverFilterBarProps) {
-    const [isRefineOpen, setIsRefineOpen] = useState(false)
+    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
 
     function renderSortSelect(className?: string) {
         return (
@@ -143,19 +149,33 @@ export default function DiscoverFilterBar({
         )
     }
 
-    function renderRefinementBody() {
+    function openNearMeFromMobileDialog() {
+        setIsMobileSearchOpen(false)
+        window.setTimeout(() => {
+            onNearMeClick()
+        }, 0)
+    }
+
+    function renderRefinementBody({ mobile = false }: { mobile?: boolean } = {}) {
         return (
             <>
-                <div className="grid gap-5 px-4 py-4 md:hidden">
-                    <FilterGroup label="Sort" tone="mint">
-                        <div className="w-full">{renderSortSelect()}</div>
-                    </FilterGroup>
-                    <FilterGroup label="View" tone="mint">
-                        {renderViewToggle("w-full")}
-                    </FilterGroup>
-                </div>
+                {mobile ? (
+                    <div className="grid gap-5 px-5 py-5">
+                        <FilterGroup label="Sort" tone="mint">
+                            <div className="w-full">{renderSortSelect()}</div>
+                        </FilterGroup>
+                        <FilterGroup label="View" tone="mint">
+                            {renderViewToggle("w-full")}
+                        </FilterGroup>
+                    </div>
+                ) : null}
 
-                <div className="grid gap-5 border-t-[3px] border-border px-4 py-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1.45fr)_minmax(0,1fr)] md:gap-6 md:py-5">
+                <div
+                    className={cn(
+                        "grid gap-5 px-4 py-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1.45fr)_minmax(0,1fr)] md:gap-6 md:py-5",
+                        mobile ? "border-t border-border/15 px-5 py-5 md:border-t-0" : "border-t-[3px] border-border",
+                    )}
+                >
                     <FilterGroup label="Category" tone="violet">
                         {[{ id: "all", title: "All" }, ...categories].map((category) => (
                             <button
@@ -222,7 +242,12 @@ export default function DiscoverFilterBar({
                 </div>
 
                 {activeFilters.length > 0 ? (
-                    <div className="flex flex-col gap-3 border-t-[3px] border-border bg-cream px-4 py-4 md:flex-row md:items-center md:justify-between">
+                    <div
+                        className={cn(
+                            "flex flex-col gap-3 bg-cream px-4 py-4 md:flex-row md:items-center md:justify-between",
+                            mobile ? "border-t border-border/15 px-5" : "border-t-[3px] border-border",
+                        )}
+                    >
                         <div className="flex flex-wrap gap-2">
                             {activeFilters.map((filter) => (
                                 <button
@@ -249,13 +274,100 @@ export default function DiscoverFilterBar({
         )
     }
 
-    return (
-        <section className="sticky top-0 z-20 border-b-[3px] border-border bg-cream/95 px-4 py-5 backdrop-blur md:px-6">
-            <Collapsible
-                open={isRefineOpen}
-                onOpenChange={setIsRefineOpen}
-                className="border-[3px] border-border bg-card shadow-[8px_8px_0_0_hsl(var(--border))]"
+    function renderMobileSearchTrigger() {
+        const hasFilters = activeFilters.length > 0
+        const displayValue = filters.search.trim().length > 0 ? filters.search.trim() : "Search events"
+
+        return (
+            <button
+                type="button"
+                onClick={() => setIsMobileSearchOpen(true)}
+                className="flex w-full items-center gap-3 rounded-[1.25rem] border-2 border-border bg-card px-4 py-3 text-left shadow-[4px_4px_0_0_hsl(var(--border))] transition active:translate-y-0.5 active:shadow-none"
+                aria-label="Open discover search"
             >
+                <Search className="size-4 shrink-0 text-foreground/60" />
+                <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-foreground">{displayValue}</p>
+                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-foreground/50">
+                        {hasFilters ? `${activeFilters.length} filters active` : "Tap to refine"}
+                    </p>
+                </div>
+                <div className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-border bg-cream">
+                    <SlidersHorizontal className="size-4" />
+                </div>
+            </button>
+        )
+    }
+
+    function renderMobileDialog() {
+        return (
+            <Dialog open={isMobileSearchOpen} onOpenChange={setIsMobileSearchOpen}>
+                <DialogContent className="left-0 top-0 h-[100svh] w-screen max-h-[100svh] max-w-none translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-0 bg-card p-0 shadow-none [&>button]:right-4 [&>button]:top-4">
+                    <DialogHeader className="border-b-2 border-border bg-card px-5 pb-4 pt-6 text-left">
+                        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-foreground/20" />
+                        <DialogTitle className="font-heading text-xl font-bold">Search</DialogTitle>
+                        <DialogDescription className="text-sm text-foreground/60">
+                            Search events first, then refine the list without leaving mobile view.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="flex-1 overflow-y-auto bg-card">
+                        <div className="space-y-4 px-5 py-5">
+                            <div className="relative">
+                                <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />
+                                <Input
+                                    value={filters.search}
+                                    onChange={(event) => onSearchChange(event.target.value)}
+                                    placeholder="Search events..."
+                                    className="h-12 rounded-[1rem] border-[3px] border-border bg-card pl-11 pr-4 text-base shadow-none"
+                                    autoFocus
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={openNearMeFromMobileDialog}
+                                className="flex w-full items-center gap-3 rounded-[1rem] border border-border/15 bg-card px-4 py-3 text-left transition hover:bg-cream"
+                            >
+                                <div className="inline-flex size-9 items-center justify-center rounded-full border-2 border-border bg-cream">
+                                    <MapPin className="size-4" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-base font-semibold text-foreground">Search nearby</p>
+                                    <p className="text-sm text-foreground/60">Open map and geosearch options</p>
+                                </div>
+                                <Crosshair className="size-4 shrink-0 text-foreground/60" />
+                            </button>
+                        </div>
+
+                        {renderRefinementBody({ mobile: true })}
+                    </div>
+
+                    <div className="border-t-2 border-border bg-card px-5 py-4">
+                        <BrutalButton
+                            tone="cream"
+                            className="w-full justify-center"
+                            onClick={() => setIsMobileSearchOpen(false)}
+                        >
+                            Done
+                        </BrutalButton>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        )
+    }
+
+    return (
+        <section
+            data-discover-filter-bar
+            className="sticky top-0 z-20 bg-transparent px-3 py-3 md:border-b-[3px] md:border-border md:bg-cream/95 md:px-6 md:py-5 md:backdrop-blur"
+        >
+            <div className="md:hidden">
+                {renderMobileSearchTrigger()}
+                {renderMobileDialog()}
+            </div>
+
+            <div className="hidden border-[3px] border-border bg-card shadow-[8px_8px_0_0_hsl(var(--border))] md:block">
                 <div className="flex flex-col gap-3 bg-cream px-4 py-4 xl:flex-row xl:items-center">
                     <div className="relative flex-1">
                         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />
@@ -272,32 +384,17 @@ export default function DiscoverFilterBar({
                             <Crosshair className="size-4" />
                             Near me
                         </BrutalButton>
-                        <div className="hidden md:block md:w-56">{renderSortSelect()}</div>
-                        <div className="hidden md:block">{renderViewToggle()}</div>
-                        <CollapsibleTrigger asChild>
-                            <button
-                                type="button"
-                                className="inline-flex items-center justify-center gap-2 border-[3px] border-border bg-card px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] transition hover:bg-violet-light md:hidden"
-                            >
-                                <span>Refine{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}</span>
-                                {isRefineOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-                            </button>
-                        </CollapsibleTrigger>
+                        <div className="md:w-56">{renderSortSelect()}</div>
+                        <div>{renderViewToggle()}</div>
                     </div>
                 </div>
 
-                <div className="hidden md:block">
-                    {renderRefinementBody()}
-                </div>
-
-                <CollapsibleContent className="border-t-[3px] border-border md:hidden data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2">
-                    {renderRefinementBody()}
-                </CollapsibleContent>
+                {renderRefinementBody()}
 
                 <div className="border-t-[3px] border-border bg-violet-light px-4 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
                     {count} {count === 1 ? "event" : "events"} in play
                 </div>
-            </Collapsible>
+            </div>
         </section>
     )
 }
