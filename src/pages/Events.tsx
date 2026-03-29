@@ -204,7 +204,7 @@ function Events() {
     }
 
     return (
-        <div className="w-full overflow-hidden border-[3px] border-border bg-cream shadow-[8px_8px_0_0_hsl(var(--border))]">
+        <div className="w-full overflow-hidden bg-transparent md:bg-cream md:border-[3px] md:border-border md:shadow-[8px_8px_0_0_hsl(var(--border))]">
             <DiscoverFilterBar
                 count={visibleEvents.length}
                 filters={filters}
@@ -227,7 +227,7 @@ function Events() {
                 activeFilterCount={activeFilters.length}
             />
 
-            <section className="px-4 py-6 md:px-6 md:py-8">
+            <section className="px-2 py-5 md:px-6 md:py-8">
                 {loading ? (
                     <div className="grid gap-6 lg:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, index) => (
