@@ -122,14 +122,14 @@ export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
                     <DialogDescription>Explore events near your location on the map.</DialogDescription>
                 </DialogHeader>
 
-                <div className="flex items-center gap-2 border-b-2 border-border bg-cream px-4 py-4 pr-14 sm:px-5 sm:py-5 sm:pr-16">
+                <div className="flex items-center gap-2 border-b-2 border-border bg-cream px-4 py-2.5 pr-14 sm:px-5 sm:py-5 sm:pr-16">
                     <span className="h-3 w-3 rounded-full border border-border bg-[#FF6B6B]" />
                     <span className="h-3 w-3 rounded-full border border-border bg-yellow" />
                     <span className="h-3 w-3 rounded-full border border-border bg-mint" />
                 </div>
 
-                <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[22rem_minmax(0,1fr)]">
-                    <div className="order-2 space-y-5 overflow-y-auto border-t-2 border-border bg-cream p-4 lg:order-1 lg:border-r-2 lg:border-t-0 lg:p-5">
+                <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[22rem_minmax(0,1fr)]">
+                    <div className="order-2 min-h-0 flex-1 space-y-5 overflow-y-auto border-t-2 border-border bg-cream p-2.5 lg:order-1 lg:border-r-2 lg:border-t-0 lg:p-5">
                         <div>
                             <p className="mb-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-violet">
                                 Nearby events
@@ -216,8 +216,8 @@ export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
                         </div>
                     </div>
 
-                    <div className="order-1 bg-violet-light p-2 sm:p-3 md:p-5 lg:order-2">
-                        <div className="h-[44svh] min-h-[20rem] overflow-hidden border-[3px] border-border bg-card shadow-[6px_6px_0_0_hsl(var(--border))] sm:h-[28rem] lg:h-[calc(92vh-9rem)] lg:min-h-[30rem]">
+                    <div className="order-1 shrink-0 bg-violet-light p-1 sm:p-3 md:p-5 lg:order-2">
+                        <div className="h-[19svh] min-h-[10.5rem] overflow-hidden border-[3px] border-border bg-card shadow-[6px_6px_0_0_hsl(var(--border))] sm:h-[28rem] lg:h-[calc(92vh-9rem)] lg:min-h-[30rem]">
                             <MapWithGeocoder
                                 value={selectedLocation}
                                 onChange={setSelectedLocation}

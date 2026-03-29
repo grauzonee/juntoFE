@@ -358,7 +358,10 @@ export default function DiscoverFilterBar({
     }
 
     return (
-        <section className="sticky top-0 z-20 bg-transparent px-3 py-3 md:border-b-[3px] md:border-border md:bg-cream/95 md:px-6 md:py-5 md:backdrop-blur">
+        <section
+            data-discover-filter-bar
+            className="sticky top-0 z-20 bg-transparent px-3 py-3 md:border-b-[3px] md:border-border md:bg-cream/95 md:px-6 md:py-5 md:backdrop-blur"
+        >
             <div className="md:hidden">
                 {renderMobileSearchTrigger()}
                 {renderMobileDialog()}
