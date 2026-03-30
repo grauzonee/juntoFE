@@ -1,14 +1,33 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
 import test from "node:test"
+import { fireEvent, render } from "@testing-library/react"
+import { MemoryRouter } from "react-router"
+import LandingHeader from "@/components/landing/LandingHeader"
 
-test("LandingHeader anchors the mobile menu to the full header width", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/components/landing/LandingHeader.tsx"), "utf-8")
+test("LandingHeader opens a mobile menu inside the full-width header container", () => {
+    window.localStorage.removeItem("token")
 
-    assert.match(source, /<Collapsible open=\{isOpen\} onOpenChange=\{setIsOpen\}>/)
-    assert.match(source, /className="border-t-\[3px\] border-border bg-cream md:hidden/)
-    assert.match(source, /className="mx-auto w-full max-w-7xl px-4 py-4 md:px-6"/)
-    assert.doesNotMatch(source, /<Collapsible open=\{isOpen\} onOpenChange=\{setIsOpen\} className="relative md:hidden">/)
-    assert.doesNotMatch(source, /className="absolute left-0 top-full w-full/)
+    const { container, getAllByRole, getByRole } = render(
+        <MemoryRouter>
+            <LandingHeader />
+        </MemoryRouter>,
+    )
+
+    assert.equal(getAllByRole("link", { name: "Log in" }).length, 1)
+
+    fireEvent.click(getByRole("button", { name: /toggle menu/i }))
+
+    assert.equal(getAllByRole("link", { name: "Log in" }).length, 2)
+    assert.equal(getAllByRole("link", { name: "Sign up" }).length, 2)
+
+    const menuContent = container.querySelector('[data-state="open"][id^="radix-"]')
+
+    assert.ok(menuContent instanceof HTMLElement)
+    assert.match(menuContent.className, /border-t-\[3px\]/)
+    assert.match(menuContent.className, /md:hidden/)
+
+    const widthContainer = menuContent.querySelector("div")
+
+    assert.ok(widthContainer instanceof HTMLElement)
+    assert.match(widthContainer.className, /mx-auto w-full max-w-7xl px-4 py-4 md:px-6/)
 })

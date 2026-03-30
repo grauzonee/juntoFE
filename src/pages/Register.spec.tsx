@@ -1,21 +1,18 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
 import test from "node:test"
+import Register from "@/pages/Register"
+import { renderWithRouter } from "@/test/render"
 
-test("Register page renders auth shell content", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/pages/Register.tsx"), "utf-8")
+test("Register page renders auth shell content and form fields", () => {
+    const view = renderWithRouter(<Register />, { route: "/register" })
 
-    assert.match(source, /eyebrow="Join Junto"/)
-    assert.match(source, /title="Start finding your people\."/)
-    assert.match(source, /description="Create an account to discover local events/)
-})
-
-test("Register page renders essential form controls", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/components/forms/RegisterForm.tsx"), "utf-8")
-
-    assert.match(source, /name="username"/)
-    assert.match(source, /name="email"/)
-    assert.match(source, /name="repeatPassword"/)
-    assert.match(source, /Create account/)
+    assert.ok(view.getByText("Join Junto"))
+    assert.ok(view.getByRole("heading", { name: "Start finding your people." }))
+    assert.ok(view.getByText(/Create an account to discover local events/i))
+    assert.ok(view.getByLabelText("Username"))
+    assert.ok(view.getByLabelText("Email"))
+    assert.ok(view.getByLabelText("Password"))
+    assert.ok(view.getByLabelText("Repeat password"))
+    assert.ok(view.getByRole("button", { name: "Create account" }))
+    assert.equal(view.getAllByRole("link", { name: "Log in" }).length, 2)
 })

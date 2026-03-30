@@ -12,7 +12,7 @@ type EventPageProps = {
     id: string
 }
 
-function EventPageContent({ event }: { event: Event }) {
+export function EventPageContent({ event }: { event: Event }) {
     return (
         <main className="pb-16">
             <EventHero event={event} />

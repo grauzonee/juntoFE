@@ -1,20 +1,16 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
 import test from "node:test"
+import Login from "@/pages/Login"
+import { renderWithRouter } from "@/test/render"
 
-test("Login page renders auth shell content", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/pages/Login.tsx"), "utf-8")
+test("Login page renders auth shell content and form fields", () => {
+    const view = renderWithRouter(<Login />, { route: "/login" })
 
-    assert.match(source, /eyebrow="Welcome back"/)
-    assert.match(source, /title="Pick up where your plans left off\."/)
-    assert.match(source, /description="Log in to check upcoming events/)
-})
-
-test("Login page renders essential form controls", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/components/forms/LoginForm.tsx"), "utf-8")
-
-    assert.match(source, /name="email"/)
-    assert.match(source, /name="password"/)
-    assert.match(source, /Create an account/)
+    assert.ok(view.getByText("Welcome back"))
+    assert.ok(view.getByRole("heading", { name: "Pick up where your plans left off." }))
+    assert.ok(view.getByText(/Log in to check upcoming events/i))
+    assert.ok(view.getByLabelText("Email"))
+    assert.ok(view.getByLabelText("Password"))
+    assert.ok(view.getByRole("button", { name: "Log in" }))
+    assert.ok(view.getByRole("link", { name: "Create an account" }))
 })

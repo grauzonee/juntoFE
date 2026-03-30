@@ -1,22 +1,56 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
 import test from "node:test"
+import { render, waitFor } from "@testing-library/react"
+import { createMemoryRouter, RouterProvider } from "react-router"
+import EventLayout from "@/layouts/EventLayout"
+import { api } from "@/lib/axios"
+import { EventPageContent } from "@/components/event/EventPage"
+import { createTestEvent } from "@/test/fixtures"
+import { renderWithRouter } from "@/test/render"
 
-test("single event page is composed from modular event sections", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/components/event/EventPage.tsx"), "utf-8")
+test("EventPageContent renders the main event sections", () => {
+    const event = createTestEvent()
+    const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
 
-    assert.match(source, /EventHero/)
-    assert.match(source, /EventAboutSection/)
-    assert.match(source, /EventMeetingPointSection/)
-    assert.match(source, /EventDiscussionSection/)
-    assert.match(source, /EventRsvpCard/)
-    assert.match(source, /EventHostCard/)
+    assert.ok(view.getByRole("heading", { name: event.title }))
+    assert.ok(view.getByText("About"))
+    assert.ok(view.getByText("Meeting point"))
+    assert.ok(view.getAllByText(event.fullAddress).length >= 2)
+    assert.ok(view.getByText("Discussion"))
+    assert.ok(view.getByText("Hosted by"))
+    assert.ok(view.getByRole("link", { name: "Log in to join" }))
 })
 
-test("single event route uses the dedicated event layout", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/routes/index.tsx"), "utf-8")
+test("EventLayout wraps event routes with the event shell", async (t) => {
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === "/user") {
+            return {
+                status: 200,
+                data: { data: null },
+            }
+        }
 
-    assert.match(source, /EventLayout/)
-    assert.match(source, /path: 'event\/:id'/)
+        throw new Error(`Unexpected GET request for ${url}`)
+    })
+
+    const router = createMemoryRouter([
+        {
+            path: "/",
+            element: <EventLayout />,
+            children: [
+                { path: "event/:id", element: <div>Event route body</div> },
+            ],
+        },
+    ], {
+        initialEntries: ["/event/event-1"],
+    })
+
+    const view = render(<RouterProvider router={router} />)
+
+    await waitFor(() => {
+        assert.ok(view.getByText("Event route body"))
+    })
+
+    assert.ok(view.getByText("JUNTO"))
+    assert.ok(view.getByText("Junto event club"))
 })
