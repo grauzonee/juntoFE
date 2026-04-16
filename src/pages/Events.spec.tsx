@@ -156,7 +156,7 @@ test("events map route redirects back to discover page", async (t) => {
 test("NearMeModal routes found events to the single-event page", async (t) => {
     mockDiscoverApi(t)
 
-    Object.defineProperty(window.navigator, "geolocation", {
+    Object.defineProperty(globalThis.navigator, "geolocation", {
         configurable: true,
         value: {
             getCurrentPosition(success: (position: { coords: { latitude: number; longitude: number } }) => void) {

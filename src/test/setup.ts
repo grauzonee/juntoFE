@@ -2,7 +2,7 @@ import { afterEach } from "node:test"
 import { cleanup } from "@testing-library/react"
 import { JSDOM } from "jsdom"
 
-const { window } = new JSDOM("<!doctype html><html><body></body></html>", {
+const { window: domWindow } = new JSDOM("<!doctype html><html><body></body></html>", {
     url: "http://localhost",
 })
 
@@ -14,26 +14,26 @@ function defineGlobal(name: string, value: unknown) {
     })
 }
 
-defineGlobal("window", window)
-defineGlobal("document", window.document)
-defineGlobal("navigator", window.navigator)
-defineGlobal("HTMLElement", window.HTMLElement)
-defineGlobal("HTMLInputElement", window.HTMLInputElement)
-defineGlobal("Node", window.Node)
-defineGlobal("NodeFilter", window.NodeFilter)
-defineGlobal("DocumentFragment", window.DocumentFragment)
-defineGlobal("MutationObserver", window.MutationObserver)
-defineGlobal("CustomEvent", window.CustomEvent)
-defineGlobal("Event", window.Event)
-defineGlobal("KeyboardEvent", window.KeyboardEvent)
-defineGlobal("MouseEvent", window.MouseEvent)
-defineGlobal("getComputedStyle", window.getComputedStyle.bind(window))
-defineGlobal("localStorage", window.localStorage)
-defineGlobal("sessionStorage", window.sessionStorage)
-defineGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => window.setTimeout(callback, 0))
-defineGlobal("cancelAnimationFrame", (handle: number) => window.clearTimeout(handle))
+defineGlobal("window", domWindow)
+defineGlobal("document", domWindow.document)
+defineGlobal("navigator", domWindow.navigator)
+defineGlobal("HTMLElement", domWindow.HTMLElement)
+defineGlobal("HTMLInputElement", domWindow.HTMLInputElement)
+defineGlobal("Node", domWindow.Node)
+defineGlobal("NodeFilter", domWindow.NodeFilter)
+defineGlobal("DocumentFragment", domWindow.DocumentFragment)
+defineGlobal("MutationObserver", domWindow.MutationObserver)
+defineGlobal("CustomEvent", domWindow.CustomEvent)
+defineGlobal("Event", domWindow.Event)
+defineGlobal("KeyboardEvent", domWindow.KeyboardEvent)
+defineGlobal("MouseEvent", domWindow.MouseEvent)
+defineGlobal("getComputedStyle", domWindow.getComputedStyle.bind(domWindow))
+defineGlobal("localStorage", domWindow.localStorage)
+defineGlobal("sessionStorage", domWindow.sessionStorage)
+defineGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => domWindow.setTimeout(callback, 0))
+defineGlobal("cancelAnimationFrame", (handle: number) => domWindow.clearTimeout(handle))
 
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(domWindow, "matchMedia", {
     writable: true,
     value: (query: string) => ({
         matches: false,
@@ -51,7 +51,7 @@ Object.defineProperty(window, "matchMedia", {
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
-const htmlElementPrototype = window.HTMLElement.prototype as typeof window.HTMLElement.prototype & {
+const htmlElementPrototype = domWindow.HTMLElement.prototype as typeof domWindow.HTMLElement.prototype & {
     attachEvent?: () => void
     detachEvent?: () => void
 }
@@ -66,6 +66,6 @@ if (!htmlElementPrototype.detachEvent) {
 
 afterEach(() => {
     cleanup()
-    window.localStorage.clear()
-    window.sessionStorage.clear()
+    globalThis.localStorage.clear()
+    globalThis.sessionStorage.clear()
 })

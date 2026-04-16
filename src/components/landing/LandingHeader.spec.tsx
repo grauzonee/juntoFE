@@ -6,7 +6,7 @@ import LandingHeader from "@/components/landing/LandingHeader"
 import { testIds } from "@/testIds"
 
 test("LandingHeader opens a mobile menu inside the full-width header container", () => {
-    window.localStorage.removeItem("token")
+    globalThis.localStorage.removeItem("token")
 
     const { container, getByTestId } = render(
         <MemoryRouter>
