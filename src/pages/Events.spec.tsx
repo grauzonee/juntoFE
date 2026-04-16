@@ -58,7 +58,6 @@ function mockDiscoverApi(
     })
 }
 
-type TestContext = Parameters<typeof test>[1] extends (t: infer T) => unknown ? T : never
 function StubMap() {
     return <div>Stub map</div>
 }

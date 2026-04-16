@@ -49,7 +49,7 @@ Object.defineProperty(domWindow, "matchMedia", {
     }),
 })
 
-globalThis.IS_REACT_ACT_ENVIRONMENT = true
+defineGlobal("IS_REACT_ACT_ENVIRONMENT", true)
 
 const htmlElementPrototype = domWindow.HTMLElement.prototype as typeof domWindow.HTMLElement.prototype & {
     attachEvent?: () => void
