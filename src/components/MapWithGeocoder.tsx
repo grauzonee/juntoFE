@@ -4,6 +4,7 @@ import { Link } from "react-router"
 import type L from "leaflet"
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 import { OpenStreetMapProvider, GeoSearchControl } from "leaflet-geosearch"
+import "leaflet-geosearch/assets/css/leaflet.css"
 import type { LatLngLiteral } from "leaflet"
 
 type GeoSearchLocation = {
