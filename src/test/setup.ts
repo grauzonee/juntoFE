@@ -1,5 +1,4 @@
 import { afterEach } from "node:test"
-import { cleanup } from "@testing-library/react"
 import { JSDOM } from "jsdom"
 
 const { window: domWindow } = new JSDOM("<!doctype html><html><body></body></html>", {
@@ -63,6 +62,8 @@ if (!htmlElementPrototype.attachEvent) {
 if (!htmlElementPrototype.detachEvent) {
     htmlElementPrototype.detachEvent = () => {}
 }
+
+const { cleanup } = await import("@testing-library/react")
 
 afterEach(() => {
     cleanup()
