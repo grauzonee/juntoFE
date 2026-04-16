@@ -5,6 +5,7 @@ import BrutalButton from "@/components/landing/BrutalButton"
 import EventSectionHeading from "@/components/event/EventSectionHeading"
 import { getUserInitials } from "@/components/event/event-utils"
 import { Link } from "react-router"
+import { testIds } from "@/testIds"
 
 type EventHostCardProps = {
     event: Event
@@ -12,7 +13,10 @@ type EventHostCardProps = {
 
 export default function EventHostCard({ event }: EventHostCardProps) {
     return (
-        <WindowCard className="overflow-hidden bg-violet-light motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500">
+        <WindowCard
+            data-testid={testIds.event.hostCard}
+            className="overflow-hidden bg-violet-light motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500"
+        >
             <div className="p-5 md:p-6">
                 <EventSectionHeading label="Hosted by" />
                 <Avatar className="h-20 w-20 border-[3px] border-border bg-card">

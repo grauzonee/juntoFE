@@ -3,7 +3,8 @@ import { Link } from "react-router"
 import { Menu, X } from "lucide-react"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import BrutalButton from "@/components/landing/BrutalButton"
-import { isLoggedIn } from "@/helpers/auth"
+import { isLoggedIn, logout } from "@/helpers/auth"
+import { testIds } from "@/testIds"
 
 const navItems = [
     { label: "Home", to: "/" },
@@ -14,13 +15,11 @@ export default function EventHeader() {
     const [isOpen, setIsOpen] = useState(false)
     const loggedIn = isLoggedIn()
 
-    function logout() {
-        localStorage.removeItem("token")
-        window.location.reload()
-    }
-
     return (
-        <header className="sticky top-0 z-50 border-b-[3px] border-border bg-cream/95 backdrop-blur">
+        <header
+            data-testid={testIds.event.shellHeader}
+            className="sticky top-0 z-50 border-b-[3px] border-border bg-cream/95 backdrop-blur"
+        >
             <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 md:px-6">
                 <Link to="/" className="font-display text-3xl font-extrabold tracking-[-0.05em]">
                     JUNTO

@@ -26,6 +26,7 @@ import type {
     DiscoverViewMode,
 } from "@/types/discover"
 import { Crosshair, LayoutGrid, List, MapPin, Search, SlidersHorizontal, X } from "lucide-react"
+import { testIds } from "@/testIds"
 
 type DiscoverFilterBarProps = {
     count: number
@@ -281,6 +282,7 @@ export default function DiscoverFilterBar({
         return (
             <button
                 type="button"
+                data-testid={testIds.discover.mobileSearchTrigger}
                 onClick={() => setIsMobileSearchOpen(true)}
                 className="flex w-full items-center gap-3 rounded-[1.25rem] border-2 border-border bg-card px-4 py-3 text-left shadow-[4px_4px_0_0_hsl(var(--border))] transition active:translate-y-0.5 active:shadow-none"
                 aria-label="Open discover search"
@@ -302,7 +304,10 @@ export default function DiscoverFilterBar({
     function renderMobileDialog() {
         return (
             <Dialog open={isMobileSearchOpen} onOpenChange={setIsMobileSearchOpen}>
-                <DialogContent className="left-0 top-0 h-[100svh] w-screen max-h-[100svh] max-w-none translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-0 bg-card p-0 shadow-none [&>button]:right-4 [&>button]:top-4">
+                <DialogContent
+                    data-testid={testIds.discover.mobileSearchDialog}
+                    className="left-0 top-0 h-[100svh] w-screen max-h-[100svh] max-w-none translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-0 bg-card p-0 shadow-none [&>button]:right-4 [&>button]:top-4"
+                >
                     <DialogHeader className="border-b-2 border-border bg-card px-5 pb-4 pt-6 text-left">
                         <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-foreground/20" />
                         <DialogTitle className="font-heading text-xl font-bold">Search</DialogTitle>
@@ -326,6 +331,7 @@ export default function DiscoverFilterBar({
 
                             <button
                                 type="button"
+                                data-testid={testIds.discover.mobileNearbyButton}
                                 onClick={openNearMeFromMobileDialog}
                                 className="flex w-full items-center gap-3 rounded-[1rem] border border-border/15 bg-card px-4 py-3 text-left transition hover:bg-cream"
                             >
@@ -360,6 +366,7 @@ export default function DiscoverFilterBar({
     return (
         <section
             data-discover-filter-bar
+            data-testid={testIds.discover.filterBar}
             className="sticky top-0 z-20 bg-transparent px-3 py-3 md:border-b-[3px] md:border-border md:bg-cream/95 md:px-6 md:py-5 md:backdrop-blur"
         >
             <div className="md:hidden">

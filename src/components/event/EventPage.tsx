@@ -7,14 +7,15 @@ import EventMeetingPointSection from "@/components/event/EventMeetingPointSectio
 import EventDiscussionSection from "@/components/event/EventDiscussionSection"
 import EventHostCard from "@/components/event/EventHostCard"
 import EventRsvpCard from "@/components/event/EventRsvpCard"
+import { testIds } from "@/testIds"
 
 type EventPageProps = {
     id: string
 }
 
-function EventPageContent({ event }: { event: Event }) {
+export function EventPageContent({ event }: { event: Event }) {
     return (
-        <main className="pb-16">
+        <main data-testid={testIds.event.page} className="pb-16">
             <EventHero event={event} />
             <div className="mx-auto grid max-w-7xl gap-8 px-4 md:px-6 lg:grid-cols-[minmax(0,1.3fr)_22rem] lg:items-start">
                 <div className="space-y-8">

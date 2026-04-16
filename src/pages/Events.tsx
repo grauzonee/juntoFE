@@ -17,6 +17,7 @@ import type {
     DiscoverEventTypeOption,
     DiscoverFilters,
 } from "@/types/discover"
+import { testIds } from "@/testIds"
 
 const defaultFilters: DiscoverFilters = {
     search: "",
@@ -403,7 +404,10 @@ function Events() {
                 ) : null}
 
                 {!loading && !error ? (
-                    <div className={filters.view === "grid" ? "grid gap-6 xl:grid-cols-3" : "flex flex-col gap-4"}>
+                    <div
+                        data-testid={testIds.discover.resultsList}
+                        className={filters.view === "grid" ? "grid gap-6 xl:grid-cols-3" : "flex flex-col gap-4"}
+                    >
                         {visibleEvents.map((event) => (
                             <div
                                 key={event._id}

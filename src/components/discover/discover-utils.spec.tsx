@@ -96,8 +96,13 @@ test("getDiscoverTypeTitle logs and returns empty string when title is missing f
     const consoleErrorMock = t.mock.method(console, "error")
 
     assert.equal(getDiscoverTypeTitle(eventWithoutTypeTitle), "")
-    assert.equal(consoleErrorMock.mock.callCount(), 1)
-    assert.match(String(consoleErrorMock.mock.calls[0].arguments[0]), /missing title/i)
+    assertMissingTitleLogs(
+        Array.from(
+            { length: consoleErrorMock.mock.callCount() },
+            (_, index) => consoleErrorMock.mock.calls[index].arguments[0],
+        ),
+        1,
+    )
 })
 
 test("getDiscoverCategoryTitles logs and omits categories when title is missing from response body", (t) => {
@@ -108,9 +113,13 @@ test("getDiscoverCategoryTitles logs and omits categories when title is missing 
     const consoleErrorMock = t.mock.method(console, "error")
 
     assert.deepEqual(getDiscoverCategoryTitles(eventWithoutCategoryTitle), [])
-    assert.equal(consoleErrorMock.mock.callCount(), 2)
-    assert.match(String(consoleErrorMock.mock.calls[0].arguments[0]), /missing title/i)
-    assert.match(String(consoleErrorMock.mock.calls[1].arguments[0]), /missing title/i)
+    assertMissingTitleLogs(
+        Array.from(
+            { length: consoleErrorMock.mock.callCount() },
+            (_, index) => consoleErrorMock.mock.calls[index].arguments[0],
+        ),
+        2,
+    )
 })
 
 test("getDiscoverEventPosition converts backend lng-lat points to leaflet lat-lng", () => {
@@ -127,3 +136,11 @@ test("getDiscoverEventPosition converts backend lng-lat points to leaflet lat-ln
         lng: -122.4194,
     })
 })
+
+function assertMissingTitleLogs(messages: unknown[], expectedCount: number) {
+    assert.equal(messages.length, expectedCount)
+
+    for (const message of messages) {
+        assert.match(String(message), /missing title/i)
+    }
+}

@@ -1,36 +1,200 @@
 import assert from "node:assert/strict"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
-import test from "node:test"
+import test, { type TestContext } from "node:test"
+import { fireEvent, render, waitFor, within } from "@testing-library/react"
+import { createMemoryRouter, RouterProvider } from "react-router"
+import DiscoverFilterBar from "@/components/discover/DiscoverFilterBar"
+import NearMeModal from "@/components/discover/NearMeModal"
+import Events from "@/pages/Events"
+import { api } from "@/lib/axios"
+import { routes as eventRoutes } from "@/routes/events"
+import {
+    createDiscoverEvent,
+    discoverCategories,
+    discoverEventTypes,
+} from "@/test/fixtures"
+import { renderWithRouter } from "@/test/render"
+import { testIds } from "@/testIds"
 
-test("Events page uses Discover building blocks", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/pages/Events.tsx"), "utf-8")
+function mockDiscoverApi(
+    t: TestContext,
+    {
+        events = [createDiscoverEvent()],
+        nearbyEvents = [createDiscoverEvent({ _id: "nearby-1", title: "Sunset Picnic" })],
+    }: {
+        events?: ReturnType<typeof createDiscoverEvent>[]
+        nearbyEvents?: ReturnType<typeof createDiscoverEvent>[]
+    } = {},
+) {
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === "/eventtypes") {
+            return {
+                status: 200,
+                data: { success: true, data: discoverEventTypes.map(({ id, title }) => ({ _id: id, title })) },
+            }
+        }
 
-    assert.match(source, /DiscoverFilterBar/)
-    assert.match(source, /DiscoverResultsHeader/)
-    assert.match(source, /NearMeModal/)
-    assert.match(source, /fetchDiscoverEvents/)
-    assert.match(source, /setIsNearMeOpen\(true\)/)
-    assert.match(source, /md:border-\[3px\] md:border-border/)
+        if (url === "/categories") {
+            return {
+                status: 200,
+                data: { success: true, data: discoverCategories.map(({ id, title }) => ({ _id: id, title })) },
+            }
+        }
+
+        if (url === "/event") {
+            return {
+                status: 200,
+                data: { success: true, data: events },
+            }
+        }
+
+        if (url === "/event/geosearch") {
+            return {
+                status: 200,
+                data: { success: true, data: nearbyEvents },
+            }
+        }
+
+        throw new Error(`Unexpected GET request for ${url}`)
+    })
+}
+
+function StubMap() {
+    return <div>Stub map</div>
+}
+
+test("Events page renders discover controls and fetched results", async (t) => {
+    const event = createDiscoverEvent()
+
+    mockDiscoverApi(t, { events: [event] })
+
+    const view = renderWithRouter(<Events />, { route: "/events" })
+
+    await view.findByTestId(testIds.discover.eventCard(event._id))
+
+    assert.ok(view.getByTestId(testIds.discover.filterBar))
+    assert.ok(view.getByTestId(testIds.discover.mobileSearchTrigger))
+    assert.ok(view.getByTestId(testIds.discover.resultsHeader))
+    assert.equal(view.getByTestId(testIds.discover.resultsList).children.length, 1)
+    assert.equal(
+        view.getByTestId(testIds.discover.eventDetailsLink(event._id)).getAttribute("href"),
+        `/event/${event._id}`,
+    )
 })
 
-test("discover filter bar uses a mobile dialog-based search flow", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/components/discover/DiscoverFilterBar.tsx"), "utf-8")
+test("DiscoverFilterBar uses a dialog-based mobile search flow", async () => {
+    let nearMeClicks = 0
 
-    assert.match(source, /<Dialog open=\{isMobileSearchOpen\} onOpenChange=\{setIsMobileSearchOpen\}>/)
-    assert.match(source, /Open discover search/)
-    assert.match(source, /openNearMeFromMobileDialog/)
-    assert.doesNotMatch(source, /CollapsibleContent/)
+    const view = render(
+        <DiscoverFilterBar
+            count={1}
+            filters={{
+                search: "",
+                selectedTypeId: "all",
+                selectedDateFilter: "all",
+                selectedCategoryId: "all",
+                sort: "soonest",
+                view: "grid",
+            }}
+            activeFilters={[]}
+            categories={discoverCategories}
+            eventTypes={discoverEventTypes}
+            onSearchChange={() => {}}
+            onTypeChange={() => {}}
+            onDateFilterChange={() => {}}
+            onCategoryChange={() => {}}
+            onSortChange={() => {}}
+            onViewChange={() => {}}
+            onClearFilter={() => {}}
+            onClearAll={() => {}}
+            onNearMeClick={() => {
+                nearMeClicks += 1
+            }}
+        />,
+    )
+
+    fireEvent.click(view.getByTestId(testIds.discover.mobileSearchTrigger))
+
+    const body = within(document.body)
+
+    assert.ok(body.getByTestId(testIds.discover.mobileSearchDialog))
+    assert.ok(body.getByTestId(testIds.discover.mobileNearbyButton))
+
+    fireEvent.click(body.getByTestId(testIds.discover.mobileNearbyButton))
+
+    await waitFor(() => {
+        assert.equal(nearMeClicks, 1)
+    })
 })
 
-test("events map route redirects back to discover page", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/routes/events.tsx"), "utf-8")
+test("events map route redirects back to discover page", async (t) => {
+    mockDiscoverApi(t)
 
-    assert.match(source, /Navigate to="\/events" replace/)
+    const mapRedirect = eventRoutes.find((route) => route.path === "events/map")?.element
+
+    assert.ok(mapRedirect)
+
+    const router = createMemoryRouter([
+        {
+            path: "/",
+            children: [
+                { path: "events", element: <Events /> },
+                { path: "events/map", element: mapRedirect },
+            ],
+        },
+    ], {
+        initialEntries: ["/events/map"],
+    })
+
+    const view = render(<RouterProvider router={router} />)
+
+    await view.findByTestId(testIds.discover.eventCard("discover-1"))
+
+    assert.equal(router.state.location.pathname, "/events")
 })
 
-test("near me modal routes found events to the single-event page", () => {
-    const source = readFileSync(resolve(process.cwd(), "src/components/discover/NearMeModal.tsx"), "utf-8")
+test("NearMeModal routes found events to the single-event page", async (t) => {
+    mockDiscoverApi(t)
 
-    assert.match(source, /navigate\(`\/event\/\$\{eventId\}`\)/)
+    Object.defineProperty(globalThis.navigator, "geolocation", {
+        configurable: true,
+        value: {
+            getCurrentPosition(success: (position: { coords: { latitude: number; longitude: number } }) => void) {
+                success({
+                    coords: {
+                        latitude: 48.2082,
+                        longitude: 16.3738,
+                    },
+                })
+            },
+        },
+    })
+
+    const router = createMemoryRouter([
+        {
+            path: "/",
+            element: <NearMeModal open onOpenChange={() => {}} MapComponent={StubMap} />,
+        },
+        {
+            path: "/event/:id",
+            element: <div data-testid="event-details-route" />,
+        },
+    ], {
+        initialEntries: ["/"],
+    })
+
+    render(<RouterProvider router={router} />)
+
+    const body = within(document.body)
+
+    fireEvent.click(body.getByTestId(testIds.discover.nearMeUseLocationButton))
+
+    const eventButton = await body.findByTestId(testIds.discover.nearMeResultButton("nearby-1"))
+
+    fireEvent.click(eventButton)
+
+    await waitFor(() => {
+        assert.equal(router.state.location.pathname, "/event/nearby-1")
+    })
+
+    assert.ok(body.getByTestId("event-details-route"))
 })

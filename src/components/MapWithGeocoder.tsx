@@ -1,14 +1,11 @@
 import type { EventAddress } from "@/schemas/EventSchemas"
 import { useEffect } from "react"
 import { Link } from "react-router"
-import L from "leaflet"
+import type L from "leaflet"
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 import { OpenStreetMapProvider, GeoSearchControl } from "leaflet-geosearch"
-import "leaflet-geosearch/assets/css/leaflet.css";
+import "leaflet-geosearch/assets/css/leaflet.css"
 import type { LatLngLiteral } from "leaflet"
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
-import markerIcon from "leaflet/dist/images/marker-icon.png"
-import markerShadow from "leaflet/dist/images/marker-shadow.png"
 
 type GeoSearchLocation = {
     x: number;
@@ -22,7 +19,7 @@ type GeoSearchShowLocationEvent = L.LeafletEvent & {
     location: GeoSearchLocation;
 };
 
-type MapWithGeocoderProps = {
+export type MapWithGeocoderProps = {
     value?: EventAddress,
     onChange: (value: EventAddress) => void,
     markers?: {
@@ -34,16 +31,6 @@ type MapWithGeocoderProps = {
     }[],
     height?: string
 }
-
-const defaultMarkerIcon = new L.Icon({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-})
 
 const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
     const map = useMap();
@@ -143,7 +130,6 @@ function MapWithGeocoder({ value, onChange, markers = [], height = "400px" }: Ma
             <SearchControl onChange={onChange} value={value} />
             <MapViewportController value={value} markers={markers} />
             {value?.coordinates && (<Marker
-                icon={defaultMarkerIcon}
                 position={[value.coordinates.lat, value.coordinates.lng]}
                 zIndexOffset={0}
             >
@@ -152,7 +138,6 @@ function MapWithGeocoder({ value, onChange, markers = [], height = "400px" }: Ma
             {markers.map((marker) => (
                 <Marker
                     key={marker.id}
-                    icon={defaultMarkerIcon}
                     position={[marker.position.lat, marker.position.lng]}
                     zIndexOffset={1000}
                 >

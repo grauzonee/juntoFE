@@ -7,6 +7,7 @@ import {
     getEventLocationLabel,
     splitEventDescription,
 } from "@/components/event/event-utils"
+import { testIds } from "@/testIds"
 
 type EventHeroProps = {
     event: Event
@@ -18,7 +19,7 @@ export default function EventHero({ event }: EventHeroProps) {
     const excerpt = splitEventDescription(event.description)[0]
 
     return (
-        <section className="relative isolate pb-10 md:pb-14">
+        <section data-testid={testIds.event.hero} className="relative isolate pb-10 md:pb-14">
             <div className="relative h-[20rem] overflow-hidden border-b-[3px] border-border bg-violet-light sm:h-[24rem] lg:h-[30rem]">
                 <img
                     src={event.imageUrl}

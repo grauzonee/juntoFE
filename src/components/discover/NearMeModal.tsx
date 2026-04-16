@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-import MapWithGeocoder from "@/components/MapWithGeocoder"
+import { lazy, Suspense, useEffect, useState, type ComponentType } from "react"
 import BrutalButton from "@/components/landing/BrutalButton"
 import {
     Dialog,
@@ -18,14 +17,24 @@ import {
 } from "@/components/discover/discover-utils"
 import { Crosshair, LoaderCircle, MapPinned } from "lucide-react"
 import { useNavigate } from "react-router"
+import type { MapWithGeocoderProps } from "@/components/MapWithGeocoder"
+import { testIds } from "@/testIds"
 
 type NearMeModalProps = {
     open: boolean
     onOpenChange: (value: boolean) => void
+    MapComponent?: ComponentType<MapWithGeocoderProps>
 }
 
-export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
+const LazyMapWithGeocoder = lazy(() => import("@/components/MapWithGeocoder"))
+
+export default function NearMeModal({
+    open,
+    onOpenChange,
+    MapComponent,
+}: NearMeModalProps) {
     const navigate = useNavigate()
+    const ResolvedMapComponent = MapComponent ?? LazyMapWithGeocoder
     const [radius, setRadius] = useState(3)
     const [selectedLocation, setSelectedLocation] = useState<DiscoverLocation>()
     const [events, setEvents] = useState<DiscoverEvent[]>([])
@@ -144,6 +153,7 @@ export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
 
                         <BrutalButton
                             tone="mint"
+                            data-testid={testIds.discover.nearMeUseLocationButton}
                             className="w-full gap-2"
                             onClick={handleUseMyLocation}
                             disabled={geoLoading}
@@ -196,6 +206,7 @@ export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
                                     <button
                                         key={event._id}
                                         type="button"
+                                        data-testid={testIds.discover.nearMeResultButton(event._id)}
                                         onClick={() => handleOpenEvent(event._id)}
                                         className="w-full border-[3px] border-border bg-card p-4 text-left shadow-[4px_4px_0_0_hsl(var(--border))] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet"
                                     >
@@ -218,12 +229,14 @@ export default function NearMeModal({ open, onOpenChange }: NearMeModalProps) {
 
                     <div className="order-1 shrink-0 bg-violet-light p-1 sm:p-3 md:p-5 lg:order-2">
                         <div className="h-[19svh] min-h-[10.5rem] overflow-hidden border-[3px] border-border bg-card shadow-[6px_6px_0_0_hsl(var(--border))] sm:h-[28rem] lg:h-[calc(92vh-9rem)] lg:min-h-[30rem]">
-                            <MapWithGeocoder
-                                value={selectedLocation}
-                                onChange={setSelectedLocation}
-                                markers={markers}
-                                height="100%"
-                            />
+                            <Suspense fallback={<div className="h-full w-full bg-card" />}>
+                                <ResolvedMapComponent
+                                    value={selectedLocation}
+                                    onChange={setSelectedLocation}
+                                    markers={markers}
+                                    height="100%"
+                                />
+                            </Suspense>
                         </div>
                     </div>
                 </div>

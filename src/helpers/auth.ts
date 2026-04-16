@@ -7,3 +7,8 @@ export const isLoggedIn = (): boolean => {
     if (!exp) return false;
     return Date.now() < exp * 1000;
 }
+
+export const logout = () => {
+    window.localStorage.removeItem("token");
+    window.location.reload();
+}

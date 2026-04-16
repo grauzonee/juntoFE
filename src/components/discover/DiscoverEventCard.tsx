@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import type { DiscoverEvent, DiscoverViewMode } from "@/types/discover"
 import { formatDiscoverDate, formatDiscoverFee } from "@/components/discover/discover-utils"
 import { Clock3, MapPin } from "lucide-react"
+import { testIds } from "@/testIds"
 
 type DiscoverEventCardProps = {
     event: DiscoverEvent
@@ -22,6 +23,7 @@ export default function DiscoverEventCard({
 
     return (
         <article
+            data-testid={testIds.discover.eventCard(event._id)}
             className={cn(
                 "overflow-hidden border-[3px] border-border bg-violet-light shadow-[6px_6px_0_0_hsl(var(--border))] transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_hsl(var(--border))] md:bg-card",
                 isList ? "grid gap-0 md:grid-cols-[15rem_minmax(0,1fr)]" : "flex flex-col",
@@ -72,6 +74,7 @@ export default function DiscoverEventCard({
                     ))}
                     <Link
                         to={`/event/${event._id}`}
+                        data-testid={testIds.discover.eventDetailsLink(event._id)}
                         className="ml-auto font-heading text-sm font-bold text-violet transition-colors hover:text-mint"
                     >
                         View details

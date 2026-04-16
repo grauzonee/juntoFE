@@ -7,13 +7,9 @@ import {
 } from "@/components/ui/navigation-menu"
 import BaseTopbar from '@/components/topbar/BaseTopbar'
 import { Link } from 'react-router'
+import { logout } from "@/helpers/auth"
 
 function AuthTopbar() {
-    function logout() {
-        localStorage.removeItem('token')
-        window.location.reload()
-    }
-
     return (
         <BaseTopbar>
             <NavigationMenu>
