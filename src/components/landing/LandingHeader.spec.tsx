@@ -14,12 +14,16 @@ test("LandingHeader opens a mobile menu inside the full-width header container",
         </MemoryRouter>,
     )
 
-    assert.equal(container.querySelectorAll('a[href="/login"]').length, 1)
+    assertLinkCount(container, "/login", 1)
 
     fireEvent.click(getByTestId(testIds.landing.mobileMenuTrigger))
 
-    assert.equal(container.querySelectorAll('a[href="/login"]').length, 2)
-    assert.equal(container.querySelectorAll('a[href="/register"]').length, 2)
+    for (const [href, expectedCount] of [
+        ["/login", 2],
+        ["/register", 2],
+    ] as const) {
+        assertLinkCount(container, href, expectedCount)
+    }
 
     const menuContent = getByTestId(testIds.landing.mobileMenu)
 
@@ -31,3 +35,7 @@ test("LandingHeader opens a mobile menu inside the full-width header container",
     assert.ok(widthContainer instanceof HTMLElement)
     assert.ok(menuContent.contains(widthContainer))
 })
+
+function assertLinkCount(container: HTMLElement, href: string, expectedCount: number) {
+    assert.equal(container.querySelectorAll(`a[href="${href}"]`).length, expectedCount)
+}

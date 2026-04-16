@@ -13,13 +13,18 @@ test("EventPageContent renders the main event sections", () => {
     const event = createTestEvent()
     const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
 
-    assert.ok(view.getByTestId(testIds.event.page))
-    assert.ok(view.getByTestId(testIds.event.hero))
-    assert.ok(view.getByTestId(testIds.event.aboutSection))
-    assert.ok(view.getByTestId(testIds.event.meetingPointSection))
-    assert.ok(view.getByTestId(testIds.event.discussionSection))
-    assert.ok(view.getByTestId(testIds.event.rsvpCard))
-    assert.ok(view.getByTestId(testIds.event.hostCard))
+    for (const sectionTestId of [
+        testIds.event.page,
+        testIds.event.hero,
+        testIds.event.aboutSection,
+        testIds.event.meetingPointSection,
+        testIds.event.discussionSection,
+        testIds.event.rsvpCard,
+        testIds.event.hostCard,
+    ]) {
+        assert.ok(view.getByTestId(sectionTestId), `Missing event section: ${sectionTestId}`)
+    }
+
     assert.equal(view.getByTestId(testIds.event.rsvpLoginLink).getAttribute("href"), "/login")
 })
 
