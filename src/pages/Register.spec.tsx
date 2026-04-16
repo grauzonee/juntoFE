@@ -2,17 +2,19 @@ import assert from "node:assert/strict"
 import test from "node:test"
 import Register from "@/pages/Register"
 import { renderWithRouter } from "@/test/render"
+import { testIds } from "@/testIds"
 
 test("Register page renders auth shell content and form fields", () => {
     const view = renderWithRouter(<Register />, { route: "/register" })
+    const form = view.getByTestId(testIds.auth.registerForm)
 
-    assert.ok(view.getByText("Join Junto"))
-    assert.ok(view.getByRole("heading", { name: "Start finding your people." }))
-    assert.ok(view.getByText(/Create an account to discover local events/i))
-    assert.ok(view.getByLabelText("Username"))
-    assert.ok(view.getByLabelText("Email"))
-    assert.ok(view.getByLabelText("Password"))
-    assert.ok(view.getByLabelText("Repeat password"))
-    assert.ok(view.getByRole("button", { name: "Create account" }))
-    assert.equal(view.getAllByRole("link", { name: "Log in" }).length, 2)
+    assert.ok(view.getByTestId(testIds.auth.card))
+    assert.equal(view.getByTestId(testIds.auth.title).tagName, "H2")
+    assert.ok(view.getByTestId(testIds.auth.description))
+    assert.ok(form.querySelector('input[name="username"]'))
+    assert.ok(form.querySelector('input[name="email"][type="email"]'))
+    assert.ok(form.querySelector('input[name="password"][type="password"]'))
+    assert.ok(form.querySelector('input[name="repeatPassword"][type="password"]'))
+    assert.ok(form.querySelector('button[type="submit"]'))
+    assert.equal(view.container.querySelectorAll('a[href="/login"]').length, 2)
 })

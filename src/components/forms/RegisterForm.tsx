@@ -6,6 +6,7 @@ import { FormField, FormControl, FormLabel, FormMessage, FormItem, Form, FormRoo
 import { Link, useNavigate } from "react-router";
 import { signUp } from "@/requests/auth";
 import BrutalButton from "@/components/landing/BrutalButton";
+import { testIds } from "@/testIds";
 
 function RegisterForm() {
     const navigate = useNavigate()
@@ -24,7 +25,11 @@ function RegisterForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 items-stretch">
+            <form
+                data-testid={testIds.auth.registerForm}
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-5 items-stretch"
+            >
                 <FormRootMessage message={form.formState.errors.root?.message} className="mb-1" />
                 <FormField control={form.control} name="username" render={({ field }) => (
                     <FormItem className="gap-2.5">

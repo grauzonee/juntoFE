@@ -6,6 +6,7 @@ import {
     formatCoordinateLabel,
     getEventCoordinates,
 } from "@/components/event/event-utils"
+import { testIds } from "@/testIds"
 
 type EventMeetingPointSectionProps = {
     event: Event
@@ -15,7 +16,10 @@ export default function EventMeetingPointSection({ event }: EventMeetingPointSec
     const coordinates = getEventCoordinates(event)
 
     return (
-        <WindowCard className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500">
+        <WindowCard
+            data-testid={testIds.event.meetingPointSection}
+            className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500"
+        >
             <div className="p-5 md:p-7">
                 <EventSectionHeading label="Meeting point" />
                 <EventLocationMap

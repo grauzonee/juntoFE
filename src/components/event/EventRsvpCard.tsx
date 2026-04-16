@@ -14,6 +14,7 @@ import {
     getEventCapacityLabel,
 } from "@/components/event/event-utils"
 import { isLoggedIn } from "@/helpers/auth"
+import { testIds } from "@/testIds"
 
 type EventRsvpCardProps = {
     event: Event
@@ -60,6 +61,7 @@ export default function EventRsvpCard({ event }: EventRsvpCardProps) {
 
     return (
         <WindowCard
+            data-testid={testIds.event.rsvpCard}
             titlebarLabel="Join this event"
             className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500"
         >
@@ -117,7 +119,7 @@ export default function EventRsvpCard({ event }: EventRsvpCardProps) {
                 ) : (
                     <div className="mt-5 grid gap-3">
                         <BrutalButton asChild tone="mint" className="w-full">
-                            <Link to="/login">Log in to join</Link>
+                            <Link to="/login" data-testid={testIds.event.rsvpLoginLink}>Log in to join</Link>
                         </BrutalButton>
                         <BrutalButton asChild tone="cream" className="w-full">
                             <Link to="/register">Create an account</Link>

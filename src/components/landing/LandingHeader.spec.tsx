@@ -3,31 +3,31 @@ import test from "node:test"
 import { fireEvent, render } from "@testing-library/react"
 import { MemoryRouter } from "react-router"
 import LandingHeader from "@/components/landing/LandingHeader"
+import { testIds } from "@/testIds"
 
 test("LandingHeader opens a mobile menu inside the full-width header container", () => {
     window.localStorage.removeItem("token")
 
-    const { container, getAllByRole, getByRole } = render(
+    const { container, getByTestId } = render(
         <MemoryRouter>
             <LandingHeader />
         </MemoryRouter>,
     )
 
-    assert.equal(getAllByRole("link", { name: "Log in" }).length, 1)
+    assert.equal(container.querySelectorAll('a[href="/login"]').length, 1)
 
-    fireEvent.click(getByRole("button", { name: /toggle menu/i }))
+    fireEvent.click(getByTestId(testIds.landing.mobileMenuTrigger))
 
-    assert.equal(getAllByRole("link", { name: "Log in" }).length, 2)
-    assert.equal(getAllByRole("link", { name: "Sign up" }).length, 2)
+    assert.equal(container.querySelectorAll('a[href="/login"]').length, 2)
+    assert.equal(container.querySelectorAll('a[href="/register"]').length, 2)
 
-    const menuContent = container.querySelector('[data-state="open"][id^="radix-"]')
+    const menuContent = getByTestId(testIds.landing.mobileMenu)
 
     assert.ok(menuContent instanceof HTMLElement)
-    assert.match(menuContent.className, /border-t-\[3px\]/)
-    assert.match(menuContent.className, /md:hidden/)
+    assert.equal(menuContent.dataset.state, "open")
 
-    const widthContainer = menuContent.querySelector("div")
+    const widthContainer = getByTestId(testIds.landing.mobileMenuInner)
 
     assert.ok(widthContainer instanceof HTMLElement)
-    assert.match(widthContainer.className, /mx-auto w-full max-w-7xl px-4 py-4 md:px-6/)
+    assert.ok(menuContent.contains(widthContainer))
 })

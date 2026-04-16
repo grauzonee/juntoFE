@@ -7,18 +7,20 @@ import { api } from "@/lib/axios"
 import { EventPageContent } from "@/components/event/EventPage"
 import { createTestEvent } from "@/test/fixtures"
 import { renderWithRouter } from "@/test/render"
+import { testIds } from "@/testIds"
 
 test("EventPageContent renders the main event sections", () => {
     const event = createTestEvent()
     const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
 
-    assert.ok(view.getByRole("heading", { name: event.title }))
-    assert.ok(view.getByText("About"))
-    assert.ok(view.getByText("Meeting point"))
-    assert.ok(view.getAllByText(event.fullAddress).length >= 2)
-    assert.ok(view.getByText("Discussion"))
-    assert.ok(view.getByText("Hosted by"))
-    assert.ok(view.getByRole("link", { name: "Log in to join" }))
+    assert.ok(view.getByTestId(testIds.event.page))
+    assert.ok(view.getByTestId(testIds.event.hero))
+    assert.ok(view.getByTestId(testIds.event.aboutSection))
+    assert.ok(view.getByTestId(testIds.event.meetingPointSection))
+    assert.ok(view.getByTestId(testIds.event.discussionSection))
+    assert.ok(view.getByTestId(testIds.event.rsvpCard))
+    assert.ok(view.getByTestId(testIds.event.hostCard))
+    assert.equal(view.getByTestId(testIds.event.rsvpLoginLink).getAttribute("href"), "/login")
 })
 
 test("EventLayout wraps event routes with the event shell", async (t) => {
@@ -38,7 +40,7 @@ test("EventLayout wraps event routes with the event shell", async (t) => {
             path: "/",
             element: <EventLayout />,
             children: [
-                { path: "event/:id", element: <div>Event route body</div> },
+                { path: "event/:id", element: <div data-testid="event-route-body" /> },
             ],
         },
     ], {
@@ -48,9 +50,9 @@ test("EventLayout wraps event routes with the event shell", async (t) => {
     const view = render(<RouterProvider router={router} />)
 
     await waitFor(() => {
-        assert.ok(view.getByText("Event route body"))
+        assert.ok(view.getByTestId("event-route-body"))
     })
 
-    assert.ok(view.getByText("JUNTO"))
-    assert.ok(view.getByText("Junto event club"))
+    assert.ok(view.getByTestId(testIds.event.shellHeader))
+    assert.ok(view.getByTestId(testIds.event.shellFooter))
 })

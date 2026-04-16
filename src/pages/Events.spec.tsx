@@ -13,6 +13,7 @@ import {
     discoverEventTypes,
 } from "@/test/fixtures"
 import { renderWithRouter } from "@/test/render"
+import { testIds } from "@/testIds"
 
 function mockDiscoverApi(
     t: TestContext,
@@ -63,17 +64,22 @@ function StubMap() {
 }
 
 test("Events page renders discover controls and fetched results", async (t) => {
-    mockDiscoverApi(t)
+    const event = createDiscoverEvent()
+
+    mockDiscoverApi(t, { events: [event] })
 
     const view = renderWithRouter(<Events />, { route: "/events" })
 
-    await view.findByRole("heading", { name: "Community Run Club" })
+    await view.findByTestId(testIds.discover.eventCard(event._id))
 
-    assert.ok(view.getByLabelText("Open discover search"))
-    assert.ok(view.getByText("Discover results"))
-    assert.ok(view.getByText("1 event"))
-    assert.ok(view.getByText("Use the workbench above to narrow the list by vibe, timing, or event type."))
-    assert.ok(view.getByRole("link", { name: "View details" }))
+    assert.ok(view.getByTestId(testIds.discover.filterBar))
+    assert.ok(view.getByTestId(testIds.discover.mobileSearchTrigger))
+    assert.ok(view.getByTestId(testIds.discover.resultsHeader))
+    assert.equal(view.getByTestId(testIds.discover.resultsList).children.length, 1)
+    assert.equal(
+        view.getByTestId(testIds.discover.eventDetailsLink(event._id)).getAttribute("href"),
+        `/event/${event._id}`,
+    )
 })
 
 test("DiscoverFilterBar uses a dialog-based mobile search flow", async () => {
@@ -107,14 +113,14 @@ test("DiscoverFilterBar uses a dialog-based mobile search flow", async () => {
         />,
     )
 
-    fireEvent.click(view.getByLabelText("Open discover search"))
+    fireEvent.click(view.getByTestId(testIds.discover.mobileSearchTrigger))
 
     const body = within(document.body)
 
-    assert.ok(body.getByRole("heading", { name: "Search" }))
-    assert.ok(body.getByText("Search nearby"))
+    assert.ok(body.getByTestId(testIds.discover.mobileSearchDialog))
+    assert.ok(body.getByTestId(testIds.discover.mobileNearbyButton))
 
-    fireEvent.click(body.getByRole("button", { name: /search nearby/i }))
+    fireEvent.click(body.getByTestId(testIds.discover.mobileNearbyButton))
 
     await waitFor(() => {
         assert.equal(nearMeClicks, 1)
@@ -142,7 +148,7 @@ test("events map route redirects back to discover page", async (t) => {
 
     const view = render(<RouterProvider router={router} />)
 
-    await view.findByRole("heading", { name: "Community Run Club" })
+    await view.findByTestId(testIds.discover.eventCard("discover-1"))
 
     assert.equal(router.state.location.pathname, "/events")
 })
@@ -171,7 +177,7 @@ test("NearMeModal routes found events to the single-event page", async (t) => {
         },
         {
             path: "/event/:id",
-            element: <div>Event details route</div>,
+            element: <div data-testid="event-details-route" />,
         },
     ], {
         initialEntries: ["/"],
@@ -181,9 +187,9 @@ test("NearMeModal routes found events to the single-event page", async (t) => {
 
     const body = within(document.body)
 
-    fireEvent.click(body.getByRole("button", { name: /use my location/i }))
+    fireEvent.click(body.getByTestId(testIds.discover.nearMeUseLocationButton))
 
-    const eventButton = await body.findByRole("button", { name: /sunset picnic/i })
+    const eventButton = await body.findByTestId(testIds.discover.nearMeResultButton("nearby-1"))
 
     fireEvent.click(eventButton)
 
@@ -191,5 +197,5 @@ test("NearMeModal routes found events to the single-event page", async (t) => {
         assert.equal(router.state.location.pathname, "/event/nearby-1")
     })
 
-    assert.ok(body.getByText("Event details route"))
+    assert.ok(body.getByTestId("event-details-route"))
 })

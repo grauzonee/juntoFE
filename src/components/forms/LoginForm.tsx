@@ -7,6 +7,7 @@ import { Link } from "react-router";
 import { logIn } from "@/requests/auth";
 import { useNavigate } from "react-router";
 import BrutalButton from "@/components/landing/BrutalButton";
+import { testIds } from "@/testIds";
 
 function LoginForm() {
     const navigate = useNavigate()
@@ -25,7 +26,11 @@ function LoginForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 items-stretch">
+            <form
+                data-testid={testIds.auth.loginForm}
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-5 items-stretch"
+            >
                 <FormRootMessage message={form.formState.errors.root?.message} className="mb-1" />
                 <FormField control={form.control} name="email" render={({ field }) => (
                     <FormItem className="gap-2.5">

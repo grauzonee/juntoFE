@@ -1,13 +1,14 @@
 import type { ReactNode } from "react"
 import { Link, useLocation } from "react-router"
 import { cn } from "@/lib/utils"
+import { testIds } from "@/testIds"
 
-interface AuthCardLayoutProps {
+type AuthCardLayoutProps = Readonly<{
     eyebrow: string
     title: string
     description: string
     children: ReactNode
-}
+}>
 
 const tabs = [
     { label: "Log in", href: "/login" },
@@ -40,14 +41,23 @@ export default function AuthCardLayout({ eyebrow, title, description, children }
                 })}
             </div>
 
-            <div className="border-[3px] border-border bg-card px-6 py-7 shadow-[8px_8px_0_0_hsl(var(--border))] md:px-8">
+            <div
+                data-testid={testIds.auth.card}
+                className="border-[3px] border-border bg-card px-6 py-7 shadow-[8px_8px_0_0_hsl(var(--border))] md:px-8"
+            >
                 <p className="mb-3 font-mono text-xs font-bold uppercase tracking-[0.22em] text-violet">
                     {eyebrow}
                 </p>
-                <h2 className="mb-3 max-w-[11ch] font-display text-[clamp(2.1rem,5vw,3.25rem)] font-extrabold leading-[0.92] tracking-[-0.06em]">
+                <h2
+                    data-testid={testIds.auth.title}
+                    className="mb-3 max-w-[11ch] font-display text-[clamp(2.1rem,5vw,3.25rem)] font-extrabold leading-[0.92] tracking-[-0.06em]"
+                >
                     {title}
                 </h2>
-                <p className="mb-8 max-w-md text-base leading-7 text-foreground/70">
+                <p
+                    data-testid={testIds.auth.description}
+                    className="mb-8 max-w-md text-base leading-7 text-foreground/70"
+                >
                     {description}
                 </p>
                 {children}

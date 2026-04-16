@@ -18,6 +18,7 @@ import {
 import { Crosshair, LoaderCircle, MapPinned } from "lucide-react"
 import { useNavigate } from "react-router"
 import type { MapWithGeocoderProps } from "@/components/MapWithGeocoder"
+import { testIds } from "@/testIds"
 
 type NearMeModalProps = {
     open: boolean
@@ -152,6 +153,7 @@ export default function NearMeModal({
 
                         <BrutalButton
                             tone="mint"
+                            data-testid={testIds.discover.nearMeUseLocationButton}
                             className="w-full gap-2"
                             onClick={handleUseMyLocation}
                             disabled={geoLoading}
@@ -204,6 +206,7 @@ export default function NearMeModal({
                                     <button
                                         key={event._id}
                                         type="button"
+                                        data-testid={testIds.discover.nearMeResultButton(event._id)}
                                         onClick={() => handleOpenEvent(event._id)}
                                         className="w-full border-[3px] border-border bg-card p-4 text-left shadow-[4px_4px_0_0_hsl(var(--border))] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet"
                                     >

@@ -4,19 +4,18 @@ import { Menu, X } from "lucide-react"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import BrutalButton from "@/components/landing/BrutalButton"
 import { landingNavItems } from "@/components/landing/landing-data"
-import { isLoggedIn } from "@/helpers/auth"
+import { isLoggedIn, logout } from "@/helpers/auth"
+import { testIds } from "@/testIds"
 
 export default function LandingHeader() {
     const [isOpen, setIsOpen] = useState(false)
     const loggedIn = isLoggedIn()
 
-    function logout() {
-        localStorage.removeItem("token")
-        window.location.reload()
-    }
-
     return (
-        <header className="sticky top-0 z-50 border-b-[3px] border-border bg-cream">
+        <header
+            data-testid={testIds.landing.header}
+            className="sticky top-0 z-50 border-b-[3px] border-border bg-cream"
+        >
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
                 <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 md:px-6">
                     <Link to="/" className="font-display text-3xl font-extrabold tracking-[-0.05em]">
@@ -61,6 +60,7 @@ export default function LandingHeader() {
                         type="button"
                         tone="cream"
                         size="icon"
+                        data-testid={testIds.landing.mobileMenuTrigger}
                         aria-label="Toggle menu"
                         className="h-11 w-11 px-0 md:hidden"
                         onClick={() => setIsOpen((open) => !open)}
@@ -68,8 +68,14 @@ export default function LandingHeader() {
                         {isOpen ? <X /> : <Menu />}
                     </BrutalButton>
                 </div>
-                <CollapsibleContent className="border-t-[3px] border-border bg-cream md:hidden data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2">
-                    <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-6">
+                <CollapsibleContent
+                    data-testid={testIds.landing.mobileMenu}
+                    className="border-t-[3px] border-border bg-cream md:hidden data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2"
+                >
+                    <div
+                        data-testid={testIds.landing.mobileMenuInner}
+                        className="mx-auto w-full max-w-7xl px-4 py-4 md:px-6"
+                    >
                         <nav className="flex flex-col gap-2">
                             {landingNavItems.map((item) => (
                                 <a
