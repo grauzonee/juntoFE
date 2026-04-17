@@ -10,7 +10,7 @@ export default function EventDiscussionSection() {
         >
             <div className="p-5 md:p-7">
                 <EventSectionHeading label="Discussion" />
-                <div className="border-brutal border-border bg-mint-light px-5 py-6 text-center shadow-brutal-sm">
+                <div className="border-2 border-border bg-mint-light px-5 py-6 text-center shadow-brutal-sm">
                     <p className="text-base leading-7 text-foreground/80">
                         Discussion is not connected in the frontend yet. For now, use the event details and host
                         information to coordinate your plans.

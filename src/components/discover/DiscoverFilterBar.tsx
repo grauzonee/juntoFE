@@ -380,7 +380,7 @@ export default function DiscoverFilterBar({
                 {renderMobileDialog()}
             </div>
 
-            <div className="hidden border-brutal border-border bg-card shadow-brutal-lg md:block">
+            <div className="hidden border-2 border-border bg-card shadow-brutal-lg md:block">
                 <div className="flex flex-col gap-3 bg-cream px-4 py-4 xl:flex-row xl:items-center">
                     <div className="relative flex-1">
                         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />

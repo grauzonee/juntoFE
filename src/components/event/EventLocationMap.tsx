@@ -8,7 +8,7 @@ type EventLocationMapProps = {
 
 export default function EventLocationMap({ lat, lng, label }: EventLocationMapProps) {
     return (
-        <div className="overflow-hidden border-brutal border-border shadow-brutal">
+        <div className="overflow-hidden border-2 border-border shadow-brutal">
             <MapContainer
                 center={[lat, lng]}
                 zoom={14}

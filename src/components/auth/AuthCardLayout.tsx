@@ -43,7 +43,7 @@ export default function AuthCardLayout({ eyebrow, title, description, children }
 
             <div
                 data-testid={testIds.auth.card}
-                className="border-brutal border-border bg-card px-6 py-7 shadow-brutal-lg md:px-8"
+                className="border-2 border-border bg-card px-6 py-7 shadow-brutal-lg md:px-8"
             >
                 <p className="mb-3 font-mono text-xs font-bold uppercase tracking-[0.22em] text-violet">
                     {eyebrow}
