@@ -11,7 +11,7 @@ const inputVariants = cva(
                 default:
                     "h-10 rounded-base border-2 bg-secondary-background px-3 py-2 text-sm font-base placeholder:text-foreground/50",
                 auth:
-                    "h-12 rounded-none border-brutal bg-cream px-4 py-2 text-base font-base placeholder:text-foreground/40",
+                    "h-12 rounded-none border-brutal bg-cream px-4 py-2 text-base font-base placeholder:text-foreground/40 focus-visible:ring-0 focus-visible:ring-offset-0",
             },
         },
         defaultVariants: {
