@@ -8,6 +8,7 @@ import { logIn } from "@/requests/auth";
 import { useNavigate } from "react-router";
 import BrutalButton from "@/components/landing/BrutalButton";
 import { testIds } from "@/testIds";
+import { authFormLabelClassName } from "@/components/auth/auth-form-styles";
 
 function LoginForm() {
     const navigate = useNavigate()
@@ -34,14 +35,14 @@ function LoginForm() {
                 <FormRootMessage message={form.formState.errors.root?.message} className="mb-1" />
                 <FormField control={form.control} name="email" render={({ field }) => (
                     <FormItem className="gap-2.5">
-                        <FormLabel className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
+                        <FormLabel className={authFormLabelClassName}>
                             Email
                         </FormLabel>
                         <FormControl>
                             <Input
                                 type="email"
                                 placeholder="you@example.com"
-                                className="h-12 rounded-none border-[3px] bg-cream px-4 text-base placeholder:text-foreground/40"
+                                variant="auth"
                                 {...field}
                             />
                         </FormControl>
@@ -51,14 +52,14 @@ function LoginForm() {
                 )} />
                 <FormField control={form.control} name="password" render={({ field }) => (
                     <FormItem className="gap-2.5">
-                        <FormLabel className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
+                        <FormLabel className={authFormLabelClassName}>
                             Password
                         </FormLabel>
                         <FormControl>
                             <Input
                                 type="password"
                                 placeholder="Enter your password"
-                                className="h-12 rounded-none border-[3px] bg-cream px-4 text-base placeholder:text-foreground/40"
+                                variant="auth"
                                 {...field}
                             />
                         </FormControl>

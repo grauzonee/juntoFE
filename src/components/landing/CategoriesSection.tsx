@@ -3,14 +3,14 @@ import { categories } from "@/components/landing/landing-data"
 
 export default function CategoriesSection() {
     return (
-        <section id="categories" className="border-t-[3px] border-border px-4 py-14 md:px-6">
+        <section id="categories" className="border-t-brutal border-border px-4 py-14 md:px-6">
             <div className="mx-auto max-w-7xl">
                 <SectionHeading eyebrow="Popular categories" />
                 <div className="flex gap-4 overflow-x-auto pb-3">
                     {categories.map((category) => (
                         <article
                             key={category.name}
-                            className={`flex min-h-14 min-w-max items-center gap-3 border-2 border-border px-5 py-4 shadow-[3px_3px_0_0_hsl(var(--border))] transition duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_hsl(var(--border))] ${category.className}`}
+                            className={`flex min-h-14 min-w-max items-center gap-3 border-2 border-border px-5 py-4 shadow-brutal-sm transition duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal ${category.className}`}
                         >
                             <span className="text-2xl" aria-hidden="true">{category.emoji}</span>
                             <span className="flex flex-col">

@@ -20,7 +20,7 @@ export default function EventHero({ event }: EventHeroProps) {
 
     return (
         <section data-testid={testIds.event.hero} className="relative isolate pb-10 md:pb-14">
-            <div className="relative h-[20rem] overflow-hidden border-b-[3px] border-border bg-violet-light sm:h-[24rem] lg:h-[30rem]">
+            <div className="relative h-[20rem] overflow-hidden border-b-brutal border-border bg-violet-light sm:h-[24rem] lg:h-[30rem]">
                 <img
                     src={event.imageUrl}
                     alt={event.title}
@@ -29,7 +29,7 @@ export default function EventHero({ event }: EventHeroProps) {
                 <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,248,231,0.14)_25%,transparent_25%,transparent_50%,rgba(255,248,231,0.14)_50%,rgba(255,248,231,0.14)_75%,transparent_75%,transparent)] bg-[length:22px_22px] opacity-50" />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-transparent" />
                 <div className="absolute bottom-5 left-4 right-4 z-30 mx-auto max-w-7xl md:bottom-7 md:px-2">
-                    <p className="inline-flex border-2 border-border bg-card px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] shadow-[4px_4px_0_0_hsl(var(--border))]">
+                    <p className="inline-flex border-2 border-border bg-card px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] shadow-brutal-sm">
                         Event spotlight
                     </p>
                 </div>

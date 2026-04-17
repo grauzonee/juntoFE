@@ -29,7 +29,7 @@ export default function AuthCardLayout({ eyebrow, title, description, children }
                             key={tab.href}
                             to={tab.href}
                             className={cn(
-                                "relative -mb-0.5 flex-1 border-b-[3px] px-4 py-3 text-center font-heading text-base font-bold transition",
+                                "relative -mb-0.5 flex-1 border-b-brutal px-4 py-3 text-center font-heading text-base font-bold transition",
                                 isActive
                                     ? "border-violet bg-cream text-foreground"
                                     : "border-transparent text-foreground/45 hover:text-foreground",
@@ -43,7 +43,7 @@ export default function AuthCardLayout({ eyebrow, title, description, children }
 
             <div
                 data-testid={testIds.auth.card}
-                className="border-[3px] border-border bg-card px-6 py-7 shadow-[8px_8px_0_0_hsl(var(--border))] md:px-8"
+                className="border-brutal border-border bg-card px-6 py-7 shadow-brutal-lg md:px-8"
             >
                 <p className="mb-3 font-mono text-xs font-bold uppercase tracking-[0.22em] text-violet">
                     {eyebrow}

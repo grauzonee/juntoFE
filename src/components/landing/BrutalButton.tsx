@@ -22,7 +22,7 @@ export default function BrutalButton({
         <Button
             variant={variant}
             className={cn(
-                "min-h-11 rounded-none border-[3px] border-border px-6 py-3 font-heading text-sm font-bold shadow-[6px_6px_0_0_hsl(var(--border))] transition duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_hsl(var(--border))] active:translate-x-1 active:translate-y-1 active:shadow-none",
+                "min-h-11 rounded-none border-brutal border-border px-6 py-3 font-heading text-sm font-bold shadow-brutal transition duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-x-1 active:translate-y-1 active:shadow-none",
                 toneClasses[tone],
                 className,
             )}

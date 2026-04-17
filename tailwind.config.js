@@ -8,6 +8,13 @@ export default {
                 shadow: 'var(--shadow)',
                 accent: 'var(--shadow-accent)',
                 inset: 'var(--inset)',
+                'brutal-sm': '4px 4px 0 0 hsl(var(--border))',
+                brutal: '6px 6px 0 0 hsl(var(--border))',
+                'brutal-lg': '8px 8px 0 0 hsl(var(--border))',
+                'brutal-xl': '10px 10px 0 0 hsl(var(--border))',
+            },
+            borderWidth: {
+                brutal: '3px',
             },
             translate: {
                 boxShadowX: 'var(--shadow-offset)',

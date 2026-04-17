@@ -125,7 +125,7 @@ export default function NearMeModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="left-0 top-0 h-[100svh] w-screen max-h-[100svh] max-w-none translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-0 bg-card p-0 shadow-none [&>button]:right-4 [&>button]:top-4 sm:left-[50%] sm:top-[50%] sm:h-auto sm:w-[94vw] sm:max-h-[92vh] sm:max-w-6xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:border-[3px] sm:shadow-[10px_10px_0_0_hsl(var(--border))] sm:[&>button]:right-5 sm:[&>button]:top-5">
+            <DialogContent className="left-0 top-0 h-[100svh] w-screen max-h-[100svh] max-w-none translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-0 bg-card p-0 shadow-none [&>button]:right-4 [&>button]:top-4 sm:left-[50%] sm:top-[50%] sm:h-auto sm:w-[94vw] sm:max-h-[92vh] sm:max-w-6xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:border-brutal sm:shadow-brutal-xl sm:[&>button]:right-5 sm:[&>button]:top-5">
                 <DialogHeader className="sr-only">
                     <DialogTitle>Near me</DialogTitle>
                     <DialogDescription>Explore events near your location on the map.</DialogDescription>
@@ -172,12 +172,12 @@ export default function NearMeModal({
                                 max={15}
                                 value={radius}
                                 onChange={(event) => setRadius(Math.min(15, Math.max(1, Number(event.target.value) || 1)))}
-                                className="h-11 rounded-none border-[3px] border-border bg-card"
+                                className="h-11 rounded-none border-brutal border-border bg-card"
                             />
                         </div>
 
                         {selectedLocation ? (
-                            <div className="border-[3px] border-border bg-card p-4 shadow-[4px_4px_0_0_hsl(var(--border))]">
+                            <div className="border-brutal border-border bg-card p-4 shadow-brutal-sm">
                                 <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60">
                                     Searching around
                                 </p>
@@ -186,7 +186,7 @@ export default function NearMeModal({
                         ) : null}
 
                         {error ? (
-                            <div className="border-[3px] border-border bg-coral px-4 py-3 text-sm font-semibold text-white">
+                            <div className="border-brutal border-border bg-coral px-4 py-3 text-sm font-semibold text-white">
                                 {error}
                             </div>
                         ) : null}
@@ -198,7 +198,7 @@ export default function NearMeModal({
                             </div>
                             <div className="max-h-56 space-y-3 overflow-y-auto pr-1 lg:max-h-64">
                                 {!loading && events.length === 0 ? (
-                                    <div className="border-[3px] border-dashed border-border bg-card px-4 py-5 text-sm text-foreground/70">
+                                    <div className="border-brutal border-dashed border-border bg-card px-4 py-5 text-sm text-foreground/70">
                                         Pick a location to load nearby events.
                                     </div>
                                 ) : null}
@@ -208,7 +208,7 @@ export default function NearMeModal({
                                         type="button"
                                         data-testid={testIds.discover.nearMeResultButton(event._id)}
                                         onClick={() => handleOpenEvent(event._id)}
-                                        className="w-full border-[3px] border-border bg-card p-4 text-left shadow-[4px_4px_0_0_hsl(var(--border))] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet"
+                                        className="w-full border-brutal border-border bg-card p-4 text-left shadow-brutal-sm transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <div>
@@ -228,7 +228,7 @@ export default function NearMeModal({
                     </div>
 
                     <div className="order-1 shrink-0 bg-violet-light p-1 sm:p-3 md:p-5 lg:order-2">
-                        <div className="h-[19svh] min-h-[10.5rem] overflow-hidden border-[3px] border-border bg-card shadow-[6px_6px_0_0_hsl(var(--border))] sm:h-[28rem] lg:h-[calc(92vh-9rem)] lg:min-h-[30rem]">
+                        <div className="h-[19svh] min-h-[10.5rem] overflow-hidden border-brutal border-border bg-card shadow-brutal sm:h-[28rem] lg:h-[calc(92vh-9rem)] lg:min-h-[30rem]">
                             <Suspense fallback={<div className="h-full w-full bg-card" />}>
                                 <ResolvedMapComponent
                                     value={selectedLocation}

@@ -25,7 +25,7 @@ export default function DiscoverEventCard({
         <article
             data-testid={testIds.discover.eventCard(event._id)}
             className={cn(
-                "overflow-hidden border-[3px] border-border bg-violet-light shadow-[6px_6px_0_0_hsl(var(--border))] transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_hsl(var(--border))] md:bg-card",
+                "overflow-hidden border-brutal border-border bg-violet-light shadow-brutal transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-lg md:bg-card",
                 isList ? "grid gap-0 md:grid-cols-[15rem_minmax(0,1fr)]" : "flex flex-col",
             )}
         >

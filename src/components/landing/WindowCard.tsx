@@ -16,7 +16,7 @@ export default function WindowCard({
 }: WindowCardProps) {
     return (
         <Card
-            variant="default"
+            variant="raised"
             className={cn("gap-0 overflow-hidden rounded-none bg-card py-0", className)}
             {...props}
         >
