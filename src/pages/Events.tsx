@@ -354,7 +354,7 @@ function Events() {
     }
 
     return (
-        <div className="w-full overflow-hidden bg-transparent md:bg-cream md:border-[3px] md:border-border md:shadow-[8px_8px_0_0_hsl(var(--border))]">
+        <div className="w-full overflow-hidden bg-transparent md:border-2 md:border-border md:bg-cream md:shadow-brutal-lg">
             <DiscoverFilterBar
                 count={visibleEvents.length}
                 filters={filters}
@@ -381,19 +381,19 @@ function Events() {
                 {loading ? (
                     <div className="grid gap-6 lg:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, index) => (
-                            <div key={index} className="h-80 animate-pulse border-[3px] border-border bg-violet-light/60" />
+                            <div key={index} className="h-80 animate-pulse border-2 border-border bg-violet-light/60" />
                         ))}
                     </div>
                 ) : null}
 
                 {!loading && error ? (
-                    <div className="border-[3px] border-border bg-coral px-5 py-4 font-semibold text-white">
+                    <div className="border-2 border-border bg-coral px-5 py-4 font-semibold text-white">
                         {error}
                     </div>
                 ) : null}
 
                 {!loading && !error && visibleEvents.length === 0 ? (
-                    <div className="border-[3px] border-dashed border-border bg-card px-6 py-10 text-center">
+                    <div className="border-2 border-dashed border-border bg-card px-6 py-10 text-center">
                         <h2 className="font-display text-4xl font-extrabold tracking-[-0.04em]">
                             Nothing matches those filters yet.
                         </h2>

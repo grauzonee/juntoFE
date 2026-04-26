@@ -39,7 +39,7 @@ export default function LandingHero() {
                     {heroCards.map((card, index) => (
                         <div
                             key={card.title}
-                            className={`absolute w-[10rem] border-[3px] border-border bg-card p-4 shadow-[6px_6px_0_0_hsl(var(--border))] transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_hsl(var(--border))] md:w-[13.75rem] ${card.className}`}
+                            className={`absolute w-[10rem] border-2 border-border bg-card p-4 shadow-brutal transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-lg md:w-[13.75rem] ${card.className}`}
                             style={{ animationDelay: `${index * 120}ms` }}
                         >
                             <div className="mb-3 text-3xl">{card.emoji}</div>

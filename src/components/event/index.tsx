@@ -6,7 +6,7 @@ import EventPage from "@/components/event/EventPage"
 function NotFound() {
     return (
         <div className="mx-auto flex min-h-[60vh] max-w-7xl items-center justify-center px-4 py-16 md:px-6">
-            <div className="border-[3px] border-border bg-card px-8 py-10 text-center shadow-[8px_8px_0_0_hsl(var(--border))]">
+            <div className="border-2 border-border bg-card px-8 py-10 text-center shadow-brutal-lg">
                 <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-violet">404</p>
                 <h1 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.06em]">Event not found</h1>
                 <p className="mt-3 max-w-md text-sm leading-6 text-foreground/70">

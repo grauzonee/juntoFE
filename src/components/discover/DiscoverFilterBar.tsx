@@ -61,6 +61,12 @@ const dateFilters: { value: DiscoverDateFilter; label: string }[] = [
 const controlChipClassName =
     "border-2 border-border px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] transition duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5"
 
+const brutalSelectTriggerClassName =
+    "h-11 rounded-none border-brutal border-border bg-card px-4 text-sm font-semibold text-foreground shadow-none"
+
+const brutalSelectContentClassName =
+    "rounded-none border-brutal border-border bg-card text-foreground"
+
 const filterGroupToneClassNames: Record<NonNullable<FilterGroupProps["tone"]>, string> = {
     cream: "bg-cream",
     yellow: "bg-yellow",
@@ -107,13 +113,13 @@ export default function DiscoverFilterBar({
             <Select value={filters.sort} onValueChange={(value) => onSortChange(value as DiscoverSortOption)}>
                 <SelectTrigger
                     className={cn(
-                        "h-11 rounded-none border-[3px] border-border bg-card px-4 text-sm font-semibold text-foreground shadow-none",
+                        brutalSelectTriggerClassName,
                         className,
                     )}
                 >
                     <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
-                <SelectContent className="rounded-none border-[3px] border-border bg-card text-foreground">
+                <SelectContent className={brutalSelectContentClassName}>
                     <SelectItem value="soonest">Sort: Date (soonest)</SelectItem>
                     <SelectItem value="latest">Sort: Date (latest)</SelectItem>
                 </SelectContent>
@@ -123,12 +129,12 @@ export default function DiscoverFilterBar({
 
     function renderViewToggle(className?: string) {
         return (
-            <div className={cn("inline-flex border-[3px] border-border", className)}>
+            <div className={cn("inline-flex border-brutal border-border", className)}>
                 <button
                     type="button"
                     onClick={() => onViewChange("grid")}
                     className={cn(
-                        "flex flex-1 items-center justify-center gap-2 border-r-[3px] border-border px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] transition lg:flex-none",
+                        "flex flex-1 items-center justify-center gap-2 border-r-brutal border-border px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] transition lg:flex-none",
                         filters.view === "grid" ? "bg-mint-light" : "bg-card hover:bg-cream",
                     )}
                 >
@@ -226,10 +232,10 @@ export default function DiscoverFilterBar({
                     <FilterGroup label="Type" tone="cream">
                         <div className="w-full">
                             <Select value={filters.selectedTypeId} onValueChange={onTypeChange}>
-                                <SelectTrigger className="h-11 rounded-none border-[3px] border-border bg-card px-4 text-sm font-semibold text-foreground shadow-none">
+                                <SelectTrigger className={brutalSelectTriggerClassName}>
                                     <SelectValue placeholder="All Types" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-none border-[3px] border-border bg-card text-foreground">
+                                <SelectContent className={brutalSelectContentClassName}>
                                     <SelectItem value="all">All Types</SelectItem>
                                     {eventTypes.map((type) => (
                                         <SelectItem key={type.id} value={type.id}>
@@ -284,7 +290,7 @@ export default function DiscoverFilterBar({
                 type="button"
                 data-testid={testIds.discover.mobileSearchTrigger}
                 onClick={() => setIsMobileSearchOpen(true)}
-                className="flex w-full items-center gap-3 rounded-[1.25rem] border-2 border-border bg-card px-4 py-3 text-left shadow-[4px_4px_0_0_hsl(var(--border))] transition active:translate-y-0.5 active:shadow-none"
+                className="flex w-full items-center gap-3 rounded-[1.25rem] border-2 border-border bg-card px-4 py-3 text-left shadow-brutal-sm transition active:translate-y-0.5 active:shadow-none"
                 aria-label="Open discover search"
             >
                 <Search className="size-4 shrink-0 text-foreground/60" />
@@ -324,7 +330,7 @@ export default function DiscoverFilterBar({
                                     value={filters.search}
                                     onChange={(event) => onSearchChange(event.target.value)}
                                     placeholder="Search events..."
-                                    className="h-12 rounded-[1rem] border-[3px] border-border bg-card pl-11 pr-4 text-base shadow-none"
+                                    className="h-12 rounded-[1rem] border-brutal border-border bg-card pl-11 pr-4 text-base shadow-none"
                                     autoFocus
                                 />
                             </div>
@@ -367,14 +373,14 @@ export default function DiscoverFilterBar({
         <section
             data-discover-filter-bar
             data-testid={testIds.discover.filterBar}
-            className="sticky top-0 z-20 bg-transparent px-3 py-3 md:border-b-[3px] md:border-border md:bg-cream/95 md:px-6 md:py-5 md:backdrop-blur"
+            className="sticky top-0 z-20 bg-transparent px-3 py-3 md:border-b-brutal md:border-border md:bg-cream/95 md:px-6 md:py-5 md:backdrop-blur"
         >
             <div className="md:hidden">
                 {renderMobileSearchTrigger()}
                 {renderMobileDialog()}
             </div>
 
-            <div className="hidden border-[3px] border-border bg-card shadow-[8px_8px_0_0_hsl(var(--border))] md:block">
+            <div className="hidden border-2 border-border bg-card shadow-brutal-lg md:block">
                 <div className="flex flex-col gap-3 bg-cream px-4 py-4 xl:flex-row xl:items-center">
                     <div className="relative flex-1">
                         <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />
@@ -382,7 +388,7 @@ export default function DiscoverFilterBar({
                             value={filters.search}
                             onChange={(event) => onSearchChange(event.target.value)}
                             placeholder="Search by title, place, or vibe"
-                            className="h-12 rounded-none border-[3px] border-border bg-card pl-11 pr-4 text-base shadow-none"
+                            className="h-12 rounded-none border-brutal border-border bg-card pl-11 pr-4 text-base shadow-none"
                         />
                     </div>
 
@@ -398,7 +404,7 @@ export default function DiscoverFilterBar({
 
                 {renderRefinementBody()}
 
-                <div className="border-t-[3px] border-border bg-violet-light px-4 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
+                <div className="border-t-brutal border-border bg-violet-light px-4 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">
                     {count} {count === 1 ? "event" : "events"} in play
                 </div>
             </div>

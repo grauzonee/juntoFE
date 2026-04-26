@@ -19,7 +19,7 @@ export default function EventHostCard({ event }: EventHostCardProps) {
         >
             <div className="p-5 md:p-6">
                 <EventSectionHeading label="Hosted by" />
-                <Avatar className="h-20 w-20 border-[3px] border-border bg-card">
+                <Avatar className="h-20 w-20 border-brutal border-border bg-card">
                     <AvatarImage src={event.author.avatarUrl} alt={event.author.username} className="object-cover" />
                     <AvatarFallback className="bg-card font-display text-2xl font-extrabold">
                         {getUserInitials(event.author.username)}

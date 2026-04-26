@@ -24,7 +24,7 @@ const showcaseCards = [
 
 export default function AuthShowcase() {
     return (
-        <div className="relative hidden min-h-screen overflow-hidden border-r-[3px] border-border bg-violet px-10 py-16 text-card lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-center">
+        <div className="relative hidden min-h-screen overflow-hidden border-r-brutal border-border bg-violet px-10 py-16 text-card lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-center">
             <div className="relative z-10 max-w-xl">
                 <p className="mb-4 font-mono text-xs font-bold uppercase tracking-[0.24em] text-card/80">
                     Find your circle
@@ -40,7 +40,7 @@ export default function AuthShowcase() {
             {showcaseCards.map((card) => (
                 <article
                     key={card.title}
-                    className={`absolute z-10 w-44 border-2 border-border px-4 py-3 text-foreground shadow-[4px_4px_0_rgba(0,0,0,0.35)] xl:w-48 ${card.cardClassName} ${card.className}`}
+                    className={`absolute z-10 w-44 border-2 border-border px-4 py-3 text-foreground shadow-brutal-sm xl:w-48 ${card.cardClassName} ${card.className}`}
                 >
                     <h3 className="mb-1 font-heading text-sm font-bold">{card.title}</h3>
                     <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-foreground/55">
@@ -52,7 +52,7 @@ export default function AuthShowcase() {
                 </article>
             ))}
 
-            <div className="absolute right-[14%] top-[10%] z-0 h-16 w-16 rounded-full border-[3px] border-card/30" />
+            <div className="absolute right-[14%] top-[10%] z-0 h-16 w-16 rounded-full border-brutal border-card/30" />
             <div className="absolute bottom-[20%] right-[28%] z-0 h-10 w-10 rounded-full bg-yellow/50" />
             <div className="absolute left-[5%] top-[32%] z-0 h-6 w-20 rotate-12 border-b-[3px] border-mint-light/80" />
             <div className="absolute bottom-[10%] right-[10%] z-0 grid grid-cols-4 gap-2">
