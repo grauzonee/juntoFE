@@ -122,6 +122,8 @@ function MapWithGeocoder({ value, onChange, markers = [], height = "400px" }: Ma
         <MapContainer
             center={[value?.coordinates.lat || 48.2082, value?.coordinates.lng || 16.3738]}
             zoom={13}
+            className="z-0"
+            scrollWheelZoom={false}
             style={{ height, width: "100%" }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
