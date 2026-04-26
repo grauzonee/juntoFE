@@ -29,8 +29,8 @@ export default function EventHero({ event }: EventHeroProps) {
                 <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,248,231,0.14)_25%,transparent_25%,transparent_50%,rgba(255,248,231,0.14)_50%,rgba(255,248,231,0.14)_75%,transparent_75%,transparent)] bg-[length:22px_22px] opacity-50" />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-transparent" />
                 <div className="absolute bottom-5 left-4 right-4 z-30 mx-auto max-w-7xl md:bottom-7 md:px-2">
-                    <p className="inline-flex border-2 border-border bg-card px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] shadow-brutal-sm">
-                        Event spotlight
+                    <p className="inline-flex border-2 border-border bg-yellow px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] shadow-brutal-sm">
+                        {event.type.title}
                     </p>
                 </div>
             </div>
@@ -43,23 +43,26 @@ export default function EventHero({ event }: EventHeroProps) {
                                 {event.title}
                             </h1>
 
-                            <div className="mt-5 flex flex-wrap gap-3">
-                                <PillBadge tone="white" className="px-4 py-2">
-                                    {event.type.title}
-                                </PillBadge>
-                                <PillBadge tone="yellow" className="px-4 py-2">
-                                    {formatEventDateBadge(event.date)}
-                                </PillBadge>
-                                <PillBadge tone="mint" className="px-4 py-2">
-                                    {formatEventFee(event)}
-                                </PillBadge>
-                            </div>
-
                             {excerpt ? (
                                 <p className="mt-5 max-w-3xl text-base leading-7 text-foreground/75 md:text-lg">
                                     {excerpt}
                                 </p>
                             ) : null}
+
+                            <div className="mt-5">
+                                <PillBadge tone="yellow" className="w-full px-4 py-2 text-center sm:w-fit">
+                                    {formatEventDateBadge(event.date)}
+                                </PillBadge>
+                            </div>
+
+                            <div className="mt-5">
+                                <PillBadge
+                                    tone="mint"
+                                    className="w-full border-brutal px-4 py-3 text-center font-display text-lg font-extrabold tracking-normal shadow-brutal-sm sm:w-fit sm:border-2 sm:py-2 sm:font-mono sm:text-[10px] sm:tracking-[0.18em] sm:shadow-none"
+                                >
+                                    {formatEventFee(event)}
+                                </PillBadge>
+                            </div>
                         </div>
 
                         <div className="mt-6 flex flex-wrap gap-3">
