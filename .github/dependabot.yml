@@ -5,7 +5,3 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
-    groups:
-      npm-dependencies:
-        patterns:
-          - "*"

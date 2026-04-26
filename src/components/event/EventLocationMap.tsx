@@ -8,11 +8,14 @@ type EventLocationMapProps = {
 
 export default function EventLocationMap({ lat, lng, label }: EventLocationMapProps) {
     return (
-        <div className="overflow-hidden border-2 border-border shadow-brutal">
+        <div className="relative z-0 overflow-hidden border-2 border-border shadow-brutal">
             <MapContainer
                 center={[lat, lng]}
                 zoom={14}
+                className="z-0"
+                dragging={false}
                 scrollWheelZoom={false}
+                touchZoom={false}
                 style={{ height: "18rem", width: "100%" }}
             >
                 <TileLayer

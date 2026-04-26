@@ -39,7 +39,7 @@ export default function EventHero({ event }: EventHeroProps) {
                 <WindowCard titlebarLabel="Event details" className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-6 motion-safe:duration-500">
                     <div className="px-5 py-6 md:px-8 md:py-8">
                         <div>
-                            <h1 className="max-w-4xl font-display text-[2.2rem] font-extrabold leading-[0.95] tracking-[-0.08em] sm:text-5xl lg:text-[4rem]">
+                            <h1 className="max-w-full break-words font-display text-[2rem] font-extrabold leading-none tracking-normal [overflow-wrap:anywhere] sm:max-w-4xl sm:text-5xl lg:text-[4rem]">
                                 {event.title}
                             </h1>
 
