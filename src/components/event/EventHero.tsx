@@ -1,6 +1,6 @@
 import type { Event } from "@/types/Event"
-import WindowCard from "@/components/landing/WindowCard"
-import PillBadge from "@/components/landing/PillBadge"
+import WindowCard from "@/components/ui/window-card"
+import PillBadge from "@/components/ui/pill-badge"
 import {
     formatEventDateBadge,
     formatEventFee,

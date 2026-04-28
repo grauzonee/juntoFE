@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react"
-import BrutalButton from "@/components/landing/BrutalButton"
+import BrutalButton from "@/components/ui/brutal-button"
 import {
     Dialog,
     DialogContent,

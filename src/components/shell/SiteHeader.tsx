@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link } from "react-router"
 import { Menu, X } from "lucide-react"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
-import BrutalButton from "@/components/landing/BrutalButton"
+import BrutalButton from "@/components/ui/brutal-button"
 import { isLoggedIn, logout } from "@/helpers/auth"
 import { cn } from "@/lib/utils"
 

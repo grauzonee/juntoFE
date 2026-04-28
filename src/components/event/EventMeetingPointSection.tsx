@@ -1,5 +1,5 @@
 import type { Event } from "@/types/Event"
-import WindowCard from "@/components/landing/WindowCard"
+import WindowCard from "@/components/ui/window-card"
 import EventSectionHeading from "@/components/event/EventSectionHeading"
 import EventLocationMap from "@/components/event/EventLocationMap"
 import {
