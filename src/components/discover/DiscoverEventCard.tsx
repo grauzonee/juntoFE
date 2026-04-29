@@ -1,5 +1,5 @@
 import { Link } from "react-router"
-import PillBadge from "@/components/landing/PillBadge"
+import PillBadge from "@/components/ui/pill-badge"
 import { cn } from "@/lib/utils"
 import type { DiscoverEvent, DiscoverViewMode } from "@/types/discover"
 import { formatDiscoverDate, formatDiscoverFee } from "@/components/discover/discover-utils"

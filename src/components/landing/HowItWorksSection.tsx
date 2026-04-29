@@ -1,5 +1,5 @@
 import SectionHeading from "@/components/landing/SectionHeading"
-import WindowCard from "@/components/landing/WindowCard"
+import WindowCard from "@/components/ui/window-card"
 import { howItWorksItems } from "@/components/landing/landing-data"
 
 export default function HowItWorksSection() {

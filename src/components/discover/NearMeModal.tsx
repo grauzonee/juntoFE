@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState, type ComponentType } from "react"
-import BrutalButton from "@/components/landing/BrutalButton"
+import BrutalButton from "@/components/ui/brutal-button"
 import {
     Dialog,
     DialogContent,

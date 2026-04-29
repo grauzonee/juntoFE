@@ -1,10 +1,7 @@
 import type {
-    CategoryItem,
-    FeaturedEventItem,
     FloatingCardItem,
     HowItWorksItem,
     LandingNavItem,
-    StatItem,
 } from "@/types/landing"
 
 export const landingNavItems: LandingNavItem[] = [
@@ -62,52 +59,4 @@ export const howItWorksItems: HowItWorksItem[] = [
         emoji: "✨",
         bodyClassName: "bg-violet-light",
     },
-]
-
-export const featuredEvents: FeaturedEventItem[] = [
-    {
-        title: "Creative Mornings Sketch Club",
-        date: "Saturday, 10:00 AM",
-        location: "Neubau, Vienna",
-        priceLabel: "Free",
-        category: "Art",
-        attendees: "18 people going",
-        emoji: "🎨",
-        imageClassName: "bg-violet-light",
-    },
-    {
-        title: "Rooftop Sunset Yoga Flow",
-        date: "Sunday, 6:30 PM",
-        location: "Leopoldstadt, Vienna",
-        priceLabel: "Paid",
-        category: "Wellbeing",
-        attendees: "24 people going",
-        emoji: "🌇",
-        imageClassName: "bg-mint-light",
-    },
-    {
-        title: "Late Night Vinyl Exchange",
-        date: "Friday, 8:00 PM",
-        location: "Margareten, Vienna",
-        priceLabel: "Free",
-        category: "Music",
-        attendees: "31 people going",
-        emoji: "🎧",
-        imageClassName: "bg-yellow",
-    },
-]
-
-export const categories: CategoryItem[] = [
-    { name: "Art & Design", countLabel: "120+ gatherings", emoji: "🎨", className: "bg-violet-light" },
-    { name: "Games", countLabel: "80+ meetups", emoji: "🎲", className: "bg-mint-light" },
-    { name: "Fitness", countLabel: "150+ sessions", emoji: "🏃", className: "bg-yellow" },
-    { name: "Foodies", countLabel: "60+ tastings", emoji: "🍜", className: "bg-coral" },
-    { name: "Music", countLabel: "90+ jams", emoji: "🎵", className: "bg-violet-light" },
-    { name: "Outdoors", countLabel: "70+ adventures", emoji: "⛰️", className: "bg-mint-light" },
-]
-
-export const stats: StatItem[] = [
-    { value: "12K+", label: "members finding their people" },
-    { value: "430+", label: "events hosted each month" },
-    { value: "28", label: "cities with active communities" },
 ]
