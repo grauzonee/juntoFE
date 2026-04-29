@@ -13,7 +13,7 @@ export default function WindowCard({
     titlebarLabel,
     bodyClassName,
     ...props
-}: WindowCardProps) {
+}: Readonly<WindowCardProps>) {
     return (
         <Card
             variant="raised"

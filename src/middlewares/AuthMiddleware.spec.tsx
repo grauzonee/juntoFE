@@ -11,7 +11,7 @@ function makeToken(exp: number) {
 }
 
 test("guestLoader redirects logged-in users to discover events", () => {
-    window.localStorage.setItem("token", makeToken(Math.floor(Date.now() / 1000) + 3600))
+    globalThis.localStorage.setItem("token", makeToken(Math.floor(Date.now() / 1000) + 3600))
 
     try {
         guestLoader()
