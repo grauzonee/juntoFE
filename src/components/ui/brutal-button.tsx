@@ -17,7 +17,7 @@ export default function BrutalButton({
     tone = "cream",
     variant = "noShadow",
     ...props
-}: BrutalButtonProps) {
+}: Readonly<BrutalButtonProps>) {
     return (
         <Button
             variant={variant}

@@ -2,8 +2,8 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router"
 import { toast } from "sonner"
 import type { Event } from "@/types/Event"
-import WindowCard from "@/components/landing/WindowCard"
-import BrutalButton from "@/components/landing/BrutalButton"
+import WindowCard from "@/components/ui/window-card"
+import BrutalButton from "@/components/ui/brutal-button"
 import {
     createEventRsvp,
     type EventRsvpStatus,

@@ -3,7 +3,7 @@ import { redirect } from "react-router";
 
 export function guestLoader() {
     if (isLoggedIn()) {
-        throw redirect("/");
+        throw redirect("/events");
     }
     return null;
 }

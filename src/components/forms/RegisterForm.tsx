@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { FormField, FormControl, FormLabel, FormMessage, FormItem, Form, FormRootMessage } from "@/components/ui/form";
 import { Link, useNavigate } from "react-router";
 import { signUp } from "@/requests/auth";
-import BrutalButton from "@/components/landing/BrutalButton";
+import BrutalButton from "@/components/ui/brutal-button";
 import { testIds } from "@/testIds";
 import { authFormLabelClassName } from "@/components/auth/auth-form-styles";
 

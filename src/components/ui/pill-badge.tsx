@@ -12,7 +12,7 @@ const toneClasses: Record<NonNullable<PillBadgeProps["tone"]>, string> = {
     white: "bg-card",
 }
 
-export default function PillBadge({ className, tone = "white", ...props }: PillBadgeProps) {
+export default function PillBadge({ className, tone = "white", ...props }: Readonly<PillBadgeProps>) {
     return (
         <Badge
             className={cn(

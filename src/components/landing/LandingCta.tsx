@@ -1,5 +1,5 @@
 import { Link } from "react-router"
-import BrutalButton from "@/components/landing/BrutalButton"
+import BrutalButton from "@/components/ui/brutal-button"
 
 export default function LandingCta() {
     return (

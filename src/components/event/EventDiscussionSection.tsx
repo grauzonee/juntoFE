@@ -1,4 +1,4 @@
-import WindowCard from "@/components/landing/WindowCard"
+import WindowCard from "@/components/ui/window-card"
 import EventSectionHeading from "@/components/event/EventSectionHeading"
 import { testIds } from "@/testIds"
 
