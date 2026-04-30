@@ -1,5 +1,20 @@
 import { afterEach } from "node:test"
+import { registerHooks } from "node:module"
 import { JSDOM } from "jsdom"
+
+registerHooks({
+    load(url, context, nextLoad) {
+        if (url.endsWith(".png")) {
+            return {
+                format: "module",
+                shortCircuit: true,
+                source: `export default ${JSON.stringify(new URL(url).pathname)}`,
+            }
+        }
+
+        return nextLoad(url, context)
+    },
+})
 
 const { window: domWindow } = new JSDOM("<!doctype html><html><body></body></html>", {
     url: "http://localhost",

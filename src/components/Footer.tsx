@@ -1,8 +1,15 @@
-import { Mail } from 'lucide-react';
+import { Mail } from "lucide-react"
 
-function Footer() {
+type FooterProps = {
+    dataTestId?: string
+}
+
+function Footer({ dataTestId }: FooterProps) {
     return (
-        <div className="h-[15rem] bg-gray-900 w-full flex flex-col md:flex-row justify-evenly text-primary-foreground/40 pt-5">
+        <div
+            data-testid={dataTestId}
+            className="h-[15rem] bg-gray-900 w-full flex flex-col md:flex-row justify-evenly text-primary-foreground/40 pt-5"
+        >
             <div className="flex flex-col gap-4">
 
                 <div className="flex flex-col gap-2">
@@ -13,7 +20,7 @@ function Footer() {
                     <p className="font-bold">Find me</p>
                     <a href="https://github.com/grauzonee">Github</a>
                     <a href="https://www.linkedin.com/in/tatiana-goloviznina-951b43255/">Linkedin</a>
-                    <span className='block flex flex-row gap-2'><Mail />trake1524@gmail.com</span>
+                    <span className="block flex flex-row gap-2"><Mail />trake1524@gmail.com</span>
                 </div>
             </div>
             <div className="flex flex-col gap-2">

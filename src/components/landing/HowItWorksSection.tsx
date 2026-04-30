@@ -4,7 +4,7 @@ import { howItWorksItems } from "@/components/landing/landing-data"
 
 export default function HowItWorksSection() {
     return (
-        <section id="how-it-works" className="border-y-[3px] border-border bg-violet-light px-4 py-14 md:px-6">
+        <section id="how-it-works" className="bg-violet-light px-4 py-14 md:px-6">
             <div className="mx-auto max-w-7xl">
                 <SectionHeading eyebrow="How it works" />
                 <div className="grid gap-7 lg:grid-cols-3">
