@@ -1,4 +1,5 @@
 import { startTransition, useDeferredValue, useEffect, useRef, useState } from "react"
+import { useSearchParams } from "react-router"
 import DiscoverEventCard from "@/components/discover/DiscoverEventCard"
 import DiscoverFilterBar from "@/components/discover/DiscoverFilterBar"
 import DiscoverResultsHeader from "@/components/discover/DiscoverResultsHeader"
@@ -38,7 +39,11 @@ const activeDateFilterLabels: Record<Exclude<DiscoverDateFilter, "all">, string>
 const mobileSnapVisibilityThreshold = 0.15
 
 function Events() {
-    const [filters, setFilters] = useState<DiscoverFilters>(defaultFilters)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [filters, setFilters] = useState<DiscoverFilters>({
+        ...defaultFilters,
+        search: searchParams.get("search") ?? defaultFilters.search,
+    })
     const [events, setEvents] = useState<DiscoverEvent[]>([])
     const [categories, setCategories] = useState<DiscoverCategoryOption[]>([])
     const [eventTypes, setEventTypes] = useState<DiscoverEventTypeOption[]>([])
@@ -50,6 +55,18 @@ function Events() {
     const scrollDirectionRef = useRef<"up" | "down">("down")
 
     const deferredSearch = useDeferredValue(filters.search)
+
+    useEffect(() => {
+        const nextSearch = searchParams.get("search") ?? ""
+
+        setFilters((currentFilters) => {
+            if (currentFilters.search === nextSearch) {
+                return currentFilters
+            }
+
+            return { ...currentFilters, search: nextSearch }
+        })
+    }, [searchParams])
 
     useEffect(() => {
         let ignore = false
@@ -323,9 +340,23 @@ function Events() {
         setFilters((currentFilters) => ({ ...currentFilters, ...nextValue }))
     }
 
+    function updateSearch(value: string) {
+        updateFilters({ search: value })
+
+        const nextParams = new URLSearchParams(searchParams)
+
+        if (value.trim()) {
+            nextParams.set("search", value)
+        } else {
+            nextParams.delete("search")
+        }
+
+        setSearchParams(nextParams, { replace: true })
+    }
+
     function clearFilter(id: string) {
         if (id === "search") {
-            updateFilters({ search: "" })
+            updateSearch("")
             return
         }
 
@@ -345,6 +376,10 @@ function Events() {
     }
 
     function clearAllFilters() {
+        const nextParams = new URLSearchParams(searchParams)
+        nextParams.delete("search")
+        setSearchParams(nextParams, { replace: true })
+
         updateFilters({
             search: "",
             selectedTypeId: "all",
@@ -361,7 +396,7 @@ function Events() {
                 activeFilters={activeFilters}
                 categories={categories}
                 eventTypes={eventTypes}
-                onSearchChange={(value) => updateFilters({ search: value })}
+                onSearchChange={updateSearch}
                 onTypeChange={(value) => updateFilters({ selectedTypeId: value })}
                 onDateFilterChange={(value) => updateFilters({ selectedDateFilter: value })}
                 onCategoryChange={(value) => updateFilters({ selectedCategoryId: value })}

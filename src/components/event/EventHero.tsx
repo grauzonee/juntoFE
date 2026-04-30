@@ -19,7 +19,7 @@ export default function EventHero({ event }: EventHeroProps) {
     const excerpt = splitEventDescription(event.description)[0]
 
     return (
-        <section data-testid={testIds.event.hero} className="relative isolate pb-10 md:pb-14">
+        <section data-testid={testIds.event.hero} className="relative isolate px-4 pb-10 pt-4 md:px-6 md:pb-14 md:pt-6">
             <div className="relative h-[20rem] overflow-hidden border-b-brutal border-border bg-violet-light sm:h-[24rem] lg:h-[30rem]">
                 <img
                     src={event.imageUrl}
@@ -35,7 +35,7 @@ export default function EventHero({ event }: EventHeroProps) {
                 </div>
             </div>
 
-            <div className="relative z-20 mx-auto -mt-10 max-w-7xl px-4 md:-mt-16 md:px-6">
+            <div className="relative z-20 mx-auto -mt-10 max-w-7xl md:-mt-16">
                 <WindowCard titlebarLabel="Event details" className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-6 motion-safe:duration-500">
                     <div className="px-5 py-6 md:px-8 md:py-8">
                         <div>

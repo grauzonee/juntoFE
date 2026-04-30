@@ -388,7 +388,7 @@ export default function DiscoverFilterBar({
                             value={filters.search}
                             onChange={(event) => onSearchChange(event.target.value)}
                             placeholder="Search by title, place, or vibe"
-                            className="h-12 rounded-none border-brutal border-border bg-card pl-11 pr-4 text-base shadow-none"
+                            className="h-12 rounded-none border-brutal border-border bg-card pl-11 pr-4 text-base font-semibold shadow-brutal-sm"
                         />
                     </div>
 
