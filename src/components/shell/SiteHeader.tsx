@@ -1,23 +1,35 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import { Menu, X } from "lucide-react"
+import { Menu, Search, X } from "lucide-react"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
+import { Input } from "@/components/ui/input"
 import BrutalButton from "@/components/ui/brutal-button"
 import { isLoggedIn, logout } from "@/helpers/auth"
 import { cn } from "@/lib/utils"
+import mainLogo from "@/assets/logo.png"
 
 type HeaderNavItem =
     | { label: string; href: string; to?: never }
     | { label: string; to: string; href?: never }
 
 type SiteHeaderProps = {
-    navItems: HeaderNavItem[]
+    navItems?: HeaderNavItem[]
     dataTestId?: string
     mobileMenuTriggerTestId?: string
     mobileMenuTestId?: string
     mobileMenuInnerTestId?: string
     mobileMenuVariant?: "full" | "dropdown"
+    sticky?: boolean
+    search?: {
+        value: string
+        onChange: (value: string) => void
+        placeholder?: string
+    }
     className?: string
+}
+
+type HeaderSearchProps = NonNullable<SiteHeaderProps["search"]> & {
+    inputClassName?: string
 }
 
 const navLinkClassName =
@@ -27,12 +39,14 @@ const mobileNavLinkClassName =
     "border-2 border-transparent px-4 py-3 font-heading font-bold transition hover:border-border hover:bg-violet-light"
 
 export default function SiteHeader({
-    navItems,
+    navItems = [],
     dataTestId,
     mobileMenuTriggerTestId,
     mobileMenuTestId,
     mobileMenuInnerTestId,
     mobileMenuVariant = "full",
+    sticky = true,
+    search,
     className,
 }: SiteHeaderProps) {
     const [isOpen, setIsOpen] = useState(false)
@@ -47,17 +61,31 @@ export default function SiteHeader({
     return (
         <header
             data-testid={dataTestId}
-            className={cn("sticky top-0 z-50 border-b-brutal border-border bg-cream", className)}
+            className={cn(
+                "z-50 border-b-brutal border-border bg-background/95 backdrop-blur",
+                sticky && "sticky top-0",
+                className,
+            )}
         >
             <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn(isDropdown && "relative")}>
-                <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 md:px-6">
-                    <Link to="/" className="font-display text-3xl font-extrabold tracking-[-0.05em]">
-                        JUNTO
+                <div className="mx-auto flex min-h-20 w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6">
+                    <Link to="/" className="flex shrink-0 items-center" aria-label="Junto home">
+                        <span className="flex size-16 overflow-hidden rounded-full">
+                            <img src={mainLogo} className="size-full object-cover" alt="" />
+                        </span>
                     </Link>
 
-                    <nav className="hidden items-center gap-1 md:flex">
-                        {navItems.map((item) => renderNavItem(item, navLinkClassName))}
-                    </nav>
+                    {navItems.length > 0 ? (
+                        <nav className="hidden items-center gap-1 md:flex">
+                            {navItems.map((item) => renderNavItem(item, navLinkClassName))}
+                        </nav>
+                    ) : null}
+
+                    {search ? (
+                        <div className="hidden min-w-0 flex-1 md:block">
+                            <HeaderSearch {...search} inputClassName="shadow-brutal-sm" />
+                        </div>
+                    ) : null}
 
                     <div className="hidden items-center gap-3 md:flex">
                         {loggedIn ? (
@@ -99,8 +127,8 @@ export default function SiteHeader({
                     className={cn(
                         "md:hidden data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2",
                         isDropdown
-                            ? "absolute right-4 top-full mt-2 w-[16rem] border-brutal border-border bg-cream p-4 shadow-brutal-lg"
-                            : "border-t-brutal border-border bg-cream",
+                            ? "absolute right-4 top-full mt-2 w-[16rem] border-brutal border-border bg-background p-4 shadow-brutal-lg"
+                            : "border-t-brutal border-border bg-background",
                     )}
                 >
                     <div
@@ -113,6 +141,9 @@ export default function SiteHeader({
                                 mobileNavLinkClassName,
                                 () => setIsOpen(false),
                             ))}
+                            {search ? (
+                                <HeaderSearch {...search} />
+                            ) : null}
                             <div className="mt-2 grid grid-cols-1 gap-3 border-t-2 border-border pt-3">
                                 {loggedIn ? (
                                     <>
@@ -139,6 +170,29 @@ export default function SiteHeader({
                 </CollapsibleContent>
             </Collapsible>
         </header>
+    )
+}
+
+function HeaderSearch({
+    value,
+    onChange,
+    placeholder = "Search events",
+    inputClassName,
+}: HeaderSearchProps) {
+    return (
+        <label className="relative block">
+            <span className="sr-only">{placeholder}</span>
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />
+            <Input
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                placeholder={placeholder}
+                className={cn(
+                    "h-12 rounded-none border-brutal border-border bg-cream pl-11 pr-4 text-base font-semibold shadow-none",
+                    inputClassName,
+                )}
+            />
+        </label>
     )
 }
 

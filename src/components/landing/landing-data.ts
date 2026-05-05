@@ -5,7 +5,7 @@ import type {
 } from "@/types/landing"
 
 export const landingNavItems: LandingNavItem[] = [
-    { label: "Discover", href: "#discover" },
+    { label: "Discover", to: "/events" },
     { label: "How it works", href: "#how-it-works" },
     { label: "Categories", href: "#categories" },
 ]

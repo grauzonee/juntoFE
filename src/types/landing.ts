@@ -1,7 +1,6 @@
-export interface LandingNavItem {
-    label: string
-    href: string
-}
+export type LandingNavItem =
+    | { label: string; href: string; to?: never }
+    | { label: string; to: string; href?: never }
 
 export interface FloatingCardItem {
     title: string

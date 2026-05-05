@@ -4,7 +4,7 @@ import { heroCards } from "@/components/landing/landing-data"
 
 export default function LandingHero() {
     return (
-        <section className="overflow-hidden px-4 py-12 md:px-6 md:py-20">
+        <section className="mx-auto w-[calc(100%-2rem)] max-w-7xl overflow-hidden border-x-brutal border-y-brutal border-border bg-cream px-4 py-12 md:w-[calc(100%-3rem)] md:px-6 md:py-20 lg:w-[calc(100%-5rem)]">
             <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_32rem] lg:items-center lg:gap-16">
                 <div className="max-w-2xl animate-in fade-in slide-in-from-bottom-6 duration-500">
                     <p className="mb-4 font-mono text-xs font-bold uppercase tracking-[0.24em] text-violet">

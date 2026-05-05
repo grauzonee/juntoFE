@@ -1,14 +1,17 @@
 import { Outlet } from "react-router"
 import { Link } from "react-router"
 import AuthShowcase from "@/components/auth/AuthShowcase"
+import mainLogo from "@/assets/logo.png"
 
 function AuthLayout() {
     return (
         <div className="min-h-screen bg-cream">
             <header className="border-b-[3px] border-border bg-cream">
-                <div className="mx-auto flex h-16 max-w-7xl items-center px-4 md:px-6">
-                    <Link to="/" className="font-display text-3xl font-extrabold tracking-[-0.05em]">
-                        JUNTO
+                <div className="flex h-20 items-center px-5 md:px-8">
+                    <Link to="/" className="flex items-center" aria-label="Junto home">
+                        <span className="flex size-20 overflow-hidden rounded-full">
+                            <img src={mainLogo} className="size-full object-cover" alt="" />
+                        </span>
                     </Link>
                 </div>
             </header>

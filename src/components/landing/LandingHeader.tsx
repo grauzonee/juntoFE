@@ -10,6 +10,7 @@ export default function LandingHeader() {
             mobileMenuTriggerTestId={testIds.landing.mobileMenuTrigger}
             mobileMenuTestId={testIds.landing.mobileMenu}
             mobileMenuInnerTestId={testIds.landing.mobileMenuInner}
+            sticky={false}
         />
     )
 }
