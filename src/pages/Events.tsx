@@ -1,4 +1,4 @@
-import { startTransition, useDeferredValue, useEffect, useRef, useState } from "react"
+import { useDeferredValue, useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import DiscoverEventCard from "@/components/discover/DiscoverEventCard"
 import DiscoverFilterBar from "@/components/discover/DiscoverFilterBar"
@@ -9,13 +9,11 @@ import {
     getDiscoverCategoryTitleById,
     getDiscoverTypeTitle,
 } from "@/components/discover/discover-utils"
-import { fetchDiscoverCategories, fetchDiscoverEvents, fetchDiscoverEventTypes } from "@/requests/discover"
+import { useDiscoverCategories, useDiscoverEventTypes } from "@/hooks/event/useDiscoverEventMetadata"
+import { useDiscoverEvents } from "@/hooks/event/useDiscoverEvents"
 import type {
     DiscoverActiveFilter,
-    DiscoverCategoryOption,
     DiscoverDateFilter,
-    DiscoverEvent,
-    DiscoverEventTypeOption,
     DiscoverFilters,
 } from "@/types/discover"
 import { testIds } from "@/testIds"
@@ -44,17 +42,27 @@ function Events() {
         ...defaultFilters,
         search: searchParams.get("search") ?? defaultFilters.search,
     })
-    const [events, setEvents] = useState<DiscoverEvent[]>([])
-    const [categories, setCategories] = useState<DiscoverCategoryOption[]>([])
-    const [eventTypes, setEventTypes] = useState<DiscoverEventTypeOption[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
     const [isNearMeOpen, setIsNearMeOpen] = useState(false)
     const eventCardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
     const lastScrollYRef = useRef(0)
     const scrollDirectionRef = useRef<"up" | "down">("down")
 
     const deferredSearch = useDeferredValue(filters.search)
+    const {
+        data: events,
+        loading,
+        error,
+    } = useDiscoverEvents({
+        limit: 24,
+        page: 1,
+        search: deferredSearch,
+        typeId: filters.selectedTypeId,
+        categoryId: filters.selectedCategoryId,
+        dateFilter: filters.selectedDateFilter,
+        sort: filters.sort,
+    })
+    const { data: categories } = useDiscoverCategories()
+    const { data: eventTypes } = useDiscoverEventTypes()
 
     useEffect(() => {
         const nextSearch = searchParams.get("search") ?? ""
@@ -67,94 +75,6 @@ function Events() {
             return { ...currentFilters, search: nextSearch }
         })
     }, [searchParams])
-
-    useEffect(() => {
-        let ignore = false
-
-        async function loadEventTypes() {
-            try {
-                const response = await fetchDiscoverEventTypes()
-                if (!ignore) {
-                    setEventTypes(response)
-                }
-            } catch {
-                if (!ignore) {
-                    setEventTypes([])
-                }
-            }
-        }
-
-        loadEventTypes()
-
-        return () => {
-            ignore = true
-        }
-    }, [])
-
-    useEffect(() => {
-        let ignore = false
-
-        async function loadCategories() {
-            try {
-                const response = await fetchDiscoverCategories()
-                if (!ignore) {
-                    setCategories(response)
-                }
-            } catch {
-                if (!ignore) {
-                    setCategories([])
-                }
-            }
-        }
-
-        loadCategories()
-
-        return () => {
-            ignore = true
-        }
-    }, [])
-
-    useEffect(() => {
-        let ignore = false
-
-        async function loadEvents() {
-            setLoading(true)
-            setError(null)
-
-            try {
-                const response = await fetchDiscoverEvents({
-                    limit: 24,
-                    page: 1,
-                    search: deferredSearch,
-                    typeId: filters.selectedTypeId,
-                    categoryId: filters.selectedCategoryId,
-                    dateFilter: filters.selectedDateFilter,
-                    sort: filters.sort,
-                })
-
-                if (!ignore) {
-                    startTransition(() => {
-                        setEvents(response)
-                    })
-                }
-            } catch (nextError) {
-                if (!ignore) {
-                    setError(nextError instanceof Error ? nextError.message : "Failed to load events")
-                    setEvents([])
-                }
-            } finally {
-                if (!ignore) {
-                    setLoading(false)
-                }
-            }
-        }
-
-        loadEvents()
-
-        return () => {
-            ignore = true
-        }
-    }, [deferredSearch, filters.selectedCategoryId, filters.selectedDateFilter, filters.selectedTypeId, filters.sort])
 
     const visibleEvents = events
 

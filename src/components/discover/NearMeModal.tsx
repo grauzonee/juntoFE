@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type ComponentType } from "react"
+import { lazy, Suspense, useState, type ComponentType } from "react"
 import BrutalButton from "@/components/ui/brutal-button"
 import {
     Dialog,
@@ -8,8 +8,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { fetchDiscoverNearbyEvents } from "@/requests/discover"
-import type { DiscoverEvent, DiscoverLocation } from "@/types/discover"
+import { useNearbyDiscoverEvents } from "@/hooks/event/useNearbyDiscoverEvents"
+import type { DiscoverLocation } from "@/types/discover"
 import {
     formatDiscoverDate,
     getDiscoverEventPosition,
@@ -37,60 +37,32 @@ export default function NearMeModal({
     const ResolvedMapComponent = MapComponent ?? LazyMapWithGeocoder
     const [radius, setRadius] = useState(3)
     const [selectedLocation, setSelectedLocation] = useState<DiscoverLocation>()
-    const [events, setEvents] = useState<DiscoverEvent[]>([])
-    const [loading, setLoading] = useState(false)
     const [geoLoading, setGeoLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-
-    useEffect(() => {
-        if (!open || !selectedLocation) {
-            return
-        }
-
-        const currentLocation = selectedLocation
-        let ignore = false
-
-        async function loadNearbyEvents() {
-            setLoading(true)
-            setError(null)
-
-            try {
-                const response = await fetchDiscoverNearbyEvents({
-                    lat: currentLocation.coordinates.lat,
-                    lng: currentLocation.coordinates.lng,
-                    radius,
-                })
-
-                if (!ignore) {
-                    setEvents(response)
-                }
-            } catch (nextError) {
-                if (!ignore) {
-                    setError(nextError instanceof Error ? nextError.message : "Failed to load nearby events")
-                    setEvents([])
-                }
-            } finally {
-                if (!ignore) {
-                    setLoading(false)
-                }
+    const [locationError, setLocationError] = useState<string | null>(null)
+    const {
+        data: events,
+        loading,
+        error: nearbyError,
+    } = useNearbyDiscoverEvents({
+        enabled: open,
+        query: selectedLocation
+            ? {
+                lat: selectedLocation.coordinates.lat,
+                lng: selectedLocation.coordinates.lng,
+                radius,
             }
-        }
-
-        loadNearbyEvents()
-
-        return () => {
-            ignore = true
-        }
-    }, [open, radius, selectedLocation])
+            : undefined,
+    })
+    const error = locationError ?? nearbyError
 
     function handleUseMyLocation() {
         if (!navigator.geolocation) {
-            setError("Geolocation is not supported in this browser.")
+            setLocationError("Geolocation is not supported in this browser.")
             return
         }
 
         setGeoLoading(true)
-        setError(null)
+        setLocationError(null)
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -105,7 +77,7 @@ export default function NearMeModal({
             },
             () => {
                 setGeoLoading(false)
-                setError("We couldn't access your location. Search for a place instead.")
+                setLocationError("We couldn't access your location. Search for a place instead.")
             },
         )
     }

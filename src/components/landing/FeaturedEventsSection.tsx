@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { Link } from "react-router"
 import SectionHeading from "@/components/landing/SectionHeading"
 import PillBadge from "@/components/ui/pill-badge"
@@ -9,29 +8,12 @@ import {
     getDiscoverCategoryTitles,
     getDiscoverTypeTitle,
 } from "@/components/discover/discover-utils"
-import { fetchLandingUpcomingEvents } from "@/requests/landing"
+import { useLandingUpcomingEvents } from "@/hooks/event/useLandingUpcomingEvents"
 import type { DiscoverEvent } from "@/types/discover"
 import { testIds } from "@/testIds"
 
 export default function FeaturedEventsSection() {
-    const [events, setEvents] = useState<DiscoverEvent[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-
-    useEffect(() => {
-        let ignore = false
-
-        loadUpcomingEvents({
-            isCurrent: () => !ignore,
-            onErrorChange: setError,
-            onEventsLoaded: setEvents,
-            onLoadingChange: setLoading,
-        })
-
-        return () => {
-            ignore = true
-        }
-    }, [])
+    const { data: events, loading, error } = useLandingUpcomingEvents()
 
     return (
         <section id="discover" className="px-4 py-14 md:px-6">
@@ -46,37 +28,6 @@ export default function FeaturedEventsSection() {
             </div>
         </section>
     )
-}
-
-async function loadUpcomingEvents({
-    isCurrent,
-    onErrorChange,
-    onEventsLoaded,
-    onLoadingChange,
-}: {
-    isCurrent: () => boolean
-    onErrorChange: (error: string | null) => void
-    onEventsLoaded: (events: DiscoverEvent[]) => void
-    onLoadingChange: (loading: boolean) => void
-}) {
-    onLoadingChange(true)
-    onErrorChange(null)
-
-    try {
-        const response = await fetchLandingUpcomingEvents()
-        if (isCurrent()) {
-            onEventsLoaded(response)
-        }
-    } catch (nextError) {
-        if (isCurrent()) {
-            onErrorChange(nextError instanceof Error ? nextError.message : "Failed to load upcoming events")
-            onEventsLoaded([])
-        }
-    } finally {
-        if (isCurrent()) {
-            onLoadingChange(false)
-        }
-    }
 }
 
 function renderContent({
