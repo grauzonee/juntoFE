@@ -145,7 +145,7 @@ function Events() {
             )
             const targetCard = scrollDirectionRef.current === "up"
                 ? visibleCards[0]
-                : downwardCandidates[downwardCandidates.length - 1]
+                : downwardCandidates.at(-1)
 
             if (!targetCard) {
                 return
