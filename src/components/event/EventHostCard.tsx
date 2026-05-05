@@ -15,7 +15,7 @@ export default function EventHostCard({ event }: EventHostCardProps) {
     return (
         <WindowCard
             data-testid={testIds.event.hostCard}
-            className="overflow-hidden bg-violet-light motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500"
+            className="overflow-hidden motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-4 motion-safe:duration-500"
         >
             <div className="p-5 md:p-6">
                 <EventSectionHeading label="Hosted by" />

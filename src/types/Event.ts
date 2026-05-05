@@ -19,6 +19,18 @@ export type Event = {
     author: Pick<User, "id" | "username" | "avatarUrl">;
     type: Eventtype;
     maxAttendees?: number;
+    capacity?: {
+        maxAttendees?: number;
+        spotsLeft?: number;
+        confirmedAttendees?: number;
+        progressPercent?: number;
+    };
+    currentUserRsvp?: {
+        id?: string;
+        _id?: string;
+        status: "confirmed" | "maybe" | "canceled";
+        additionalGuests?: number;
+    };
     fee?: {
         amount: number;
         currency: string;

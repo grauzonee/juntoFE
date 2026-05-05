@@ -17,7 +17,7 @@ export default function WindowCard({
     return (
         <Card
             variant="raised"
-            className={cn("gap-0 overflow-hidden rounded-none bg-card py-0", className)}
+            className={cn("gap-0 overflow-hidden rounded-none bg-event-surface py-0", className)}
             {...props}
         >
             {titlebarLabel ? (

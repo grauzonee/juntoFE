@@ -39,10 +39,81 @@ export function formatEventFee(event: Pick<Event, "fee">) {
         return "Free"
     }
 
-    return new Intl.NumberFormat("en-GB", {
-        style: "currency",
-        currency,
+    const numberLabel = new Intl.NumberFormat("en-GB", {
+        maximumFractionDigits: Number.isInteger(amount) ? 0 : 2,
     }).format(amount)
+    const currencySymbol = new Intl.NumberFormat("en-US", {
+        currencyDisplay: "narrowSymbol",
+        currency,
+        style: "currency",
+    }).formatToParts(amount).find((part) => part.type === "currency")?.value ?? currency
+
+    return `${numberLabel}${currencySymbol}`
+}
+
+type EventCapacityDisplay = {
+    label: string
+    progressPercent: number | null
+    isLimited: boolean
+    helper: string
+}
+
+function clampPercent(value: number) {
+    return Math.min(100, Math.max(0, value))
+}
+
+export function getEventCapacityDisplay(
+    event: Pick<Event, "capacity" | "maxAttendees">,
+): EventCapacityDisplay {
+    const maxAttendees = event.maxAttendees
+
+    if (!maxAttendees || maxAttendees < 0) {
+        return {
+            label: "Unlimited spots",
+            progressPercent: null,
+            isLimited: false,
+            helper: "No event limit",
+        }
+    }
+
+    if (typeof event.capacity?.spotsLeft === "number") {
+        const spotsLeft = Math.max(0, event.capacity.spotsLeft)
+        const usedSpots = Math.max(0, maxAttendees - spotsLeft)
+
+        return {
+            label: `${spotsLeft} / ${maxAttendees} spots left`,
+            progressPercent: clampPercent((usedSpots / maxAttendees) * 100),
+            isLimited: true,
+            helper: "Live capacity",
+        }
+    }
+
+    if (typeof event.capacity?.confirmedAttendees === "number") {
+        const confirmedAttendees = Math.max(0, event.capacity.confirmedAttendees)
+
+        return {
+            label: `${confirmedAttendees} / ${maxAttendees} going`,
+            progressPercent: clampPercent((confirmedAttendees / maxAttendees) * 100),
+            isLimited: true,
+            helper: "Live attendance",
+        }
+    }
+
+    if (typeof event.capacity?.progressPercent === "number") {
+        return {
+            label: `${maxAttendees} total spots`,
+            progressPercent: clampPercent(event.capacity.progressPercent),
+            isLimited: true,
+            helper: "Live capacity",
+        }
+    }
+
+    return {
+        label: `${maxAttendees} total spots`,
+        progressPercent: null,
+        isLimited: true,
+        helper: "Spots left unavailable",
+    }
 }
 
 export function getEventCapacityLabel(event: Pick<Event, "maxAttendees">) {
