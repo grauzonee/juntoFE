@@ -4,7 +4,7 @@ import { makeRequest, normalizeApiDateValue } from '@/requests/utils';
 
 const eventCache = new Map<string, Promise<Event | null>>();
 
-export type EventRsvpStatus = "confirmed" | "maybe";
+export type EventRsvpStatus = "confirmed" | "maybe" | "canceled";
 
 type EventRsvpPayload = {
     eventId: string
@@ -12,7 +12,7 @@ type EventRsvpPayload = {
     additionalGuests?: number
 }
 
-type EventRsvp = {
+export type EventRsvp = {
     id?: string
     _id?: string
     status: string
@@ -64,6 +64,15 @@ export async function fetchEvent(id: string): Promise<Event | null> {
 export async function createEventRsvp(payload: EventRsvpPayload): Promise<EventRsvp> {
     const response = await makeRequest<{ success: boolean; data: EventRsvp }>(() =>
         axios.post("/event/attend", payload),
+        "rsvp",
+    )
+
+    return response.data
+}
+
+export async function updateEventRsvp(rsvpId: string, payload: Omit<EventRsvpPayload, "eventId">): Promise<EventRsvp> {
+    const response = await makeRequest<{ success: boolean; data: EventRsvp }>(() =>
+        axios.put(`/rsvp/${rsvpId}`, payload),
         "rsvp",
     )
 

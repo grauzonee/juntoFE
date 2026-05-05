@@ -48,6 +48,9 @@ export default {
                 yellow: 'hsl(var(--yellow))',
                 coral: 'hsl(var(--coral))',
                 cream: 'hsl(var(--cream))',
+                event: {
+                    surface: 'hsl(var(--event-surface))',
+                },
                 main: {
                     DEFAULT: 'hsl(var(--main))',
                     foreground: 'hsl(var(--main-foreground))'
