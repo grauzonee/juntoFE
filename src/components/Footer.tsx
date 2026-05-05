@@ -4,7 +4,7 @@ type FooterProps = {
     dataTestId?: string
 }
 
-function Footer({ dataTestId }: FooterProps) {
+function Footer({ dataTestId }: Readonly<FooterProps>) {
     return (
         <div
             data-testid={dataTestId}
