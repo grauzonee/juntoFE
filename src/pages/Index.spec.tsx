@@ -9,18 +9,22 @@ import { testIds } from "@/testIds"
 function mockLandingApi(t: TestContext) {
     const event = createDiscoverEvent({
         _id: "landing-event-1",
-        title: "Backend Pottery Session",
-        fullAddress: "Backend Studio, Vienna",
+        title: "Tech Startup Networking Night",
+        fullAddress: "123 Market St, San Francisco, CA 94103, USA",
     })
+    const featuredEvent = {
+        ...event,
+        date: 1778522400,
+    }
 
     let eventRequestParams: unknown
 
     t.mock.method(api, "get", async (url: string, config?: { params?: unknown }) => {
-        if (url === "/event") {
+        if (url === "/event/featured") {
             eventRequestParams = config?.params
             return {
                 status: 200,
-                data: { success: true, data: [event] },
+                data: { success: true, data: [featuredEvent] },
             }
         }
 
@@ -33,32 +37,41 @@ function mockLandingApi(t: TestContext) {
     }
 }
 
-test("landing page renders upcoming events from backend data", async (t) => {
+test("landing page renders featured events from backend data", async (t) => {
     const { event, getEventRequestParams } = mockLandingApi(t)
 
     const view = renderWithRouter(<Index />)
 
-    await view.findByTestId(testIds.landing.upcomingEventCard(event._id))
+    await view.findByTestId(testIds.landing.featuredEventCard(event._id))
 
-    assert.ok(view.getByText("Backend Pottery Session"))
-    assert.ok(view.getByText("Backend Studio, Vienna"))
+    assert.ok(view.getByText("Tech Startup Networking Night"))
+    assert.ok(view.getByText("123 Market St, San Francisco, CA 94103, USA"))
+    assert.ok(view.getByText("Featured events"))
     assert.equal(view.queryByText("Creative Mornings Sketch Club"), null)
-    assert.deepEqual(getEventRequestParams(), {
-        limit: 3,
-        page: 1,
-        sortByAsc: "date",
-    })
+    assert.equal(getEventRequestParams(), undefined)
 })
 
-test("landing page does not render fake categories or community stats", async (t) => {
-    mockLandingApi(t)
+test("landing page handles empty featured events", async (t) => {
+    t.mock.method(api, "get", async (url: string) => {
+        assert.equal(url, "/event/featured")
+        return {
+            status: 200,
+            data: { success: true, data: [] },
+        }
+    })
 
     const view = renderWithRouter(<Index />)
 
-    await view.findByText("Backend Pottery Session")
+    await view.findByText("No featured events are available right now.")
+})
 
-    assert.equal(view.queryByText("Art & Design"), null)
-    assert.equal(view.queryByText("12K+"), null)
-    assert.ok(view.getByText(/Popular categories need a public backend endpoint/))
-    assert.equal(view.queryByText(/Community stats are waiting on backend data/), null)
+test("landing page handles featured events loading errors", async (t) => {
+    t.mock.method(api, "get", async (url: string) => {
+        assert.equal(url, "/event/featured")
+        throw new Error("Request failed")
+    })
+
+    const view = renderWithRouter(<Index />)
+
+    await view.findByText("Network error")
 })
