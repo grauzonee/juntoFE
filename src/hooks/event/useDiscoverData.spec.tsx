@@ -3,7 +3,7 @@ import test, { type TestContext } from "node:test"
 import { renderHook, waitFor } from "@testing-library/react"
 import { api } from "@/lib/axios"
 import { useDiscoverEvents } from "@/hooks/event/useDiscoverEvents"
-import { useLandingUpcomingEvents } from "@/hooks/event/useLandingUpcomingEvents"
+import { useLandingFeaturedEvents } from "@/hooks/event/useLandingFeaturedEvents"
 import { useNearbyDiscoverEvents } from "@/hooks/event/useNearbyDiscoverEvents"
 import { createDiscoverEvent } from "@/test/fixtures"
 
@@ -24,7 +24,7 @@ function createDeferred<T>(): Deferred<T> {
     return { promise, reject, resolve }
 }
 
-function createApiResponse(events = [createDiscoverEvent()]) {
+function createApiResponse(events: unknown[] = [createDiscoverEvent()]) {
     return {
         status: 200,
         data: {
@@ -160,25 +160,27 @@ test("useNearbyDiscoverEvents stays idle without an enabled location query", () 
     assert.deepEqual(result.current.data, [])
 })
 
-test("useLandingUpcomingEvents loads the landing query", async (t: TestContext) => {
+test("useLandingFeaturedEvents loads featured events", async (t: TestContext) => {
     let capturedParams: unknown
 
     t.mock.method(api, "get", async (url: string, config?: { params?: unknown }) => {
-        assert.equal(url, "/event")
+        assert.equal(url, "/event/featured")
         capturedParams = config?.params
-        return createApiResponse([createDiscoverEvent({ _id: "landing-event" })])
+        return createApiResponse([{
+            ...createDiscoverEvent({
+                _id: "featured-event",
+            }),
+            date: 1778522400,
+        }])
     })
 
-    const { result } = renderHook(() => useLandingUpcomingEvents())
+    const { result } = renderHook(() => useLandingFeaturedEvents())
 
     await waitFor(() => {
         assert.equal(result.current.loading, false)
     })
 
-    assert.equal(result.current.data[0]?._id, "landing-event")
-    assert.deepEqual(capturedParams, {
-        limit: 3,
-        page: 1,
-        sortByAsc: "date",
-    })
+    assert.equal(result.current.data[0]?._id, "featured-event")
+    assert.equal(result.current.data[0]?.date, "2026-05-11T18:00:00.000Z")
+    assert.equal(capturedParams, undefined)
 })

@@ -37,6 +37,6 @@ export const testIds = {
         mobileMenuTrigger: "landing-mobile-menu-trigger",
         mobileMenu: "landing-mobile-menu",
         mobileMenuInner: "landing-mobile-menu-inner",
-        upcomingEventCard: (eventId: string) => `landing-upcoming-event-card-${eventId}`,
+        featuredEventCard: (eventId: string) => `landing-featured-event-card-${eventId}`,
     },
 } as const

@@ -8,21 +8,21 @@ import {
     getDiscoverCategoryTitles,
     getDiscoverTypeTitle,
 } from "@/components/discover/discover-utils"
-import { useLandingUpcomingEvents } from "@/hooks/event/useLandingUpcomingEvents"
+import { useLandingFeaturedEvents } from "@/hooks/event/useLandingFeaturedEvents"
 import type { DiscoverEvent } from "@/types/discover"
 import { testIds } from "@/testIds"
 
 export default function FeaturedEventsSection() {
-    const { data: events, loading, error } = useLandingUpcomingEvents()
+    const { data: events, loading, error } = useLandingFeaturedEvents()
 
     return (
         <section id="discover" className="px-4 py-14 md:px-6">
             <div className="mx-auto max-w-7xl">
-                <SectionHeading eyebrow="Upcoming events" actionLabel="See all events" actionHref="/events" />
+                <SectionHeading eyebrow="Featured events" actionLabel="See all events" actionHref="/events" />
                 {renderContent({ events, loading, error })}
                 <div className="mt-8 text-center">
                     <Link to="/events" className="font-heading text-lg font-bold text-violet transition-colors hover:text-mint">
-                        Browse all upcoming events
+                        Browse all events
                     </Link>
                 </div>
             </div>
@@ -67,7 +67,7 @@ function renderContent({
     if (events.length === 0) {
         return (
             <div className="border-2 border-dashed border-border bg-card px-5 py-6 text-foreground/70">
-                No upcoming events are available right now.
+                No featured events are available right now.
             </div>
         )
     }
@@ -81,7 +81,7 @@ function renderContent({
                 return (
                     <WindowCard
                         key={event._id}
-                        data-testid={testIds.landing.upcomingEventCard(event._id)}
+                        data-testid={testIds.landing.featuredEventCard(event._id)}
                         className="overflow-hidden rounded-none"
                     >
                         <div className="relative h-48 overflow-hidden border-b-2 border-border bg-violet-light">

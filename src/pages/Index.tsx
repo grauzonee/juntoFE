@@ -12,8 +12,8 @@ export default function Index() {
             <LandingHeader />
             <main>
                 <LandingHero />
-                <HowItWorksSection />
                 <FeaturedEventsSection />
+                <HowItWorksSection />
                 <CategoriesSection />
                 <LandingCta />
             </main>
