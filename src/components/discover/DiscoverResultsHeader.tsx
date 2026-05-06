@@ -1,18 +1,23 @@
+import DiscoverSelect from "@/components/discover/DiscoverSelect"
+import { discoverSortOptions } from "@/components/discover/discover-options"
 import { testIds } from "@/testIds"
+import type { DiscoverSortOption } from "@/types/discover"
 
 type DiscoverResultsHeaderProps = {
     count: number
-    activeFilterCount: number
+    sort: DiscoverSortOption
+    onSortChange: (value: DiscoverSortOption) => void
 }
 
 export default function DiscoverResultsHeader({
     count,
-    activeFilterCount,
-}: DiscoverResultsHeaderProps) {
+    sort,
+    onSortChange,
+}: Readonly<DiscoverResultsHeaderProps>) {
     return (
         <div
             data-testid={testIds.discover.resultsHeader}
-            className="hidden flex-col gap-2 border-b-[3px] border-border bg-card px-4 py-4 md:flex md:px-6 md:py-5 lg:flex-row lg:items-end lg:justify-between"
+            className="hidden border-b-[3px] border-border bg-card px-4 py-4 md:flex md:items-start md:justify-between md:gap-6 md:px-6 md:py-5"
         >
             <div>
                 <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/55">
@@ -26,14 +31,17 @@ export default function DiscoverResultsHeader({
                 </h2>
             </div>
 
-            <p
-                data-testid={testIds.discover.resultsSummary}
-                className="max-w-md text-sm font-semibold leading-6 text-foreground/70"
-            >
-                {activeFilterCount > 0
-                    ? `${activeFilterCount} ${activeFilterCount === 1 ? "filter is" : "filters are"} shaping this list right now.`
-                    : "Use the workbench above to narrow the list by vibe, timing, or event type."}
-            </p>
+            <div className="flex shrink-0 justify-end">
+                <DiscoverSelect
+                    label="Sort results"
+                    value={sort}
+                    options={discoverSortOptions}
+                    size="compact"
+                    variant="plain"
+                    className="w-48"
+                    onValueChange={onSortChange}
+                />
+            </div>
         </div>
     )
 }

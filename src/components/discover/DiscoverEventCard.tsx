@@ -25,7 +25,7 @@ export default function DiscoverEventCard({
         <article
             data-testid={testIds.discover.eventCard(event._id)}
             className={cn(
-                "overflow-hidden border-2 border-border bg-violet-light shadow-brutal transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-lg md:bg-card",
+                "overflow-hidden border-2 border-border bg-event-surface shadow-brutal transition duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-lg",
                 isList ? "grid gap-0 md:grid-cols-[15rem_minmax(0,1fr)]" : "flex flex-col",
             )}
         >
@@ -43,7 +43,7 @@ export default function DiscoverEventCard({
                 </div>
             </div>
 
-            <div className="flex flex-1 flex-col justify-between gap-4 bg-violet-light px-5 pb-6 pt-5 md:bg-card md:p-5">
+            <div className="flex flex-1 flex-col justify-between gap-4 bg-event-surface px-5 pb-6 pt-5 md:p-5">
                 <div className="space-y-3">
                     <Link to={`/event/${event._id}`} className="block">
                         <h3 data-discover-event-title className="font-heading text-2xl font-bold leading-tight">
