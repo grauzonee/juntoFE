@@ -1,11 +1,15 @@
 import BrutalButton from "@/components/ui/brutal-button"
 import { Input } from "@/components/ui/input"
+import NearMeLocationSearch from "@/components/discover/nearMeModal/NearMeLocationSearch"
 import { testIds } from "@/testIds"
+import type { DiscoverLocation } from "@/types/discover"
 import { Crosshair, LoaderCircle } from "lucide-react"
 
 type NearMeModalFormProps = {
     geoLoading: boolean
     radius: number
+    selectedLocation?: DiscoverLocation
+    onLocationChange: (value: DiscoverLocation) => void
     onRadiusChange: (value: number) => void
     onUseMyLocation: () => void
 }
@@ -13,6 +17,8 @@ type NearMeModalFormProps = {
 export default function NearMeModalForm({
     geoLoading,
     radius,
+    selectedLocation,
+    onLocationChange,
     onRadiusChange,
     onUseMyLocation,
 }: Readonly<NearMeModalFormProps>) {
@@ -33,6 +39,11 @@ export default function NearMeModalForm({
                     Use your current location or search for another place to preview events on the map.
                 </p>
             </div>
+
+            <NearMeLocationSearch
+                value={selectedLocation}
+                onChange={onLocationChange}
+            />
 
             <BrutalButton
                 tone="mint"

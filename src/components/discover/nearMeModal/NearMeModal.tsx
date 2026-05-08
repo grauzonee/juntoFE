@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, type ComponentType } from "react"
+import { lazy, Suspense, useEffect, useState, type ComponentType } from "react"
 import {
     Dialog,
     DialogContent,
@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dialog"
 import NearMeModalForm from "@/components/discover/nearMeModal/NearMeModalForm"
 import NearMeModalResults from "@/components/discover/nearMeModal/NearMeModalResults"
+import { reverseSearchOpenStreetMap } from "@/helpers/openStreetMapSearch"
 import { useNearbyDiscoverEvents } from "@/hooks/event/useNearbyDiscoverEvents"
 import type { DiscoverLocation } from "@/types/discover"
 import { getDiscoverEventPosition } from "@/components/discover/discover-utils"
@@ -19,6 +20,34 @@ type NearMeModalProps = {
 }
 
 const LazyMapWithGeocoder = lazy(() => import("@/components/MapWithGeocoder"))
+const nearMeMapMediaQuery = "(min-width: 1024px)"
+
+function useShouldRenderNearMeMap() {
+    const [shouldRenderMap, setShouldRenderMap] = useState(() => {
+        if (globalThis.window === undefined || globalThis.matchMedia === undefined) {
+            return false
+        }
+
+        return globalThis.matchMedia(nearMeMapMediaQuery).matches
+    })
+
+    useEffect(() => {
+        if (globalThis.window === undefined || globalThis.matchMedia === undefined) {
+            return
+        }
+
+        const mediaQuery = globalThis.matchMedia(nearMeMapMediaQuery)
+        const updateShouldRenderMap = () => setShouldRenderMap(mediaQuery.matches)
+        updateShouldRenderMap()
+        mediaQuery.addEventListener("change", updateShouldRenderMap)
+
+        return () => {
+            mediaQuery.removeEventListener("change", updateShouldRenderMap)
+        }
+    }, [])
+
+    return shouldRenderMap
+}
 
 export default function NearMeModal({
     open,
@@ -26,6 +55,7 @@ export default function NearMeModal({
     MapComponent,
 }: NearMeModalProps) {
     const navigate = useNavigate()
+    const shouldRenderMap = useShouldRenderNearMeMap()
     const ResolvedMapComponent = MapComponent ?? LazyMapWithGeocoder
     const [radius, setRadius] = useState(3)
     const [selectedLocation, setSelectedLocation] = useState<DiscoverLocation>()
@@ -57,13 +87,22 @@ export default function NearMeModal({
         setLocationError(null)
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
+                const coordinates = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                }
+                let locationLabel = "Current location"
+
+                try {
+                    locationLabel = await reverseSearchOpenStreetMap(coordinates)
+                } catch {
+                    setLocationError("We found your location, but couldn't load its address.")
+                }
+
                 setSelectedLocation({
-                    value: "Current location",
-                    coordinates: {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    },
+                    value: locationLabel,
+                    coordinates,
                 })
                 setGeoLoading(false)
             },
@@ -96,10 +135,12 @@ export default function NearMeModal({
                 <DialogTitle className="sr-only">Near me</DialogTitle>
 
                 <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[22rem_minmax(0,1fr)]">
-                    <div className="order-2 min-h-0 flex-1 space-y-5 overflow-y-auto border-t-2 border-border bg-cream p-2.5 lg:order-1 lg:border-r-2 lg:border-t-0 lg:p-5">
+                    <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-cream p-2.5 lg:border-r-2 lg:border-border lg:p-5">
                         <NearMeModalForm
                             geoLoading={geoLoading}
                             radius={radius}
+                            selectedLocation={selectedLocation}
+                            onLocationChange={setSelectedLocation}
                             onRadiusChange={setRadius}
                             onUseMyLocation={handleUseMyLocation}
                         />
@@ -113,18 +154,20 @@ export default function NearMeModal({
                         />
                     </div>
 
-                    <div className="order-1 shrink-0 bg-violet-light p-1 sm:p-3 md:p-5 lg:order-2">
-                        <div className="h-[19svh] min-h-[10.5rem] overflow-hidden border-2 border-border bg-card shadow-brutal sm:h-[28rem] lg:h-[calc(92vh-9rem)] lg:min-h-[30rem]">
-                            <Suspense fallback={<div className="h-full w-full bg-card" />}>
-                                <ResolvedMapComponent
-                                    value={selectedLocation}
-                                    onChange={setSelectedLocation}
-                                    markers={markers}
-                                    height="100%"
-                                />
-                            </Suspense>
+                    {shouldRenderMap ? (
+                        <div className="shrink-0 bg-violet-light p-5 lg:order-2">
+                            <div className="h-[calc(92vh-9rem)] min-h-[30rem] overflow-hidden border-2 border-border bg-card shadow-brutal">
+                                <Suspense fallback={<div className="h-full w-full bg-card" />}>
+                                    <ResolvedMapComponent
+                                        value={selectedLocation}
+                                        onChange={setSelectedLocation}
+                                        markers={markers}
+                                        height="100%"
+                                    />
+                                </Suspense>
+                            </div>
                         </div>
-                    </div>
+                    ) : null}
                 </div>
             </DialogContent>
         </Dialog>
