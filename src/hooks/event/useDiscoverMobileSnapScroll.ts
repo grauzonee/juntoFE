@@ -55,7 +55,7 @@ export function useDiscoverMobileSnapScroll({
     }, [events])
 
     useEffect(() => {
-        if (typeof globalThis.window === "undefined" || typeof globalThis.matchMedia !== "function") {
+        if (globalThis.window === undefined || globalThis.matchMedia === undefined) {
             return
         }
 

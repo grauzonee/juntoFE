@@ -2,29 +2,25 @@ import DiscoverSelect, { type DiscoverSelectOption } from "@/components/discover
 import { cn } from "@/lib/utils"
 import type { DiscoverDateFilter } from "@/types/discover"
 
+export type DiscoverRefinementControl<Value extends string = string> = {
+    value: Value
+    options: ReadonlyArray<DiscoverSelectOption<Value>>
+    onChange: (value: Value) => void
+}
+
+export type DiscoverRefinementControlGroups = {
+    category: DiscoverRefinementControl
+    dateFilter: DiscoverRefinementControl<DiscoverDateFilter>
+    eventType: DiscoverRefinementControl
+}
+
 type DiscoverRefinementControlsProps = {
-    categoryOptions: DiscoverSelectOption[]
-    dateFilterOptions: DiscoverSelectOption<DiscoverDateFilter>[]
-    eventTypeOptions: DiscoverSelectOption[]
-    selectedCategoryId: string
-    selectedDateFilter: DiscoverDateFilter
-    selectedTypeId: string
-    onCategoryChange: (value: string) => void
-    onDateFilterChange: (value: DiscoverDateFilter) => void
-    onTypeChange: (value: string) => void
+    controls: DiscoverRefinementControlGroups
     mobile?: boolean
 }
 
 export default function DiscoverRefinementControls({
-    categoryOptions,
-    dateFilterOptions,
-    eventTypeOptions,
-    selectedCategoryId,
-    selectedDateFilter,
-    selectedTypeId,
-    onCategoryChange,
-    onDateFilterChange,
-    onTypeChange,
+    controls,
     mobile = false,
 }: Readonly<DiscoverRefinementControlsProps>) {
     return (
@@ -37,32 +33,32 @@ export default function DiscoverRefinementControls({
             <div>
                 <DiscoverSelect
                     label="Category"
-                    value={selectedCategoryId}
-                    options={categoryOptions}
+                    value={controls.category.value}
+                    options={controls.category.options}
                     size="compact"
                     tone="violet"
-                    onValueChange={onCategoryChange}
+                    onValueChange={controls.category.onChange}
                 />
             </div>
 
             <div>
                 <DiscoverSelect
                     label="When"
-                    value={selectedDateFilter}
-                    options={dateFilterOptions}
+                    value={controls.dateFilter.value}
+                    options={controls.dateFilter.options}
                     size="compact"
                     tone="yellow"
-                    onValueChange={onDateFilterChange}
+                    onValueChange={controls.dateFilter.onChange}
                 />
             </div>
 
             <div>
                 <DiscoverSelect
                     label="Type"
-                    value={selectedTypeId}
-                    options={eventTypeOptions}
+                    value={controls.eventType.value}
+                    options={controls.eventType.options}
                     size="compact"
-                    onValueChange={onTypeChange}
+                    onValueChange={controls.eventType.onChange}
                 />
             </div>
         </div>

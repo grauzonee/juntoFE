@@ -1,9 +1,12 @@
 import { useState } from "react"
 import DiscoverActiveFilters from "@/components/discover/DiscoverActiveFilters"
-import DiscoverDesktopSearchBar from "@/components/discover/DiscoverDesktopSearchBar"
 import DiscoverMobileSearchDialog from "@/components/discover/DiscoverMobileSearchDialog"
 import DiscoverMobileSearchTrigger from "@/components/discover/DiscoverMobileSearchTrigger"
-import DiscoverRefinementControls from "@/components/discover/DiscoverRefinementControls"
+import DiscoverNearMeButton from "@/components/discover/DiscoverNearMeButton"
+import DiscoverRefinementControls, {
+    type DiscoverRefinementControlGroups,
+} from "@/components/discover/DiscoverRefinementControls"
+import DiscoverSearchBar from "@/components/discover/DiscoverSearchBar"
 import type { DiscoverSelectOption } from "@/components/discover/DiscoverSelect"
 import type {
     DiscoverActiveFilter,
@@ -66,6 +69,23 @@ export default function DiscoverFilterBar({
         { value: "all", label: "Type: All Types" },
         ...eventTypes.map((type) => ({ value: type.id, label: `Type: ${type.title}` })),
     ]
+    const refinementControls: DiscoverRefinementControlGroups = {
+        category: {
+            value: filters.selectedCategoryId,
+            options: categoryOptions,
+            onChange: onCategoryChange,
+        },
+        dateFilter: {
+            value: filters.selectedDateFilter,
+            options: dateFilterOptions,
+            onChange: onDateFilterChange,
+        },
+        eventType: {
+            value: filters.selectedTypeId,
+            options: eventTypeOptions,
+            onChange: onTypeChange,
+        },
+    }
 
     return (
         <section
@@ -81,44 +101,34 @@ export default function DiscoverFilterBar({
                 />
                 <DiscoverMobileSearchDialog
                     activeFilters={activeFilters}
-                    categoryOptions={categoryOptions}
-                    dateFilterOptions={dateFilterOptions}
-                    eventTypeOptions={eventTypeOptions}
+                    refinementControls={refinementControls}
                     open={isMobileSearchOpen}
                     search={filters.search}
-                    selectedCategoryId={filters.selectedCategoryId}
-                    selectedDateFilter={filters.selectedDateFilter}
-                    selectedTypeId={filters.selectedTypeId}
                     sort={filters.sort}
-                    onCategoryChange={onCategoryChange}
                     onClearAll={onClearAll}
                     onClearFilter={onClearFilter}
-                    onDateFilterChange={onDateFilterChange}
                     onNearMeClick={onNearMeClick}
                     onOpenChange={setIsMobileSearchOpen}
                     onSearchChange={onSearchChange}
                     onSortChange={onSortChange}
-                    onTypeChange={onTypeChange}
                 />
             </div>
 
             <div className="hidden border-2 border-border bg-card shadow-brutal-lg md:block">
-                <DiscoverDesktopSearchBar
+                <DiscoverSearchBar
+                    variant="desktop"
                     search={filters.search}
                     onSearchChange={onSearchChange}
-                    onNearMeClick={onNearMeClick}
+                    nearMeButton={(
+                        <DiscoverNearMeButton
+                            variant="desktop"
+                            onClick={onNearMeClick}
+                        />
+                    )}
                 />
 
                 <DiscoverRefinementControls
-                    categoryOptions={categoryOptions}
-                    dateFilterOptions={dateFilterOptions}
-                    eventTypeOptions={eventTypeOptions}
-                    selectedCategoryId={filters.selectedCategoryId}
-                    selectedDateFilter={filters.selectedDateFilter}
-                    selectedTypeId={filters.selectedTypeId}
-                    onCategoryChange={onCategoryChange}
-                    onDateFilterChange={onDateFilterChange}
-                    onTypeChange={onTypeChange}
+                    controls={refinementControls}
                 />
 
                 <DiscoverActiveFilters

@@ -60,6 +60,14 @@ export default function DiscoverSelect<Value extends string = string>({
     variant = "framed",
 }: Readonly<DiscoverSelectProps<Value>>) {
     const isFramed = variant === "framed"
+    const triggerFrameClassName = isFramed
+        ? "h-full border-2 border-border px-3"
+        : "w-full border-brutal border-border px-4"
+    let triggerTextSizeClassName = plainSizeClassNames[size]
+
+    if (isFramed) {
+        triggerTextSizeClassName = size === "compact" ? "text-sm" : "text-base"
+    }
 
     return (
         <div
@@ -75,10 +83,8 @@ export default function DiscoverSelect<Value extends string = string>({
                     aria-label={label}
                     className={cn(
                         "min-h-0 rounded-none font-heading font-bold shadow-none",
-                        isFramed
-                            ? "h-full border-2 border-border px-3"
-                            : "w-full border-brutal border-border px-4",
-                        isFramed ? (size === "compact" ? "text-sm" : "text-base") : plainSizeClassNames[size],
+                        triggerFrameClassName,
+                        triggerTextSizeClassName,
                         selectToneClassNames[tone],
                         triggerClassName,
                     )}
