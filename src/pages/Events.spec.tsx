@@ -3,7 +3,7 @@ import test, { type TestContext } from "node:test"
 import { fireEvent, render, waitFor, within } from "@testing-library/react"
 import { createMemoryRouter, RouterProvider } from "react-router"
 import DiscoverFilterBar from "@/components/discover/DiscoverFilterBar"
-import NearMeModal from "@/components/discover/NearMeModal"
+import NearMeModal from "@/components/discover/nearMeModal/NearMeModal"
 import Events from "@/pages/Events"
 import { api } from "@/lib/axios"
 import { routes as eventRoutes } from "@/routes/events"
@@ -26,7 +26,7 @@ function mockDiscoverApi(
     } = {},
 ) {
     t.mock.method(api, "get", async (url: string) => {
-        if (url === "/eventtypes") {
+        if (url === "/event/types") {
             return {
                 status: 200,
                 data: { success: true, data: discoverEventTypes.map(({ id, title }) => ({ _id: id, title })) },
@@ -93,7 +93,6 @@ test("DiscoverFilterBar uses a dialog-based mobile search flow", async () => {
                 selectedDateFilter: "all",
                 selectedCategoryId: "all",
                 sort: "soonest",
-                view: "grid",
             }}
             activeFilters={[]}
             categories={discoverCategories}
@@ -103,7 +102,6 @@ test("DiscoverFilterBar uses a dialog-based mobile search flow", async () => {
             onDateFilterChange={() => {}}
             onCategoryChange={() => {}}
             onSortChange={() => {}}
-            onViewChange={() => {}}
             onClearFilter={() => {}}
             onClearAll={() => {}}
             onNearMeClick={() => {

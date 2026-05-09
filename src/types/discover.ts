@@ -80,7 +80,6 @@ export type DiscoverFilters = {
     selectedDateFilter: DiscoverDateFilter
     selectedCategoryId: string
     sort: DiscoverSortOption
-    view: DiscoverViewMode
 }
 
 export type DiscoverLocation = EventAddress

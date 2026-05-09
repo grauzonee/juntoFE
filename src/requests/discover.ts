@@ -120,7 +120,7 @@ export async function fetchDiscoverNearbyEvents(query: DiscoverGeoSearchQuery): 
 
 export async function fetchDiscoverEventTypes(): Promise<DiscoverEventTypeOption[]> {
     const response = await makeRequest<SuccessResponse<RawEventType[]>>(
-        () => axios.get("/eventtypes", { params: { limit: 50, page: 1 } }),
+        () => axios.get("/event/types", { params: { limit: 50, page: 1 } }),
         "event types",
     )
 

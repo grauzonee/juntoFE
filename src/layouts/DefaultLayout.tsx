@@ -3,6 +3,7 @@ import SiteHeader from "@/components/shell/SiteHeader"
 import Footer from "@/components/Footer"
 import { Toaster } from "@/components/ui/sonner"
 import { UserProvider } from "@/providers/UserProvider"
+import { cn } from "@/lib/utils"
 
 function DefaultLayout() {
     const location = useLocation()
@@ -24,7 +25,10 @@ function DefaultLayout() {
 
     return (
         <>
-            <div className="w-full flex flex-col min-h-[120v] bg-main md:bg-background">
+            <div className={cn(
+                "w-full flex flex-col min-h-[120v] md:bg-background",
+                isDiscoverPage ? "bg-background" : "bg-main",
+            )}>
                 <SiteHeader
                     search={isDiscoverPage ? {
                         value: discoverSearch,
@@ -34,7 +38,10 @@ function DefaultLayout() {
                 />
 
                 <div
-                    className="flex-1 flex flex-col items-center w-5/6 md:w-3/4 mx-auto max-w-5xl mb-[4rem] pt-5"
+                    className={cn(
+                        "flex-1 flex flex-col items-center md:w-3/4 mx-auto max-w-5xl mb-[4rem] pt-5",
+                        isDiscoverPage ? "w-[94%]" : "w-5/6",
+                    )}
                 >
                     <Toaster />
                     <UserProvider>
