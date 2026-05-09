@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useId, useState } from "react"
 import { Input } from "@/components/ui/input"
 import {
     searchOpenStreetMap,
@@ -15,6 +15,36 @@ type NearMeLocationSearchProps = {
 type NearMeLocationSuggestionProps = {
     suggestion: LocationSuggestion
     onSelect: (suggestion: LocationSuggestion) => void
+}
+
+type NearMeLocationInputProps = {
+    id: string
+    value: string
+    loading: boolean
+    onChange: (value: string) => void
+}
+
+function NearMeLocationInput({
+    id,
+    value,
+    loading,
+    onChange,
+}: Readonly<NearMeLocationInputProps>) {
+    return (
+        <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />
+            <Input
+                id={id}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                placeholder="Search for an address"
+                className="h-11 rounded-none border-brutal border-border bg-card pl-10 pr-10"
+            />
+            {loading ? (
+                <LoaderCircle className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-foreground/55" />
+            ) : null}
+        </div>
+    )
 }
 
 function NearMeLocationSuggestion({
@@ -37,6 +67,7 @@ export default function NearMeLocationSearch({
     value,
     onChange,
 }: Readonly<NearMeLocationSearchProps>) {
+    const addressInputId = useId()
     const [query, setQuery] = useState(value?.value ?? "")
     const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
     const [loading, setLoading] = useState(false)
@@ -107,21 +138,18 @@ export default function NearMeLocationSearch({
 
     return (
         <div className="space-y-2 lg:hidden">
-            <label className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/65">
+            <label
+                htmlFor={addressInputId}
+                className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/65"
+            >
                 Address
             </label>
-            <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground/55" />
-                <Input
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Search for an address"
-                    className="h-11 rounded-none border-brutal border-border bg-card pl-10 pr-10"
-                />
-                {loading ? (
-                    <LoaderCircle className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-foreground/55" />
-                ) : null}
-            </div>
+            <NearMeLocationInput
+                id={addressInputId}
+                value={query}
+                loading={loading}
+                onChange={setQuery}
+            />
 
             {error ? (
                 <p className="text-sm font-semibold text-coral">{error}</p>

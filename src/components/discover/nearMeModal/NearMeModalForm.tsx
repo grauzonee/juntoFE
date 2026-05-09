@@ -4,6 +4,7 @@ import NearMeLocationSearch from "@/components/discover/nearMeModal/NearMeLocati
 import { testIds } from "@/testIds"
 import type { DiscoverLocation } from "@/types/discover"
 import { Crosshair, LoaderCircle } from "lucide-react"
+import { useId } from "react"
 
 type NearMeModalFormProps = {
     geoLoading: boolean
@@ -22,6 +23,8 @@ export default function NearMeModalForm({
     onRadiusChange,
     onUseMyLocation,
 }: Readonly<NearMeModalFormProps>) {
+    const radiusInputId = useId()
+
     function handleRadiusChange(value: string) {
         onRadiusChange(Math.min(15, Math.max(1, Number(value) || 1)))
     }
@@ -57,10 +60,14 @@ export default function NearMeModalForm({
             </BrutalButton>
 
             <div className="space-y-2">
-                <label className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/65">
+                <label
+                    htmlFor={radiusInputId}
+                    className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/65"
+                >
                     Radius (1-15)
                 </label>
                 <Input
+                    id={radiusInputId}
                     type="number"
                     min={1}
                     max={15}
