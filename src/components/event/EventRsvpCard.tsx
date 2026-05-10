@@ -1,62 +1,81 @@
 import {
     createContext,
-    useCallback,
     useContext,
-    useMemo,
     useState,
     type ComponentProps,
     type PropsWithChildren,
 } from "react"
-import { Link, useNavigate } from "react-router"
+import { Link } from "react-router"
 import { Check, HelpCircle, Minus, Plus } from "lucide-react"
-import { toast } from "sonner"
 import type { Event } from "@/types/Event"
 import WindowCard from "@/components/ui/window-card"
 import BrutalButton from "@/components/ui/brutal-button"
-import {
-    createEventRsvp,
-    updateEventRsvp,
-    type EventRsvpStatus,
-} from "@/requests/event"
+import type { EventRsvpStatus } from "@/requests/event"
 import {
     formatEventFee,
     getEventCapacityDisplay,
 } from "@/components/event/event-utils"
-import { isLoggedIn } from "@/helpers/auth"
+import {
+    defaultResponsiveVariant,
+    isMobile,
+    responsiveVariants,
+    type ResponsiveVariant,
+} from "@/helpers/responsive"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
+import {
+    useEventRsvp,
+    type UseEventRsvpValue,
+} from "@/hooks/event/useEventRsvp"
 import { testIds } from "@/testIds"
 import { cn } from "@/lib/utils"
 
-type EventRsvpCardProps = PropsWithChildren & Omit<ComponentProps<typeof WindowCard>, "children"> & {
-    event: Event
+type EventRsvpCardProps = PropsWithChildren & Omit<ComponentProps<typeof WindowCard>, "children" | "variant"> & {
+    event?: Event
 }
 
-type RsvpChoiceStatus = Extract<EventRsvpStatus, "confirmed" | "maybe">
-
-type EventRsvpCardContextValue = {
-    event: Event
-    selectedStatus: EventRsvpStatus | null
-    submittingStatus: EventRsvpStatus | null
-    loggedIn: boolean
-    additionalGuests: number
-    onRsvp: (status: EventRsvpStatus) => void
-    onAdjustAdditionalGuests: (nextValue: number) => void
+type EventRsvpMobilePanelProps = {
+    event?: Event
+    className?: string
 }
 
-type RsvpChoiceButtonProps = {
-    status: RsvpChoiceStatus
+type RsvpChoiceButtonsProps = {
     selectedStatus: EventRsvpStatus | null
     submittingStatus: EventRsvpStatus | null
     disabled: boolean
     onSelect: (status: EventRsvpStatus) => void
+    className?: string
+    buttonClassName?: string
 }
 
-type GuestStepperControlProps = {
-    value: number
-    onChange: (nextValue: number) => void
+type AuthActionLinksProps = {
+    variant?: ResponsiveVariant
 }
 
-const EventRsvpCardContext = createContext<EventRsvpCardContextValue | undefined>(undefined)
+type RsvpActionsProps = {
+    variant?: ResponsiveVariant
+}
 
+type GuestStepperProps = {
+    variant?: ResponsiveVariant
+}
+
+type MobileGuestRsvpDialogProps = {
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+type RsvpPanelProps = Omit<EventRsvpCardProps, "event"> & {
+    variant?: ResponsiveVariant
+}
+
+const EventRsvpCardContext = createContext<UseEventRsvpValue | undefined>(undefined)
+
+// Reads shared RSVP state for the card and mobile panel subtree.
 function useEventRsvpCardContext() {
     const context = useContext(EventRsvpCardContext)
 
@@ -67,10 +86,50 @@ function useEventRsvpCardContext() {
     return context
 }
 
-function PriceCapacitySection() {
+// Provides shared RSVP state and actions for all RSVP presentation variants.
+export function EventRsvpProvider({ event, children }: Readonly<PropsWithChildren<{ event: Event }>>) {
+    const contextValue = useEventRsvp(event)
+
+    return (
+        <EventRsvpCardContext.Provider value={contextValue}>
+            {children}
+        </EventRsvpCardContext.Provider>
+    )
+}
+
+// Shows event price and capacity in desktop or mobile layout.
+function PriceCapacitySummary({ variant = defaultResponsiveVariant }: Readonly<{ variant?: ResponsiveVariant }>) {
     const { event } = useEventRsvpCardContext()
     const capacity = getEventCapacityDisplay(event)
     const progressPercent = capacity.progressPercent ?? 0
+
+    if (isMobile(variant)) {
+        return (
+            <div className="min-w-0">
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground/65">
+                    Join this event
+                </p>
+                <p className="mt-1 truncate font-heading text-2xl font-black uppercase leading-none text-foreground">
+                    {formatEventFee(event)}
+                </p>
+                <p className="mt-1 truncate text-xs font-bold leading-tight text-foreground/70">
+                    {capacity.label}
+                </p>
+                <div
+                    className="mt-2 h-2 overflow-hidden border-2 border-border bg-card"
+                    aria-label={capacity.label}
+                >
+                    <div
+                        className={cn(
+                            "h-full bg-mint transition-[width] duration-300",
+                            capacity.progressPercent === null && "bg-[repeating-linear-gradient(135deg,#B8F2C8_0,#B8F2C8_4px,#fff_4px,#fff_8px)]",
+                        )}
+                        style={{ width: `${progressPercent}%` }}
+                    />
+                </div>
+            </div>
+        )
+    }
 
     return (
         <>
@@ -102,91 +161,178 @@ function PriceCapacitySection() {
     )
 }
 
-function RsvpChoiceButton({
-    status,
+// Renders the primary RSVP choice buttons for confirmed and maybe statuses.
+function RsvpChoiceButtons({
     selectedStatus,
     submittingStatus,
     disabled,
     onSelect,
-}: Readonly<RsvpChoiceButtonProps>) {
-    const isGoing = status === "confirmed"
-    const isSelected = selectedStatus === status
-    const Icon = isGoing ? Check : HelpCircle
-    const label = isGoing ? "GOING" : "MAYBE"
-    const savingLabel = submittingStatus === status ? "SAVING" : label
-    let tone: ComponentProps<typeof BrutalButton>["tone"] = "cream"
-
-    if (isSelected) {
-        tone = isGoing ? "mint" : "violet"
-    }
-
+    className,
+    buttonClassName,
+}: Readonly<RsvpChoiceButtonsProps>) {
     return (
-        <BrutalButton
-            tone={tone}
-            className={cn(
-                "min-w-0 justify-center gap-2 px-3 text-xs",
-                isSelected && "shadow-none translate-x-1 translate-y-1",
-            )}
-            onClick={() => onSelect(status)}
-            disabled={disabled}
-        >
-            <Icon className="h-4 w-4 shrink-0 stroke-[3]" aria-hidden="true" />
-            {savingLabel}
-        </BrutalButton>
+        <div className={className}>
+            {(["confirmed", "maybe"] as const).map((status) => {
+                const isGoing = status === "confirmed"
+                const isSelected = selectedStatus === status
+                const Icon = isGoing ? Check : HelpCircle
+                const label = isGoing ? "GOING" : "MAYBE"
+                const savingLabel = submittingStatus === status ? "SAVING" : label
+                let tone: ComponentProps<typeof BrutalButton>["tone"] = "cream"
+
+                if (isSelected) {
+                    tone = isGoing ? "mint" : "violet"
+                }
+
+                return (
+                    <BrutalButton
+                        key={status}
+                        type="button"
+                        tone={tone}
+                        className={cn(
+                            "min-w-0 justify-center gap-2 px-3 text-xs",
+                            isSelected && "shadow-none translate-x-1 translate-y-1",
+                            buttonClassName,
+                        )}
+                        onClick={() => onSelect(status)}
+                        disabled={disabled}
+                    >
+                        <Icon className="h-4 w-4 shrink-0 stroke-[3]" aria-hidden="true" />
+                        {savingLabel}
+                    </BrutalButton>
+                )
+            })}
+        </div>
     )
 }
 
-function GuestStepperControl({ value, onChange }: Readonly<GuestStepperControlProps>) {
+// Lets logged-in users adjust the number of additional guests.
+function GuestStepper({
+    variant = defaultResponsiveVariant,
+}: Readonly<GuestStepperProps>) {
+    const { additionalGuests, onAdjustAdditionalGuests } = useEventRsvpCardContext()
+    const mobile = isMobile(variant)
+
     return (
-        <div className="flex items-center justify-between gap-4">
-            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-foreground/70">
-                Additional guests
-            </span>
+        <div className={cn("flex items-center gap-4", mobile ? "justify-center" : "justify-between")}>
+            {mobile ? null : (
+                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-foreground/70">
+                    Additional guests
+                </span>
+            )}
             <div className="flex shrink-0 items-center">
                 <button
                     type="button"
-                    className="flex h-11 w-11 items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint disabled:cursor-not-allowed disabled:opacity-50"
-                    onClick={() => onChange(value - 1)}
-                    disabled={value === 0}
+                    className={cn(
+                        "flex items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint disabled:cursor-not-allowed disabled:opacity-50",
+                        mobile ? "h-14 w-14" : "h-11 w-11",
+                    )}
+                    onClick={() => onAdjustAdditionalGuests(additionalGuests - 1)}
+                    disabled={additionalGuests === 0}
                     aria-label="Remove additional guest"
                 >
-                    <Minus className="h-4 w-4 stroke-[4]" aria-hidden="true" />
+                    <Minus className={cn("stroke-[4]", mobile ? "h-5 w-5" : "h-4 w-4")} aria-hidden="true" />
                 </button>
-                <span className="flex h-11 w-12 items-center justify-center border-y-[3px] border-border bg-card font-display text-xl font-extrabold">
-                    {value}
+                <span
+                    className={cn(
+                        "flex items-center justify-center border-y-[3px] border-border bg-card font-display",
+                        mobile ? "h-14 w-16 text-4xl font-black" : "h-11 w-12 text-xl font-extrabold",
+                    )}
+                >
+                    {additionalGuests}
                 </span>
                 <button
                     type="button"
-                    className="flex h-11 w-11 items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint"
-                    onClick={() => onChange(value + 1)}
+                    className={cn(
+                        "flex items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint",
+                        mobile ? "h-14 w-14" : "h-11 w-11",
+                    )}
+                    onClick={() => onAdjustAdditionalGuests(additionalGuests + 1)}
                     aria-label="Add additional guest"
                 >
-                    <Plus className="h-4 w-4 stroke-[4]" aria-hidden="true" />
+                    <Plus className={cn("stroke-[4]", mobile ? "h-5 w-5" : "h-4 w-4")} aria-hidden="true" />
                 </button>
             </div>
         </div>
     )
 }
 
-function AuthActionLinks() {
+// Confirms mobile "Going" RSVP after users choose their guest count.
+function MobileGuestRsvpDialog({ open, onOpenChange }: Readonly<MobileGuestRsvpDialogProps>) {
+    const { submittingStatus, onRsvp } = useEventRsvpCardContext()
+    const submitting = submittingStatus === "confirmed"
+
+    async function handleConfirm() {
+        await onRsvp("confirmed")
+        onOpenChange(false)
+    }
+
     return (
-        <div className="mt-4 grid gap-3">
-            <BrutalButton asChild tone="mint" className="w-full">
-                <Link to="/login" data-testid={testIds.event.rsvpLoginLink}>Log in to join</Link>
+        <Dialog
+            open={open}
+            onOpenChange={(nextOpen) => {
+                if (submittingStatus === null) {
+                    onOpenChange(nextOpen)
+                }
+            }}
+        >
+            <DialogContent
+                aria-describedby={undefined}
+                className="w-[calc(100%-2rem)] max-w-sm rounded-none border-[3px] border-border bg-event-surface p-0 shadow-brutal"
+            >
+                <DialogHeader className="border-b-[3px] border-border bg-cream px-5 pb-4 pt-6 text-left">
+                    <DialogTitle className="font-heading text-2xl font-black uppercase leading-none">
+                        Additional guests
+                    </DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-5 p-5">
+                    <GuestStepper variant={responsiveVariants.mobile} />
+                    <BrutalButton
+                        type="button"
+                        tone="mint"
+                        className="w-full justify-center gap-2"
+                        onClick={handleConfirm}
+                        disabled={submittingStatus !== null}
+                    >
+                        <Check className="h-4 w-4 shrink-0 stroke-[3]" aria-hidden="true" />
+                        {submitting ? "SAVING" : "CONFIRM"}
+                    </BrutalButton>
+                </div>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+// Shows login and registration links for users who cannot RSVP yet.
+function AuthActionLinks({ variant = defaultResponsiveVariant }: Readonly<AuthActionLinksProps>) {
+    const mobile = isMobile(variant)
+
+    return (
+        <div className={cn("grid", mobile ? "min-w-0 grid-cols-2 gap-2" : "mt-4 gap-3")}>
+            <BrutalButton
+                asChild
+                tone="mint"
+                className={cn(mobile ? "min-w-0 justify-center px-2 text-xs" : "w-full")}
+            >
+                <Link to="/login" data-testid={mobile ? undefined : testIds.event.rsvpLoginLink}>
+                    {mobile ? "Log in" : "Log in to join"}
+                </Link>
             </BrutalButton>
-            <BrutalButton asChild tone="cream" className="w-full">
-                <Link to="/register">Create an account</Link>
+            <BrutalButton
+                asChild
+                tone="cream"
+                className={cn(mobile ? "min-w-0 justify-center px-2 text-xs" : "w-full")}
+            >
+                <Link to="/register">
+                    {mobile ? "Sign up" : "Create an account"}
+                </Link>
             </BrutalButton>
         </div>
     )
 }
 
-function GuestStepper() {
-    const { additionalGuests, onAdjustAdditionalGuests } = useEventRsvpCardContext()
-
-    return <GuestStepperControl value={additionalGuests} onChange={onAdjustAdditionalGuests} />
-}
-
+// Lets logged-in users cancel their current RSVP.
 function CancelButton() {
     const { loggedIn, selectedStatus, submittingStatus, onRsvp } = useEventRsvpCardContext()
 
@@ -209,32 +355,59 @@ function CancelButton() {
     return null
 }
 
-function ParticipationPanel() {
+// Composes the RSVP controls for desktop and mobile surfaces.
+function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpActionsProps>) {
     const {
         loggedIn,
         selectedStatus,
         submittingStatus,
         onRsvp,
     } = useEventRsvpCardContext()
-    const rsvpDisabled = loggedIn ? submittingStatus !== null : true
-    const disabledContentClassName = loggedIn ? undefined : "pointer-events-none opacity-70"
-    const authActionLinks = loggedIn ? null : <AuthActionLinks />
+    const mobile = isMobile(variant)
+    const [guestDialogOpen, setGuestDialogOpen] = useState(false)
+
+    function handleMobileRsvpSelect(status: EventRsvpStatus) {
+        if (status === "confirmed") {
+            setGuestDialogOpen(true)
+            return
+        }
+
+        onRsvp(status)
+    }
+
+    if (mobile) {
+        if (!loggedIn) {
+            return <AuthActionLinks variant={responsiveVariants.mobile} />
+        }
+
+        return (
+            <>
+                <RsvpChoiceButtons
+                    selectedStatus={selectedStatus}
+                    submittingStatus={submittingStatus}
+                    disabled={submittingStatus !== null}
+                    onSelect={handleMobileRsvpSelect}
+                    className="grid min-w-0 grid-cols-2 gap-2"
+                    buttonClassName="h-12 px-2"
+                />
+                <MobileGuestRsvpDialog
+                    open={guestDialogOpen}
+                    onOpenChange={setGuestDialogOpen}
+                />
+            </>
+        )
+    }
 
     return (
-        <div className="relative mt-6 overflow-hidden border-y-[3px] border-border py-4">
-            <div className={cn("space-y-4", disabledContentClassName)}>
-                <div className="grid grid-cols-2 gap-3">
-                    {(["confirmed", "maybe"] as const).map((status) => (
-                        <RsvpChoiceButton
-                            key={status}
-                            status={status}
-                            selectedStatus={selectedStatus}
-                            submittingStatus={submittingStatus}
-                            disabled={rsvpDisabled}
-                            onSelect={onRsvp}
-                        />
-                    ))}
-                </div>
+        <>
+            <div className={cn("space-y-4", !loggedIn && "pointer-events-none opacity-70")}>
+                <RsvpChoiceButtons
+                    selectedStatus={selectedStatus}
+                    submittingStatus={submittingStatus}
+                    disabled={loggedIn ? submittingStatus !== null : true}
+                    onSelect={onRsvp}
+                    className="grid grid-cols-2 gap-3"
+                />
 
                 {loggedIn ? (
                     <>
@@ -244,84 +417,48 @@ function ParticipationPanel() {
                 ) : null}
             </div>
 
-            {authActionLinks}
+            {loggedIn ? null : <AuthActionLinks />}
+        </>
+    )
+}
+
+// Wraps desktop RSVP controls in the bordered participation section.
+function ParticipationPanel() {
+    return (
+        <div className="relative mt-6 overflow-hidden border-y-[3px] border-border py-4">
+            <RsvpActions />
         </div>
     )
 }
 
-function EventRsvpCardRoot({
-    event,
+// Renders the RSVP shell as either the desktop card or mobile sticky panel.
+function RsvpPanel({
+    variant = defaultResponsiveVariant,
     children,
-    titlebarLabel = "JOIN THIS EVENT",
+    titlebarLabel,
     className,
     ...props
-}: Readonly<EventRsvpCardProps>) {
-    const navigate = useNavigate()
-    const loggedIn = isLoggedIn()
-    const initialRsvp = event.currentUserRsvp
-    const initialRsvpId = initialRsvp?.id ?? initialRsvp?._id
-    const [additionalGuests, setAdditionalGuests] = useState(initialRsvp?.additionalGuests ?? 0)
-    const [selectedStatus, setSelectedStatus] = useState<EventRsvpStatus | null>(
-        initialRsvp?.status ?? null,
-    )
-    const [rsvpId, setRsvpId] = useState(initialRsvpId)
-    const [submittingStatus, setSubmittingStatus] = useState<EventRsvpStatus | null>(null)
-
-    const handleRsvp = useCallback(async (status: EventRsvpStatus) => {
-        setSubmittingStatus(status)
-
-        try {
-            const response = rsvpId
-                ? await updateEventRsvp(rsvpId, { status, additionalGuests })
-                : await createEventRsvp({
-                    eventId: event._id,
-                    status,
-                    additionalGuests,
-                })
-            setRsvpId(response.id ?? response._id ?? rsvpId)
-            setSelectedStatus(status)
-
-            if (status === "confirmed") {
-                toast("You are on the guest list.")
-            } else if (status === "maybe") {
-                toast("Marked as maybe.")
-            } else {
-                toast("RSVP canceled.")
-            }
-        } catch (error) {
-            const message = error instanceof Error ? error.message : "Could not update RSVP"
-
-            if (message === "Unauthorized") {
-                navigate("/login")
-                return
-            }
-
-            toast(message)
-        } finally {
-            setSubmittingStatus(null)
-        }
-    }, [additionalGuests, event._id, navigate, rsvpId])
-
-    const adjustAdditionalGuests = useCallback((nextValue: number) => {
-        setAdditionalGuests(Math.min(10, Math.max(0, nextValue)))
-    }, [])
-    const contextValue = useMemo<EventRsvpCardContextValue>(() => ({
-        event,
-        loggedIn,
-        selectedStatus,
-        submittingStatus,
-        additionalGuests,
-        onRsvp: handleRsvp,
-        onAdjustAdditionalGuests: adjustAdditionalGuests,
-    }), [
-        additionalGuests,
-        adjustAdditionalGuests,
-        event,
-        handleRsvp,
-        loggedIn,
-        selectedStatus,
-        submittingStatus,
-    ])
+}: Readonly<RsvpPanelProps>) {
+    if (isMobile(variant)) {
+        return (
+            <div
+                data-testid={testIds.event.mobileRsvpPanel}
+                className={cn(
+                    "fixed inset-x-0 bottom-0 z-40 border-t-[3px] border-border bg-event-surface px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-4px_0_0_hsl(var(--border))] lg:hidden",
+                    className,
+                )}
+            >
+                {children ?? (
+                    <div className="mx-auto flex max-w-7xl items-center gap-3">
+                        <PriceCapacitySummary variant={responsiveVariants.mobile} />
+                        <div className="min-w-0 flex-1">
+                            <RsvpActions variant={responsiveVariants.mobile} />
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
+    }
 
     return (
         <WindowCard
@@ -333,22 +470,60 @@ function EventRsvpCardRoot({
             )}
             {...props}
         >
-            <EventRsvpCardContext.Provider value={contextValue}>
-                <div className="p-5 md:p-6">
-                    {children ?? (
-                        <>
-                            <PriceCapacitySection />
-                            <ParticipationPanel />
-                        </>
-                    )}
-                </div>
-            </EventRsvpCardContext.Provider>
+            <div className="p-5 md:p-6">
+                {children ?? (
+                    <>
+                        <PriceCapacitySummary />
+                        <ParticipationPanel />
+                    </>
+                )}
+            </div>
         </WindowCard>
     )
 }
 
+// Public mobile RSVP panel wrapper that can provide its own RSVP state.
+export function EventRsvpMobilePanel({ event, className }: Readonly<EventRsvpMobilePanelProps>) {
+    const content = <RsvpPanel variant={responsiveVariants.mobile} className={className} />
+
+    if (event) {
+        return <EventRsvpProvider event={event}>{content}</EventRsvpProvider>
+    }
+
+    return content
+}
+
+// Public desktop RSVP card wrapper that can provide its own RSVP state.
+function EventRsvpCardRoot({
+    event,
+    children,
+    titlebarLabel = "JOIN THIS EVENT",
+    className,
+    ...props
+}: Readonly<EventRsvpCardProps>) {
+    const content = (
+        <RsvpPanel
+            titlebarLabel={titlebarLabel}
+            className={className}
+            {...props}
+        >
+            {children}
+        </RsvpPanel>
+    )
+
+    if (event) {
+        return <EventRsvpProvider event={event}>{content}</EventRsvpProvider>
+    }
+
+    return content
+}
+
 const EventRsvpCard = Object.assign(EventRsvpCardRoot, {
-    PriceCapacity: PriceCapacitySection,
+    Provider: EventRsvpProvider,
+    MobilePanel: EventRsvpMobilePanel,
+    PriceCapacity: PriceCapacitySummary,
+    Actions: RsvpActions,
+    Panel: RsvpPanel,
     Participation: ParticipationPanel,
     GuestStepper,
     CancelButton,

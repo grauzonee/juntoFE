@@ -1,4 +1,9 @@
 import { cn } from "@/lib/utils"
+import {
+    defaultResponsiveVariant,
+    isMobile,
+    type ResponsiveVariant,
+} from "@/helpers/responsive"
 import type { DiscoverActiveFilter } from "@/types/discover"
 import { X } from "lucide-react"
 
@@ -6,18 +11,20 @@ type DiscoverActiveFiltersProps = {
     activeFilters: DiscoverActiveFilter[]
     onClearFilter: (id: string) => void
     onClearAll: () => void
-    mobile?: boolean
+    variant?: ResponsiveVariant
 }
 
 export default function DiscoverActiveFilters({
     activeFilters,
     onClearFilter,
     onClearAll,
-    mobile = false,
+    variant = defaultResponsiveVariant,
 }: Readonly<DiscoverActiveFiltersProps>) {
     if (activeFilters.length === 0) {
         return null
     }
+
+    const mobile = isMobile(variant)
 
     return (
         <div

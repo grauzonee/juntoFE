@@ -1,9 +1,13 @@
 import BrutalButton from "@/components/ui/brutal-button"
+import {
+    isDesktop,
+    type ResponsiveVariant,
+} from "@/helpers/responsive"
 import { testIds } from "@/testIds"
 import { Crosshair, MapPin } from "lucide-react"
 
 type DiscoverNearMeButtonProps = {
-    variant: "desktop" | "mobile"
+    variant: ResponsiveVariant
     onClick: () => void
 }
 
@@ -11,7 +15,7 @@ export default function DiscoverNearMeButton({
     variant,
     onClick,
 }: Readonly<DiscoverNearMeButtonProps>) {
-    if (variant === "desktop") {
+    if (isDesktop(variant)) {
         return (
             <BrutalButton
                 tone="mint"

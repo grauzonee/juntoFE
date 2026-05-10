@@ -13,6 +13,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import BrutalButton from "@/components/ui/brutal-button"
+import { responsiveVariants } from "@/helpers/responsive"
 import { testIds } from "@/testIds"
 import type {
     DiscoverActiveFilter,
@@ -67,12 +68,12 @@ export default function DiscoverMobileSearchDialog({
 
                 <div className="flex-1 overflow-y-auto bg-cream">
                     <DiscoverSearchBar
-                        variant="mobile"
+                        variant={responsiveVariants.mobile}
                         search={search}
                         onSearchChange={onSearchChange}
                         nearMeButton={(
                             <DiscoverNearMeButton
-                                variant="mobile"
+                                variant={responsiveVariants.mobile}
                                 onClick={handleNearMeClick}
                             />
                         )}
@@ -92,12 +93,12 @@ export default function DiscoverMobileSearchDialog({
 
                     <DiscoverRefinementControls
                         controls={refinementControls}
-                        mobile
+                        variant={responsiveVariants.mobile}
                     />
 
                     <DiscoverActiveFilters
                         activeFilters={activeFilters}
-                        mobile
+                        variant={responsiveVariants.mobile}
                         onClearFilter={onClearFilter}
                         onClearAll={onClearAll}
                     />

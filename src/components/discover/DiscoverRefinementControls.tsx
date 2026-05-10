@@ -1,4 +1,9 @@
 import DiscoverSelect, { type DiscoverSelectOption } from "@/components/discover/DiscoverSelect"
+import {
+    defaultResponsiveVariant,
+    isMobile,
+    type ResponsiveVariant,
+} from "@/helpers/responsive"
 import { cn } from "@/lib/utils"
 import type { DiscoverDateFilter } from "@/types/discover"
 
@@ -16,13 +21,15 @@ export type DiscoverRefinementControlGroups = {
 
 type DiscoverRefinementControlsProps = {
     controls: DiscoverRefinementControlGroups
-    mobile?: boolean
+    variant?: ResponsiveVariant
 }
 
 export default function DiscoverRefinementControls({
     controls,
-    mobile = false,
+    variant = defaultResponsiveVariant,
 }: Readonly<DiscoverRefinementControlsProps>) {
+    const mobile = isMobile(variant)
+
     return (
         <div
             className={cn(
