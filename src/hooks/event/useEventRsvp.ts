@@ -15,7 +15,7 @@ export type UseEventRsvpValue = {
     submittingStatus: EventRsvpStatus | null
     loggedIn: boolean
     additionalGuests: number
-    onRsvp: (status: EventRsvpStatus) => void
+    onRsvp: (status: EventRsvpStatus) => Promise<void>
     onAdjustAdditionalGuests: (nextValue: number) => void
 }
 

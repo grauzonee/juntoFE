@@ -1,6 +1,7 @@
 import {
     createContext,
     useContext,
+    useState,
     type ComponentProps,
     type PropsWithChildren,
 } from "react"
@@ -20,6 +21,12 @@ import {
     responsiveVariants,
     type ResponsiveVariant,
 } from "@/helpers/responsive"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 import {
     useEventRsvp,
     type UseEventRsvpValue,
@@ -51,6 +58,15 @@ type AuthActionLinksProps = {
 
 type RsvpActionsProps = {
     variant?: ResponsiveVariant
+}
+
+type GuestStepperProps = {
+    variant?: ResponsiveVariant
+}
+
+type MobileGuestRsvpDialogProps = {
+    open: boolean
+    onOpenChange: (open: boolean) => void
 }
 
 type RsvpPanelProps = Omit<EventRsvpCardProps, "event"> & {
@@ -191,37 +207,100 @@ function RsvpChoiceButtons({
 }
 
 // Lets logged-in users adjust the number of additional guests.
-function GuestStepper() {
+function GuestStepper({
+    variant = defaultResponsiveVariant,
+}: Readonly<GuestStepperProps>) {
     const { additionalGuests, onAdjustAdditionalGuests } = useEventRsvpCardContext()
+    const mobile = isMobile(variant)
 
     return (
-        <div className="flex items-center justify-between gap-4">
-            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-foreground/70">
-                Additional guests
-            </span>
+        <div className={cn("flex items-center gap-4", mobile ? "justify-center" : "justify-between")}>
+            {mobile ? null : (
+                <span className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-foreground/70">
+                    Additional guests
+                </span>
+            )}
             <div className="flex shrink-0 items-center">
                 <button
                     type="button"
-                    className="flex h-11 w-11 items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint disabled:cursor-not-allowed disabled:opacity-50"
+                    className={cn(
+                        "flex items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint disabled:cursor-not-allowed disabled:opacity-50",
+                        mobile ? "h-14 w-14" : "h-11 w-11",
+                    )}
                     onClick={() => onAdjustAdditionalGuests(additionalGuests - 1)}
                     disabled={additionalGuests === 0}
                     aria-label="Remove additional guest"
                 >
-                    <Minus className="h-4 w-4 stroke-[4]" aria-hidden="true" />
+                    <Minus className={cn("stroke-[4]", mobile ? "h-5 w-5" : "h-4 w-4")} aria-hidden="true" />
                 </button>
-                <span className="flex h-11 w-12 items-center justify-center border-y-[3px] border-border bg-card font-display text-xl font-extrabold">
+                <span
+                    className={cn(
+                        "flex items-center justify-center border-y-[3px] border-border bg-card font-display",
+                        mobile ? "h-14 w-16 text-4xl font-black" : "h-11 w-12 text-xl font-extrabold",
+                    )}
+                >
                     {additionalGuests}
                 </span>
                 <button
                     type="button"
-                    className="flex h-11 w-11 items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint"
+                    className={cn(
+                        "flex items-center justify-center border-[3px] border-border bg-card transition hover:bg-mint",
+                        mobile ? "h-14 w-14" : "h-11 w-11",
+                    )}
                     onClick={() => onAdjustAdditionalGuests(additionalGuests + 1)}
                     aria-label="Add additional guest"
                 >
-                    <Plus className="h-4 w-4 stroke-[4]" aria-hidden="true" />
+                    <Plus className={cn("stroke-[4]", mobile ? "h-5 w-5" : "h-4 w-4")} aria-hidden="true" />
                 </button>
             </div>
         </div>
+    )
+}
+
+// Confirms mobile "Going" RSVP after users choose their guest count.
+function MobileGuestRsvpDialog({ open, onOpenChange }: Readonly<MobileGuestRsvpDialogProps>) {
+    const { submittingStatus, onRsvp } = useEventRsvpCardContext()
+    const submitting = submittingStatus === "confirmed"
+
+    async function handleConfirm() {
+        await onRsvp("confirmed")
+        onOpenChange(false)
+    }
+
+    return (
+        <Dialog
+            open={open}
+            onOpenChange={(nextOpen) => {
+                if (submittingStatus === null) {
+                    onOpenChange(nextOpen)
+                }
+            }}
+        >
+            <DialogContent
+                aria-describedby={undefined}
+                className="w-[calc(100%-2rem)] max-w-sm rounded-none border-[3px] border-border bg-event-surface p-0 shadow-brutal"
+            >
+                <DialogHeader className="border-b-[3px] border-border bg-cream px-5 pb-4 pt-6 text-left">
+                    <DialogTitle className="font-heading text-2xl font-black uppercase leading-none">
+                        Additional guests
+                    </DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-5 p-5">
+                    <GuestStepper variant={responsiveVariants.mobile} />
+                    <BrutalButton
+                        type="button"
+                        tone="mint"
+                        className="w-full justify-center gap-2"
+                        onClick={handleConfirm}
+                        disabled={submittingStatus !== null}
+                    >
+                        <Check className="h-4 w-4 shrink-0 stroke-[3]" aria-hidden="true" />
+                        {submitting ? "SAVING" : "CONFIRM"}
+                    </BrutalButton>
+                </div>
+            </DialogContent>
+        </Dialog>
     )
 }
 
@@ -285,6 +364,16 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
         onRsvp,
     } = useEventRsvpCardContext()
     const mobile = isMobile(variant)
+    const [guestDialogOpen, setGuestDialogOpen] = useState(false)
+
+    function handleMobileRsvpSelect(status: EventRsvpStatus) {
+        if (status === "confirmed") {
+            setGuestDialogOpen(true)
+            return
+        }
+
+        void onRsvp(status)
+    }
 
     if (mobile) {
         if (!loggedIn) {
@@ -292,14 +381,20 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
         }
 
         return (
-            <RsvpChoiceButtons
-                selectedStatus={selectedStatus}
-                submittingStatus={submittingStatus}
-                disabled={submittingStatus !== null}
-                onSelect={onRsvp}
-                className="grid min-w-0 grid-cols-2 gap-2"
-                buttonClassName="h-12 px-2"
-            />
+            <>
+                <RsvpChoiceButtons
+                    selectedStatus={selectedStatus}
+                    submittingStatus={submittingStatus}
+                    disabled={submittingStatus !== null}
+                    onSelect={handleMobileRsvpSelect}
+                    className="grid min-w-0 grid-cols-2 gap-2"
+                    buttonClassName="h-12 px-2"
+                />
+                <MobileGuestRsvpDialog
+                    open={guestDialogOpen}
+                    onOpenChange={setGuestDialogOpen}
+                />
+            </>
         )
     }
 

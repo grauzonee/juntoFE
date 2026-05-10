@@ -48,7 +48,7 @@ test("EventPageContent renders the main event sections", () => {
     assert.ok(mobilePanel.querySelector('a[href="/register"]'))
 })
 
-test("EventPageContent lets logged-in users RSVP from the mobile panel", async (t) => {
+test("EventPageContent confirms mobile Going RSVP after selecting guests", async (t) => {
     const event = createTestEvent()
     const requests: RsvpRequestPayload[] = []
 
@@ -77,6 +77,13 @@ test("EventPageContent lets logged-in users RSVP from the mobile panel", async (
 
     fireEvent.click(within(mobilePanel).getByRole("button", { name: /going/i }))
 
+    const guestDialog = view.getByRole("dialog", { name: /additional guests/i })
+
+    assert.equal(requests.length, 0)
+
+    fireEvent.click(within(guestDialog).getByRole("button", { name: /add additional guest/i }))
+    fireEvent.click(within(guestDialog).getByRole("button", { name: /confirm/i }))
+
     await waitFor(() => {
         assert.equal(requests.length, 1)
     })
@@ -84,7 +91,7 @@ test("EventPageContent lets logged-in users RSVP from the mobile panel", async (
     assert.deepEqual(requests[0], {
         eventId: event._id,
         status: "confirmed",
-        additionalGuests: 0,
+        additionalGuests: 1,
     })
 })
 
