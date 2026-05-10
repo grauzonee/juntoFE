@@ -16,6 +16,7 @@ import type {
     DiscoverFilters,
     DiscoverSortOption,
 } from "@/types/discover"
+import { responsiveVariants } from "@/helpers/responsive"
 import { testIds } from "@/testIds"
 
 type DiscoverFilterBarProps = {
@@ -116,12 +117,12 @@ export default function DiscoverFilterBar({
 
             <div className="hidden border-2 border-border bg-card shadow-brutal-lg md:block">
                 <DiscoverSearchBar
-                    variant="desktop"
+                    variant={responsiveVariants.desktop}
                     search={filters.search}
                     onSearchChange={onSearchChange}
                     nearMeButton={(
                         <DiscoverNearMeButton
-                            variant="desktop"
+                            variant={responsiveVariants.desktop}
                             onClick={onNearMeClick}
                         />
                     )}

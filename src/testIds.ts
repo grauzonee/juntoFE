@@ -27,6 +27,7 @@ export const testIds = {
         meetingPointSection: "event-meeting-point-section",
         discussionSection: "event-discussion-section",
         rsvpCard: "event-rsvp-card",
+        mobileRsvpPanel: "event-mobile-rsvp-panel",
         rsvpLoginLink: "event-rsvp-login-link",
         hostCard: "event-host-card",
         shellHeader: "event-shell-header",

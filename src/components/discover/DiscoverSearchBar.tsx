@@ -1,30 +1,33 @@
 import type { ReactNode } from "react"
 import { Input } from "@/components/ui/input"
+import {
+    defaultResponsiveVariant,
+    responsiveVariants,
+    type ResponsiveVariant,
+} from "@/helpers/responsive"
 import { Search } from "lucide-react"
-
-type DiscoverSearchBarVariant = "desktop" | "mobile"
 
 type DiscoverSearchBarProps = {
     search: string
     onSearchChange: (value: string) => void
     autoFocus?: boolean
     nearMeButton?: ReactNode
-    variant?: DiscoverSearchBarVariant
+    variant?: ResponsiveVariant
 }
 
-const searchBarClassNames: Record<DiscoverSearchBarVariant, string> = {
-    desktop: "flex items-center gap-3 bg-cream px-4 py-4",
-    mobile: "space-y-4 px-5 py-5",
+const searchBarClassNames: Record<ResponsiveVariant, string> = {
+    [responsiveVariants.desktop]: "flex items-center gap-3 bg-cream px-4 py-4",
+    [responsiveVariants.mobile]: "space-y-4 px-5 py-5",
 }
 
-const searchInputClassNames: Record<DiscoverSearchBarVariant, string> = {
-    desktop: "h-12 rounded-none border-brutal border-border bg-card pl-11 pr-4 text-base font-semibold shadow-brutal-sm",
-    mobile: "h-12 rounded-[1rem] border-brutal border-border bg-card pl-11 pr-4 text-base shadow-none",
+const searchInputClassNames: Record<ResponsiveVariant, string> = {
+    [responsiveVariants.desktop]: "h-12 rounded-none border-brutal border-border bg-card pl-11 pr-4 text-base font-semibold shadow-brutal-sm",
+    [responsiveVariants.mobile]: "h-12 rounded-[1rem] border-brutal border-border bg-card pl-11 pr-4 text-base shadow-none",
 }
 
-const searchPlaceholder: Record<DiscoverSearchBarVariant, string> = {
-    desktop: "Search by title, place, or vibe",
-    mobile: "Search events...",
+const searchPlaceholder: Record<ResponsiveVariant, string> = {
+    [responsiveVariants.desktop]: "Search by title, place, or vibe",
+    [responsiveVariants.mobile]: "Search events...",
 }
 
 export default function DiscoverSearchBar({
@@ -32,7 +35,7 @@ export default function DiscoverSearchBar({
     onSearchChange,
     autoFocus = false,
     nearMeButton,
-    variant = "desktop",
+    variant = defaultResponsiveVariant,
 }: Readonly<DiscoverSearchBarProps>) {
     return (
         <div className={searchBarClassNames[variant]}>
