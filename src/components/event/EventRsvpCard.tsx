@@ -372,7 +372,7 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
             return
         }
 
-        void onRsvp(status)
+        onRsvp(status)
     }
 
     if (mobile) {
