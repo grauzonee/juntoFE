@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface BrutalButtonProps extends ComponentProps<typeof Button> {
-    tone?: "mint" | "violet" | "cream"
+    tone?: "mint" | "violet" | "cream" | "destructive"
 }
 
 const toneClasses: Record<NonNullable<BrutalButtonProps["tone"]>, string> = {
     mint: "bg-mint text-foreground hover:bg-mint/90",
     violet: "bg-violet text-card hover:bg-violet/90",
     cream: "bg-card text-foreground hover:bg-card/90",
+    destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
 }
 
 export default function BrutalButton({

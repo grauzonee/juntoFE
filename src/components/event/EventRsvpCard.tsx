@@ -6,7 +6,7 @@ import {
     type PropsWithChildren,
 } from "react"
 import { Link } from "react-router"
-import { Check, HelpCircle, Minus, Plus } from "lucide-react"
+import { Check, HelpCircle, Minus, Plus, X } from "lucide-react"
 import type { Event } from "@/types/Event"
 import WindowCard from "@/components/ui/window-card"
 import BrutalButton from "@/components/ui/brutal-button"
@@ -174,15 +174,22 @@ function RsvpChoiceButtons({
         <div className={className}>
             {(["confirmed", "maybe"] as const).map((status) => {
                 const isGoing = status === "confirmed"
-                const isSelected = selectedStatus === status
-                const Icon = isGoing ? Check : HelpCircle
-                const label = isGoing ? "GOING" : "MAYBE"
-                const savingLabel = submittingStatus === status ? "SAVING" : label
+                const isCancelingAttendance = isGoing && selectedStatus === "confirmed"
+                const actionStatus: EventRsvpStatus = isCancelingAttendance ? "canceled" : status
+                const isSelected = selectedStatus === status && !isCancelingAttendance
+                let Icon = isGoing ? Check : HelpCircle
+                let label = isGoing ? "ATTEND" : "MAYBE"
                 let tone: ComponentProps<typeof BrutalButton>["tone"] = "cream"
 
-                if (isSelected) {
+                if (isCancelingAttendance) {
+                    Icon = X
+                    label = "CAN'T GO"
+                    tone = "destructive"
+                } else if (isSelected) {
                     tone = isGoing ? "mint" : "violet"
                 }
+
+                const savingLabel = submittingStatus === actionStatus ? "SAVING" : label
 
                 return (
                     <BrutalButton
@@ -194,7 +201,7 @@ function RsvpChoiceButtons({
                             isSelected && "shadow-none translate-x-1 translate-y-1",
                             buttonClassName,
                         )}
-                        onClick={() => onSelect(status)}
+                        onClick={() => onSelect(actionStatus)}
                         disabled={disabled}
                     >
                         <Icon className="h-4 w-4 shrink-0 stroke-[3]" aria-hidden="true" />
@@ -332,23 +339,15 @@ function AuthActionLinks({ variant = defaultResponsiveVariant }: Readonly<AuthAc
     )
 }
 
-// Lets logged-in users cancel their current RSVP.
-function CancelButton() {
-    const { loggedIn, selectedStatus, submittingStatus, onRsvp } = useEventRsvpCardContext()
+// Shows the current attendance state below RSVP controls.
+function AttendanceStatusLine() {
+    const { selectedStatus } = useEventRsvpCardContext()
 
-    if (loggedIn) {
+    if (selectedStatus === "confirmed") {
         return (
-            <button
-                type="button"
-                className={cn(
-                    "w-full text-center text-sm font-black underline decoration-[2px] underline-offset-4 transition hover:text-violet",
-                    selectedStatus === "canceled" && "text-violet",
-                )}
-                onClick={() => onRsvp("canceled")}
-                disabled={submittingStatus !== null}
-            >
-                {submittingStatus === "canceled" ? "Saving..." : "Can't Go"}
-            </button>
+            <p className="w-full text-center text-sm font-black text-foreground/75">
+                You're attending the event
+            </p>
         )
     }
 
@@ -412,7 +411,7 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
                 {loggedIn ? (
                     <>
                         <GuestStepper />
-                        <CancelButton />
+                        <AttendanceStatusLine />
                     </>
                 ) : null}
             </div>
@@ -526,7 +525,7 @@ const EventRsvpCard = Object.assign(EventRsvpCardRoot, {
     Panel: RsvpPanel,
     Participation: ParticipationPanel,
     GuestStepper,
-    CancelButton,
+    AttendanceStatusLine,
     AuthActions: AuthActionLinks,
 })
 

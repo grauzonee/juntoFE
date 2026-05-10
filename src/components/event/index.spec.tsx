@@ -48,7 +48,7 @@ test("EventPageContent renders the main event sections", () => {
     assert.ok(mobilePanel.querySelector('a[href="/register"]'))
 })
 
-test("EventPageContent confirms mobile Going RSVP after selecting guests", async (t) => {
+test("EventPageContent confirms mobile Attend RSVP after selecting guests", async (t) => {
     const event = createTestEvent()
     const requests: RsvpRequestPayload[] = []
 
@@ -75,7 +75,7 @@ test("EventPageContent confirms mobile Going RSVP after selecting guests", async
     const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
     const mobilePanel = view.getByTestId(testIds.event.mobileRsvpPanel)
 
-    fireEvent.click(within(mobilePanel).getByRole("button", { name: /going/i }))
+    fireEvent.click(within(mobilePanel).getByRole("button", { name: /attend/i }))
 
     const guestDialog = view.getByRole("dialog", { name: /additional guests/i })
 
@@ -92,6 +92,58 @@ test("EventPageContent confirms mobile Going RSVP after selecting guests", async
         eventId: event._id,
         status: "confirmed",
         additionalGuests: 1,
+    })
+})
+
+test("EventPageContent shows a cancel action when the user is attending", async (t) => {
+    const event = createTestEvent({
+        currentUserRsvp: {
+            id: "rsvp-1",
+            status: "confirmed",
+            additionalGuests: 0,
+        },
+    })
+    const requests: Array<Omit<RsvpRequestPayload, "eventId">> = []
+
+    globalThis.localStorage.setItem("token", makeToken(Math.floor(Date.now() / 1000) + 3600))
+
+    t.mock.method(api, "put", async (url: string, payload: Omit<RsvpRequestPayload, "eventId">) => {
+        assert.equal(url, "/rsvp/rsvp-1")
+        requests.push(payload)
+
+        return {
+            status: 200,
+            data: {
+                success: true,
+                data: {
+                    id: "rsvp-1",
+                    status: payload.status,
+                    additionalGuests: payload.additionalGuests,
+                    eventDate: event.date,
+                },
+            },
+        }
+    })
+
+    const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
+    const rsvpCard = view.getByTestId(testIds.event.rsvpCard)
+
+    assert.equal(within(rsvpCard).queryByRole("button", { name: /^attend$/i }), null)
+    assert.ok(within(rsvpCard).getByText("You're attending the event"))
+
+    fireEvent.click(within(rsvpCard).getByRole("button", { name: /can't go/i }))
+
+    await waitFor(() => {
+        assert.equal(requests.length, 1)
+    })
+
+    assert.deepEqual(requests[0], {
+        status: "canceled",
+        additionalGuests: 0,
+    })
+
+    await waitFor(() => {
+        assert.equal(within(rsvpCard).queryByText("You're attending the event"), null)
     })
 })
 
