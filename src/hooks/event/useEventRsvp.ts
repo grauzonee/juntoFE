@@ -22,6 +22,10 @@ export type UseEventRsvpValue = {
     onAdjustAdditionalGuests: (nextValue: number) => void
 }
 
+function getSeatCount(guests = 0) {
+    return 1 + guests
+}
+
 export function useEventRsvp(event: Event): UseEventRsvpValue {
     const navigate = useNavigate()
     const loggedIn = isLoggedIn()
@@ -36,10 +40,6 @@ export function useEventRsvp(event: Event): UseEventRsvpValue {
     const [submittingStatus, setSubmittingStatus] = useState<EventRsvpStatus | null>(null)
     const [attendanceReady, setAttendanceReady] = useState(() => !loggedIn || Boolean(initialRsvp))
     const [capacity, setCapacity] = useState(baseCapacity)
-
-    function getSeatCount(guests = 0) {
-        return 1 + guests
-    }
 
     const applyRsvpState = useCallback((rsvp: typeof initialRsvp | null | undefined, ready: boolean) => {
         setAdditionalGuests(rsvp?.additionalGuests ?? 0)
