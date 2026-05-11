@@ -6,11 +6,12 @@ import {
     type PropsWithChildren,
 } from "react"
 import { Link } from "react-router"
-import { Check, HelpCircle, Minus, Plus } from "lucide-react"
+import { Check, HelpCircle, Minus, Plus, X } from "lucide-react"
 import type { Event } from "@/types/Event"
 import WindowCard from "@/components/ui/window-card"
 import BrutalButton from "@/components/ui/brutal-button"
 import type { EventRsvpStatus } from "@/requests/event"
+import { eventRsvpStatuses, isConfirmed } from "@/helpers/eventRsvpStatus"
 import {
     formatEventFee,
     getEventCapacityDisplay,
@@ -46,6 +47,7 @@ type EventRsvpMobilePanelProps = {
 type RsvpChoiceButtonsProps = {
     selectedStatus: EventRsvpStatus | null
     submittingStatus: EventRsvpStatus | null
+    loading?: boolean
     disabled: boolean
     onSelect: (status: EventRsvpStatus) => void
     className?: string
@@ -100,7 +102,7 @@ export function EventRsvpProvider({ event, children }: Readonly<PropsWithChildre
 // Shows event price and capacity in desktop or mobile layout.
 function PriceCapacitySummary({ variant = defaultResponsiveVariant }: Readonly<{ variant?: ResponsiveVariant }>) {
     const { event } = useEventRsvpCardContext()
-    const capacity = getEventCapacityDisplay(event)
+    const capacity = getEventCapacityDisplay(event.capacity)
     const progressPercent = capacity.progressPercent ?? 0
 
     if (isMobile(variant)) {
@@ -165,24 +167,50 @@ function PriceCapacitySummary({ variant = defaultResponsiveVariant }: Readonly<{
 function RsvpChoiceButtons({
     selectedStatus,
     submittingStatus,
+    loading = false,
     disabled,
     onSelect,
     className,
     buttonClassName,
 }: Readonly<RsvpChoiceButtonsProps>) {
+    if (loading) {
+        return (
+            <div className={className} aria-busy="true">
+                {["confirmed", "maybe"].map((status) => (
+                    <BrutalButton
+                        key={status}
+                        type="button"
+                        tone="cream"
+                        className={cn("min-w-0 justify-center gap-2 px-3 text-xs", buttonClassName)}
+                        disabled
+                    >
+                        CHECKING
+                    </BrutalButton>
+                ))}
+            </div>
+        )
+    }
+
     return (
         <div className={className}>
             {(["confirmed", "maybe"] as const).map((status) => {
-                const isGoing = status === "confirmed"
-                const isSelected = selectedStatus === status
-                const Icon = isGoing ? Check : HelpCircle
-                const label = isGoing ? "GOING" : "MAYBE"
-                const savingLabel = submittingStatus === status ? "SAVING" : label
+                const isGoing = isConfirmed(status)
+                const isCancelingAttendance = isGoing && isConfirmed(selectedStatus)
+                const actionStatus: EventRsvpStatus = isCancelingAttendance ? "canceled" : status
+                const isSelected = selectedStatus === status && !isCancelingAttendance
+                let Icon = isGoing ? Check : HelpCircle
+                let label = isGoing ? "ATTEND" : "MAYBE"
                 let tone: ComponentProps<typeof BrutalButton>["tone"] = "cream"
 
-                if (isSelected) {
+                if (isCancelingAttendance) {
+                    Icon = X
+                    label = "CAN'T GO"
+                    tone = "destructive"
+                } else if (isSelected) {
                     tone = isGoing ? "mint" : "violet"
                 }
+
+                const savingLabel = submittingStatus === actionStatus ? "SAVING" : label
 
                 return (
                     <BrutalButton
@@ -194,7 +222,7 @@ function RsvpChoiceButtons({
                             isSelected && "shadow-none translate-x-1 translate-y-1",
                             buttonClassName,
                         )}
-                        onClick={() => onSelect(status)}
+                        onClick={() => onSelect(actionStatus)}
                         disabled={disabled}
                     >
                         <Icon className="h-4 w-4 shrink-0 stroke-[3]" aria-hidden="true" />
@@ -260,10 +288,10 @@ function GuestStepper({
 // Confirms mobile "Going" RSVP after users choose their guest count.
 function MobileGuestRsvpDialog({ open, onOpenChange }: Readonly<MobileGuestRsvpDialogProps>) {
     const { submittingStatus, onRsvp } = useEventRsvpCardContext()
-    const submitting = submittingStatus === "confirmed"
+    const submitting = isConfirmed(submittingStatus)
 
     async function handleConfirm() {
-        await onRsvp("confirmed")
+        await onRsvp(eventRsvpStatuses.confirmed)
         onOpenChange(false)
     }
 
@@ -332,23 +360,15 @@ function AuthActionLinks({ variant = defaultResponsiveVariant }: Readonly<AuthAc
     )
 }
 
-// Lets logged-in users cancel their current RSVP.
-function CancelButton() {
-    const { loggedIn, selectedStatus, submittingStatus, onRsvp } = useEventRsvpCardContext()
+// Shows the current attendance state below RSVP controls.
+function AttendanceStatusLine() {
+    const { selectedStatus } = useEventRsvpCardContext()
 
-    if (loggedIn) {
+    if (isConfirmed(selectedStatus)) {
         return (
-            <button
-                type="button"
-                className={cn(
-                    "w-full text-center text-sm font-black underline decoration-[2px] underline-offset-4 transition hover:text-violet",
-                    selectedStatus === "canceled" && "text-violet",
-                )}
-                onClick={() => onRsvp("canceled")}
-                disabled={submittingStatus !== null}
-            >
-                {submittingStatus === "canceled" ? "Saving..." : "Can't Go"}
-            </button>
+            <p className="w-full text-center text-sm font-black text-foreground/75">
+                You're attending the event
+            </p>
         )
     }
 
@@ -361,13 +381,14 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
         loggedIn,
         selectedStatus,
         submittingStatus,
+        attendanceReady,
         onRsvp,
     } = useEventRsvpCardContext()
     const mobile = isMobile(variant)
     const [guestDialogOpen, setGuestDialogOpen] = useState(false)
 
     function handleMobileRsvpSelect(status: EventRsvpStatus) {
-        if (status === "confirmed") {
+        if (isConfirmed(status)) {
             setGuestDialogOpen(true)
             return
         }
@@ -378,6 +399,20 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
     if (mobile) {
         if (!loggedIn) {
             return <AuthActionLinks variant={responsiveVariants.mobile} />
+        }
+
+        if (!attendanceReady) {
+            return (
+                <RsvpChoiceButtons
+                    selectedStatus={null}
+                    submittingStatus={null}
+                    loading
+                    disabled
+                    onSelect={handleMobileRsvpSelect}
+                    className="grid min-w-0 grid-cols-2 gap-2"
+                    buttonClassName="h-12 px-2"
+                />
+            )
         }
 
         return (
@@ -404,15 +439,16 @@ function RsvpActions({ variant = defaultResponsiveVariant }: Readonly<RsvpAction
                 <RsvpChoiceButtons
                     selectedStatus={selectedStatus}
                     submittingStatus={submittingStatus}
-                    disabled={loggedIn ? submittingStatus !== null : true}
+                    loading={loggedIn && !attendanceReady}
+                    disabled={loggedIn ? submittingStatus !== null || !attendanceReady : true}
                     onSelect={onRsvp}
                     className="grid grid-cols-2 gap-3"
                 />
 
-                {loggedIn ? (
+                {loggedIn && attendanceReady ? (
                     <>
                         <GuestStepper />
-                        <CancelButton />
+                        <AttendanceStatusLine />
                     </>
                 ) : null}
             </div>
@@ -526,7 +562,7 @@ const EventRsvpCard = Object.assign(EventRsvpCardRoot, {
     Panel: RsvpPanel,
     Participation: ParticipationPanel,
     GuestStepper,
-    CancelButton,
+    AttendanceStatusLine,
     AuthActions: AuthActionLinks,
 })
 
