@@ -1,5 +1,8 @@
 name: Junto pipeline
 on: 
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
@@ -27,4 +30,3 @@ jobs:
       - name: Build code 🔧
         run: npm run build
         working-directory: ./
-
