@@ -26,7 +26,11 @@ export function createTestEvent(overrides: Partial<Event> = {}): Event {
             id: "workshop",
             title: "Workshop",
         },
-        maxAttendees: 30,
+        capacity: {
+            maxAttendees: 30,
+            confirmedAttendanceTotal: 0,
+            remainingSeats: 30,
+        },
         fee: {
             amount: 0,
             currency: "EUR",

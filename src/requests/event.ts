@@ -20,6 +20,13 @@ export type EventRsvp = {
     eventDate: string
 }
 
+export type CurrentUserEventRsvp = {
+    id?: string
+    _id?: string
+    status: EventRsvpStatus
+    additionalGuests?: number
+}
+
 type RawEvent = Omit<Event, "date"> & {
     date: string | number
 }
@@ -64,6 +71,15 @@ export async function fetchEvent(id: string): Promise<Event | null> {
 export async function createEventRsvp(payload: EventRsvpPayload): Promise<EventRsvp> {
     const response = await makeRequest<{ success: boolean; data: EventRsvp }>(() =>
         axios.post("/event/attend", payload),
+        "rsvp",
+    )
+
+    return response.data
+}
+
+export async function fetchCurrentUserEventRsvp(eventId: string): Promise<CurrentUserEventRsvp | null> {
+    const response = await makeRequest<{ success: boolean; data: CurrentUserEventRsvp | null }>(() =>
+        axios.get(`/event/${eventId}/rsvps/me`),
         "rsvp",
     )
 

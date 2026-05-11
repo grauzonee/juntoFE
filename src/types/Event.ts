@@ -7,6 +7,15 @@ type Location = {
     coordinates: number[]
 }
 
+export type Capacity = {
+    maxAttendees?: number;
+    remainingSeats?: number;
+    confirmedAttendanceTotal?: number;
+    progressPercent?: number;
+    spotsLeft?: number;
+    confirmedAttendees?: number;
+}
+
 export type Event = {
     _id: string;
     title: string;
@@ -18,13 +27,7 @@ export type Event = {
     categories: Category[];
     author: Pick<User, "id" | "username" | "avatarUrl">;
     type: Eventtype;
-    maxAttendees?: number;
-    capacity?: {
-        maxAttendees?: number;
-        spotsLeft?: number;
-        confirmedAttendees?: number;
-        progressPercent?: number;
-    };
+    capacity?: Capacity;
     currentUserRsvp?: {
         id?: string;
         _id?: string;

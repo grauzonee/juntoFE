@@ -49,10 +49,33 @@ test("EventPageContent renders the main event sections", () => {
 })
 
 test("EventPageContent confirms mobile Attend RSVP after selecting guests", async (t) => {
-    const event = createTestEvent()
+    const event = createTestEvent({
+        capacity: {
+            maxAttendees: 30,
+            confirmedAttendanceTotal: 0,
+            remainingSeats: 30,
+        },
+    })
     const requests: RsvpRequestPayload[] = []
 
     globalThis.localStorage.setItem("token", makeToken(Math.floor(Date.now() / 1000) + 3600))
+    t.after(() => {
+        globalThis.localStorage.removeItem("token")
+    })
+
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === `/event/${event._id}/rsvps/me`) {
+            return {
+                status: 200,
+                data: {
+                    success: true,
+                    data: null,
+                },
+            }
+        }
+
+        throw new Error(`Unexpected GET request for ${url}`)
+    })
 
     t.mock.method(api, "post", async (url: string, payload: RsvpRequestPayload) => {
         assert.equal(url, "/event/attend")
@@ -75,6 +98,10 @@ test("EventPageContent confirms mobile Attend RSVP after selecting guests", asyn
     const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
     const mobilePanel = view.getByTestId(testIds.event.mobileRsvpPanel)
 
+    await waitFor(() => {
+        assert.ok(within(mobilePanel).getByRole("button", { name: /attend/i }))
+    })
+
     fireEvent.click(within(mobilePanel).getByRole("button", { name: /attend/i }))
 
     const guestDialog = view.getByRole("dialog", { name: /additional guests/i })
@@ -88,6 +115,10 @@ test("EventPageContent confirms mobile Attend RSVP after selecting guests", asyn
         assert.equal(requests.length, 1)
     })
 
+    await waitFor(() => {
+        assert.ok(within(mobilePanel).getByText(/28 \/ 30 spots left/i))
+    })
+
     assert.deepEqual(requests[0], {
         eventId: event._id,
         status: "confirmed",
@@ -95,56 +126,40 @@ test("EventPageContent confirms mobile Attend RSVP after selecting guests", asyn
     })
 })
 
-test("EventPageContent shows a cancel action when the user is attending", async (t) => {
-    const event = createTestEvent({
-        currentUserRsvp: {
-            id: "rsvp-1",
-            status: "confirmed",
-            additionalGuests: 0,
-        },
-    })
-    const requests: Array<Omit<RsvpRequestPayload, "eventId">> = []
+test("EventPageContent reflects an already-attending mobile RSVP from the backend", async (t) => {
+    const event = createTestEvent()
 
     globalThis.localStorage.setItem("token", makeToken(Math.floor(Date.now() / 1000) + 3600))
+    t.after(() => {
+        globalThis.localStorage.removeItem("token")
+    })
 
-    t.mock.method(api, "put", async (url: string, payload: Omit<RsvpRequestPayload, "eventId">) => {
-        assert.equal(url, "/rsvp/rsvp-1")
-        requests.push(payload)
-
-        return {
-            status: 200,
-            data: {
-                success: true,
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === `/event/${event._id}/rsvps/me`) {
+            return {
+                status: 200,
                 data: {
-                    id: "rsvp-1",
-                    status: payload.status,
-                    additionalGuests: payload.additionalGuests,
-                    eventDate: event.date,
+                    success: true,
+                    data: {
+                        id: "rsvp-1",
+                        status: "confirmed",
+                        additionalGuests: 2,
+                    },
                 },
-            },
+            }
         }
+
+        throw new Error(`Unexpected GET request for ${url}`)
     })
 
     const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
-    const rsvpCard = view.getByTestId(testIds.event.rsvpCard)
-
-    assert.equal(within(rsvpCard).queryByRole("button", { name: /^attend$/i }), null)
-    assert.ok(within(rsvpCard).getByText("You're attending the event"))
-
-    fireEvent.click(within(rsvpCard).getByRole("button", { name: /can't go/i }))
+    const mobilePanel = view.getByTestId(testIds.event.mobileRsvpPanel)
 
     await waitFor(() => {
-        assert.equal(requests.length, 1)
+        assert.ok(within(mobilePanel).getByRole("button", { name: /can't go/i }))
     })
 
-    assert.deepEqual(requests[0], {
-        status: "canceled",
-        additionalGuests: 0,
-    })
-
-    await waitFor(() => {
-        assert.equal(within(rsvpCard).queryByText("You're attending the event"), null)
-    })
+    assert.equal(within(mobilePanel).queryByRole("button", { name: /attend/i }), null)
 })
 
 test("EventLayout wraps event routes with the event shell", async (t) => {

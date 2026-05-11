@@ -1,4 +1,4 @@
-import type { Event } from "@/types/Event"
+import type { Capacity, Event } from "@/types/Event"
 
 export function getEventCoordinates(event: Pick<Event, "location">) {
     const [lng = 16.3738, lat = 48.2082] = event.location.coordinates
@@ -63,9 +63,9 @@ function clampPercent(value: number) {
 }
 
 export function getEventCapacityDisplay(
-    event: Pick<Event, "capacity" | "maxAttendees">,
+    capacity?: Capacity,
 ): EventCapacityDisplay {
-    const maxAttendees = event.maxAttendees
+    const maxAttendees = capacity?.maxAttendees
 
     if (!maxAttendees || maxAttendees < 0) {
         return {
@@ -76,8 +76,8 @@ export function getEventCapacityDisplay(
         }
     }
 
-    if (typeof event.capacity?.spotsLeft === "number") {
-        const spotsLeft = Math.max(0, event.capacity.spotsLeft)
+    if (typeof capacity?.remainingSeats === "number") {
+        const spotsLeft = Math.max(0, capacity.remainingSeats)
         const usedSpots = Math.max(0, maxAttendees - spotsLeft)
 
         return {
@@ -88,8 +88,8 @@ export function getEventCapacityDisplay(
         }
     }
 
-    if (typeof event.capacity?.confirmedAttendees === "number") {
-        const confirmedAttendees = Math.max(0, event.capacity.confirmedAttendees)
+    if (typeof capacity?.confirmedAttendanceTotal === "number") {
+        const confirmedAttendees = Math.max(0, capacity.confirmedAttendanceTotal)
 
         return {
             label: `${confirmedAttendees} / ${maxAttendees} going`,
@@ -99,10 +99,33 @@ export function getEventCapacityDisplay(
         }
     }
 
-    if (typeof event.capacity?.progressPercent === "number") {
+    if (typeof capacity?.spotsLeft === "number") {
+        const spotsLeft = Math.max(0, capacity.spotsLeft)
+        const usedSpots = Math.max(0, maxAttendees - spotsLeft)
+
+        return {
+            label: `${spotsLeft} / ${maxAttendees} spots left`,
+            progressPercent: clampPercent((usedSpots / maxAttendees) * 100),
+            isLimited: true,
+            helper: "Live capacity",
+        }
+    }
+
+    if (typeof capacity?.confirmedAttendees === "number") {
+        const confirmedAttendees = Math.max(0, capacity.confirmedAttendees)
+
+        return {
+            label: `${confirmedAttendees} / ${maxAttendees} going`,
+            progressPercent: clampPercent((confirmedAttendees / maxAttendees) * 100),
+            isLimited: true,
+            helper: "Live attendance",
+        }
+    }
+
+    if (typeof capacity?.progressPercent === "number") {
         return {
             label: `${maxAttendees} total spots`,
-            progressPercent: clampPercent(event.capacity.progressPercent),
+            progressPercent: clampPercent(capacity.progressPercent),
             isLimited: true,
             helper: "Live capacity",
         }
@@ -116,16 +139,18 @@ export function getEventCapacityDisplay(
     }
 }
 
-export function getEventCapacityLabel(event: Pick<Event, "maxAttendees">) {
-    if (!event.maxAttendees || event.maxAttendees < 0) {
+export function getEventCapacityLabel(capacity?: Capacity) {
+    const maxAttendees = capacity?.maxAttendees
+
+    if (!maxAttendees || maxAttendees < 0) {
         return "Unlimited spots"
     }
 
-    if (event.maxAttendees === 1) {
+    if (maxAttendees === 1) {
         return "1 spot available"
     }
 
-    return `${event.maxAttendees} spots available`
+    return `${maxAttendees} spots available`
 }
 
 export function getUserInitials(username?: string) {

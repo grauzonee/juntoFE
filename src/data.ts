@@ -40,7 +40,11 @@ export const event = {
         },
     ],
     author: sampleAuthor,
-    maxAttendees: 50,
+    capacity: {
+        maxAttendees: 50,
+        confirmedAttendanceTotal: 0,
+        remainingSeats: 50,
+    },
     active: true,
     type: {
         id: "123",
