@@ -8,11 +8,11 @@ export default function MovedPermanentlyPage() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const timeoutId = window.setTimeout(() => {
+        const timeoutId = globalThis.setTimeout(() => {
             navigate("/", { replace: true })
         }, REDIRECT_DELAY_MS)
 
-        return () => window.clearTimeout(timeoutId)
+        return () => globalThis.clearTimeout(timeoutId)
     }, [navigate])
 
     return (
