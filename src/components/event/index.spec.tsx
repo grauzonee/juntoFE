@@ -1,10 +1,12 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 import { fireEvent, render, waitFor, within } from "@testing-library/react"
+import { AxiosError } from "axios"
 import { createMemoryRouter, RouterProvider } from "react-router"
 import EventLayout from "@/layouts/EventLayout"
 import { api } from "@/lib/axios"
 import { EventPageContent } from "@/components/event/EventPage"
+import SingleEvent from "@/components/event"
 import { createTestEvent } from "@/test/fixtures"
 import { renderWithRouter } from "@/test/render"
 import { testIds } from "@/testIds"
@@ -194,4 +196,50 @@ test("EventLayout wraps event routes with the event shell", async (t) => {
 
     assert.ok(view.getByTestId(testIds.event.shellHeader))
     assert.ok(view.getByTestId(testIds.event.shellFooter))
+})
+
+test("SingleEvent renders the shared 404 page when the backend returns not found", async (t) => {
+    const eventId = "missing-event"
+
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === "/user") {
+            return {
+                status: 200,
+                data: { data: null },
+            }
+        }
+
+        if (url === `event/${eventId}`) {
+            throw new AxiosError("boom", undefined, undefined, undefined, {
+                status: 404,
+                statusText: "Not found",
+                headers: {},
+                config: { headers: {} as never },
+                data: {},
+            })
+        }
+
+        throw new Error(`Unexpected GET request for ${url}`)
+    })
+
+    const router = createMemoryRouter([
+        {
+            path: "/",
+            element: <EventLayout />,
+            children: [
+                { path: "event/:id", element: <SingleEvent /> },
+            ],
+        },
+    ], {
+        initialEntries: [`/event/${eventId}`],
+    })
+
+    const view = render(<RouterProvider router={router} />)
+
+    await waitFor(() => {
+        assert.ok(view.getByRole("heading", { name: "Page not found" }))
+    })
+
+    assert.ok(view.getByText("The page you asked for does not exist or has moved."))
+    assert.ok(view.getByRole("link", { name: "Go home" }))
 })
