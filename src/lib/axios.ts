@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { apiBaseUrl } from "@/lib/runtime"
 
 export const api = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: apiBaseUrl,
     timeout: 5000,
     headers: {
         'Content-Type': 'application/json'
@@ -37,5 +38,4 @@ export function cleanToken() {
 export function setToken(token: string) {
     localStorage.setItem('token', token);
 }
-
 
