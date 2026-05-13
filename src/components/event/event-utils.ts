@@ -31,6 +31,15 @@ export function formatEventDateDetailed(dateValue: string) {
     }).format(new Date(dateValue))
 }
 
+export function formatCommentTimestamp(dateValue: string) {
+    return new Intl.DateTimeFormat("en-GB", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(new Date(dateValue))
+}
+
 export function formatEventFee(event: Pick<Event, "fee">) {
     const amount = event.fee?.amount ?? 0
     const currency = event.fee?.currency ?? "EUR"
