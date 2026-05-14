@@ -29,7 +29,7 @@ export function EventPageContent({ event }: EventPageContentProps) {
                     <div className="space-y-8">
                         <EventAboutSection event={event} />
                         <EventMeetingPointSection event={event} />
-                        <EventDiscussionSection />
+                        <EventDiscussionSection eventId={event._id} />
                     </div>
                     <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
                         <EventRsvpCard className="hidden lg:block" />

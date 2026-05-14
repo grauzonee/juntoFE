@@ -1,4 +1,5 @@
 import type { DiscoverCategoryOption, DiscoverEvent, DiscoverEventTypeOption } from "@/types/discover"
+import type { EventComment } from "@/types/Comment"
 import type { Event } from "@/types/Event"
 
 export function createTestEvent(overrides: Partial<Event> = {}): Event {
@@ -60,6 +61,21 @@ export function createDiscoverEvent(overrides: Partial<DiscoverEvent> = {}): Dis
             currency: "EUR",
         },
         active: true,
+        ...overrides,
+    }
+}
+
+export function createTestComment(overrides: Partial<EventComment> = {}): EventComment {
+    return {
+        id: "comment-1",
+        eventId: "event-1",
+        author: {
+            id: "host-1",
+            username: "Mira",
+            avatarUrl: "/mira.jpg",
+        },
+        content: "This sounds like a solid plan.",
+        createdAt: "2026-04-11T18:30:00.000Z",
         ...overrides,
     }
 }

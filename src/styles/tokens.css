@@ -56,9 +56,8 @@
   --border-w: 3px;
   --radius: 5px;
 
-/* ---------- Typography ---------- */
-:root {
-  --font-display: 'Sora', sans-serif;
+  /* ---------- Typography ---------- */
+  --font-display: 'Syne', sans-serif;
   --font-heading: 'Sora', sans-serif;
   --font-body: 'Public Sans', sans-serif;
   --font-mono: 'Space Mono', monospace;

@@ -7,9 +7,11 @@ import EventLayout from "@/layouts/EventLayout"
 import { api } from "@/lib/axios"
 import { EventPageContent } from "@/components/event/EventPage"
 import SingleEvent from "@/components/event"
-import { createTestEvent } from "@/test/fixtures"
+import { UserContext } from "@/contexts/UserContext"
+import { createTestComment, createTestEvent } from "@/test/fixtures"
 import { renderWithRouter } from "@/test/render"
 import { testIds } from "@/testIds"
+import type { EventComment } from "@/types/Comment"
 
 type RsvpRequestPayload = {
     eventId: string
@@ -25,8 +27,41 @@ function makeToken(exp: number) {
     ].join(".")
 }
 
-test("EventPageContent renders the main event sections", () => {
+function makeCommentsResponse(comments: EventComment[]) {
+    return {
+        status: 200,
+        data: {
+            success: true,
+            data: {
+                total: comments.length,
+                entities: comments.map((comment) => ({
+                    _id: comment.id,
+                    event: comment.eventId,
+                    author: {
+                        _id: comment.author.id,
+                        username: comment.author.username,
+                        avatarUrl: comment.author.avatarUrl,
+                    },
+                    content: comment.content,
+                    createdAt: comment.createdAt,
+                })),
+            },
+        },
+    }
+}
+
+test("EventPageContent renders the main event sections and loaded comments", async (t) => {
     const event = createTestEvent()
+    const comments = [createTestComment({ eventId: event._id, content: "See you all there." })]
+
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === `/comments/${event._id}`) {
+            return makeCommentsResponse(comments)
+        }
+
+        throw new Error(`Unexpected GET request for ${url}`)
+    })
+
     const view = renderWithRouter(<EventPageContent event={event} />, { route: `/event/${event._id}` })
 
     for (const sectionTestId of [
@@ -48,6 +83,10 @@ test("EventPageContent renders the main event sections", () => {
 
     assert.ok(mobilePanel.querySelector('a[href="/login"]'))
     assert.ok(mobilePanel.querySelector('a[href="/register"]'))
+
+    await waitFor(() => {
+        assert.ok(view.getByText("See you all there."))
+    })
 })
 
 test("EventPageContent confirms mobile Attend RSVP after selecting guests", async (t) => {
@@ -66,6 +105,10 @@ test("EventPageContent confirms mobile Attend RSVP after selecting guests", asyn
     })
 
     t.mock.method(api, "get", async (url: string) => {
+        if (url === `/comments/${event._id}`) {
+            return makeCommentsResponse([])
+        }
+
         if (url === `/event/${event._id}/rsvps/me`) {
             return {
                 status: 200,
@@ -137,6 +180,10 @@ test("EventPageContent reflects an already-attending mobile RSVP from the backen
     })
 
     t.mock.method(api, "get", async (url: string) => {
+        if (url === `/comments/${event._id}`) {
+            return makeCommentsResponse([])
+        }
+
         if (url === `/event/${event._id}/rsvps/me`) {
             return {
                 status: 200,
@@ -162,6 +209,125 @@ test("EventPageContent reflects an already-attending mobile RSVP from the backen
     })
 
     assert.equal(within(mobilePanel).queryByRole("button", { name: /attend/i }), null)
+})
+
+test("EventPageContent lets signed-in users post and delete their own comments", async (t) => {
+    const event = createTestEvent()
+    const currentUser = {
+        id: "host-1",
+        username: "Mira",
+        description: "",
+        email: "mira@example.com",
+        interests: [],
+        createdAt: new Date("2026-04-01T10:00:00.000Z"),
+        avatarUrl: "/mira.jpg",
+    }
+    const initialComment = createTestComment({
+        id: "comment-own",
+        eventId: event._id,
+        author: {
+            id: currentUser.id,
+            username: currentUser.username,
+            avatarUrl: currentUser.avatarUrl,
+        },
+        content: "I'll bring coffee.",
+    })
+    const createdComment = createTestComment({
+        id: "comment-new",
+        eventId: event._id,
+        author: {
+            id: currentUser.id,
+            username: currentUser.username,
+            avatarUrl: currentUser.avatarUrl,
+        },
+        content: "Happy to coordinate carpools.",
+    })
+
+    globalThis.localStorage.setItem("token", makeToken(Math.floor(Date.now() / 1000) + 3600))
+    t.after(() => {
+        globalThis.localStorage.removeItem("token")
+    })
+
+    t.mock.method(api, "get", async (url: string) => {
+        if (url === `/comments/${event._id}`) {
+            return makeCommentsResponse([initialComment])
+        }
+
+        if (url === `/event/${event._id}/rsvps/me`) {
+            return {
+                status: 200,
+                data: {
+                    success: true,
+                    data: null,
+                },
+            }
+        }
+
+        throw new Error(`Unexpected GET request for ${url}`)
+    })
+
+    t.mock.method(api, "post", async (url: string, payload: { eventId: string; content: string }) => {
+        assert.equal(url, "/comments")
+        assert.deepEqual(payload, { eventId: event._id, content: "Happy to coordinate carpools." })
+
+        return {
+            status: 201,
+            data: {
+                success: true,
+                data: {
+                    _id: createdComment.id,
+                    event: createdComment.eventId,
+                    author: {
+                        _id: createdComment.author.id,
+                        username: createdComment.author.username,
+                        avatarUrl: createdComment.author.avatarUrl,
+                    },
+                    content: createdComment.content,
+                    createdAt: createdComment.createdAt,
+                },
+            },
+        }
+    })
+
+    t.mock.method(api, "delete", async (url: string) => {
+        assert.equal(url, `/comments/${initialComment.id}`)
+
+        return {
+            status: 200,
+            data: {
+                success: true,
+                data: {
+                    message: "Comment has been deleted",
+                },
+            },
+        }
+    })
+
+    const view = renderWithRouter(
+        <UserContext value={{ user: currentUser, refreshUser: () => {} }}>
+            <EventPageContent event={event} />
+        </UserContext>,
+        { route: `/event/${event._id}` },
+    )
+
+    await waitFor(() => {
+        assert.ok(view.getByText(initialComment.content))
+    })
+
+    fireEvent.change(view.getByTestId(testIds.event.commentTextarea), {
+        target: { value: createdComment.content },
+    })
+    fireEvent.submit(view.getByTestId(testIds.event.commentForm))
+
+    await waitFor(() => {
+        assert.ok(view.getByText(createdComment.content))
+    })
+
+    fireEvent.click(view.getByTestId(testIds.event.commentDeleteButton(initialComment.id)))
+
+    await waitFor(() => {
+        assert.equal(view.queryByText(initialComment.content), null)
+    })
 })
 
 test("EventLayout wraps event routes with the event shell", async (t) => {
