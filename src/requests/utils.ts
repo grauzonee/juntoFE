@@ -9,14 +9,12 @@ export function normalizeApiDateValue(value: string | number): string {
         parsedValue = Number(value)
     }
 
-    let normalizedTimestamp = parsedValue
+    let normalizedTimestamp: string | number = parsedValue
     if (typeof parsedValue === "number" && parsedValue < 1_000_000_000_000) {
         normalizedTimestamp = parsedValue * 1000
     }
 
-    const date = typeof normalizedTimestamp === "number"
-        ? new Date(normalizedTimestamp)
-        : new Date(normalizedTimestamp)
+    const date = new Date(normalizedTimestamp)
 
     if (Number.isNaN(date.getTime())) {
         return String(value)

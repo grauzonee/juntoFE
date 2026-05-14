@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { Suspense } from "react";
-import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary'
 import EventPage from "@/components/event/EventPage"
 import NotFoundPage from "@/pages/errors/NotFound"
 import InternalServerErrorPage from "@/pages/errors/InternalServerError"
@@ -13,6 +13,10 @@ function EventRouteErrorFallback({ error }: Readonly<{ error: unknown }>) {
     return <InternalServerErrorPage />
 }
 
+function renderEventRouteErrorFallback({ error }: FallbackProps) {
+    return <EventRouteErrorFallback error={error} />
+}
+
 function SingleEvent() {
     const { id } = useParams();
 
@@ -22,7 +26,7 @@ function SingleEvent() {
 
     return (
         <ErrorBoundary
-            fallbackRender={({ error }) => <EventRouteErrorFallback error={error} />}
+            fallbackRender={renderEventRouteErrorFallback}
         >
             <Suspense fallback={<p className="px-4 py-10 text-center text-sm font-semibold">Fetching event details...</p>}>
                 <EventPage id={id} />
