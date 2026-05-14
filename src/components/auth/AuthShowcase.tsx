@@ -22,6 +22,17 @@ const showcaseCards = [
     },
 ]
 
+const showcaseDotKeys = [
+    "showcase-dot-1",
+    "showcase-dot-2",
+    "showcase-dot-3",
+    "showcase-dot-4",
+    "showcase-dot-5",
+    "showcase-dot-6",
+    "showcase-dot-7",
+    "showcase-dot-8",
+]
+
 export default function AuthShowcase() {
     return (
         <div className="relative hidden min-h-screen overflow-hidden border-r-brutal border-border bg-violet px-10 py-16 text-card lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-center">
@@ -56,8 +67,8 @@ export default function AuthShowcase() {
             <div className="absolute bottom-[20%] right-[28%] z-0 h-10 w-10 rounded-full bg-yellow/50" />
             <div className="absolute left-[5%] top-[32%] z-0 h-6 w-20 rotate-12 border-b-[3px] border-mint-light/80" />
             <div className="absolute bottom-[10%] right-[10%] z-0 grid grid-cols-4 gap-2">
-                {Array.from({ length: 8 }).map((_, index) => (
-                    <span key={index} className="h-2 w-2 rounded-full bg-card/30" />
+                {showcaseDotKeys.map((dotKey) => (
+                    <span key={dotKey} className="h-2 w-2 rounded-full bg-card/30" />
                 ))}
             </div>
         </div>

@@ -12,11 +12,15 @@ import {
 import { cn } from "@/lib/utils";
 import { event } from "@/data";
 
-const events = [event, event, event]
+const events = [
+    event,
+    { ...event, _id: `${event._id}-2` },
+    { ...event, _id: `${event._id}-3` },
+]
 
-type EventsListCardProps = React.ComponentProps<'div'> & {
-    title?: string;
-}
+type EventsListCardProps = Readonly<React.ComponentProps<"div"> & {
+    title?: string
+}>
 
 function EventsListCard({ className, title }: EventsListCardProps) {
     return (
@@ -28,8 +32,8 @@ function EventsListCard({ className, title }: EventsListCardProps) {
             </CardHeader>
             <CardContent className="flex flex-col justify-between flex-1">
                 <div className="flex flex-col gap-1">
-                    {events.map((event, index) => (
-                        <EventCard event={event} className="flex flex-col md:flex-row gap-3 md:max-h-36 shadow-0 border" key={index}>
+                    {events.map((listedEvent) => (
+                        <EventCard event={listedEvent} className="flex flex-col md:flex-row gap-3 md:max-h-36 shadow-0 border" key={listedEvent._id}>
                             <EventCard.Image className="md:w-1/3" />
                             <div className="flex flex-col gap-4">
                                 <EventCard.Title className="text-h4" />

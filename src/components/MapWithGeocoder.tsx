@@ -19,7 +19,7 @@ type GeoSearchShowLocationEvent = L.LeafletEvent & {
     location: GeoSearchLocation;
 };
 
-export type MapWithGeocoderProps = {
+export type MapWithGeocoderProps = Readonly<{
     value?: EventAddress,
     onChange: (value: EventAddress) => void,
     markers?: {
@@ -30,9 +30,11 @@ export type MapWithGeocoderProps = {
         href?: string
     }[],
     height?: string
-}
+}>
 
-const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
+type SearchControlProps = Readonly<Pick<MapWithGeocoderProps, "onChange" | "value">>
+
+function SearchControl({ value, onChange }: SearchControlProps) {
     const map = useMap();
 
     useEffect(() => {
@@ -77,13 +79,13 @@ const SearchControl: React.FC<MapWithGeocoderProps> = ({ value, onChange }) => {
             input.value = value.value;
         }
     }, [map, value]);
-    return null;
+    return null
 }
 
 function MapViewportController({
     value,
     markers,
-}: Pick<MapWithGeocoderProps, "value" | "markers">) {
+}: Readonly<Pick<MapWithGeocoderProps, "value" | "markers">>) {
     const map = useMap()
 
     useEffect(() => {

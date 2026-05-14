@@ -27,7 +27,7 @@ export default {
                 heading: ["Sora", "sans-serif"],
                 base: ["Public Sans", "sans-serif"],
                 sans: ["Public Sans", "sans-serif"],
-                display: ["Syne", "sans-serif"],
+                display: ["Sora", "sans-serif"],
                 mono: ["Space Mono", "monospace"],
             },
             borderRadius: {

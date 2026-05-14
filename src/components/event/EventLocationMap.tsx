@@ -1,10 +1,10 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
 
-type EventLocationMapProps = {
+type EventLocationMapProps = Readonly<{
     lat: number
     lng: number
     label: string
-}
+}>
 
 export default function EventLocationMap({ lat, lng, label }: EventLocationMapProps) {
     return (

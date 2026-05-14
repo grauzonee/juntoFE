@@ -24,34 +24,32 @@ function DefaultLayout() {
     }
 
     return (
-        <>
-            <div className={cn(
-                "w-full flex flex-col min-h-[120v] md:bg-background",
-                isDiscoverPage ? "bg-background" : "bg-main",
-            )}>
-                <SiteHeader
-                    search={isDiscoverPage ? {
-                        value: discoverSearch,
-                        onChange: handleDiscoverSearchChange,
-                        placeholder: "Search by title, place, or vibe",
-                    } : undefined}
-                />
+        <div className={cn(
+            "w-full flex flex-col min-h-[120v] md:bg-background",
+            isDiscoverPage ? "bg-background" : "bg-main",
+        )}>
+            <SiteHeader
+                search={isDiscoverPage ? {
+                    value: discoverSearch,
+                    onChange: handleDiscoverSearchChange,
+                    placeholder: "Search by title, place, or vibe",
+                } : undefined}
+            />
 
-                <div
-                    className={cn(
-                        "flex-1 flex flex-col items-center md:w-3/4 mx-auto max-w-5xl mb-[4rem] pt-5",
-                        isDiscoverPage ? "w-[94%]" : "w-5/6",
-                    )}
-                >
-                    <Toaster />
-                    <UserProvider>
-                        <Outlet />
-                    </UserProvider>
-                </div>
-
-                <Footer />
+            <div
+                className={cn(
+                    "flex-1 flex flex-col items-center md:w-3/4 mx-auto max-w-5xl mb-[4rem] pt-5",
+                    isDiscoverPage ? "w-[94%]" : "w-5/6",
+                )}
+            >
+                <Toaster />
+                <UserProvider>
+                    <Outlet />
+                </UserProvider>
             </div>
-        </>
+
+            <Footer />
+        </div>
     )
 }
 

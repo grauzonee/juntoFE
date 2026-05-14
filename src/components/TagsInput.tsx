@@ -8,7 +8,7 @@ type TagsInputProps = {
     onChange: (val: string[]) => void
 }
 
-function TagsInput({ value = [], onChange }: TagsInputProps) {
+function TagsInput({ value = [], onChange }: Readonly<TagsInputProps>) {
     const [currentTag, setCurrentTag] = useState('')
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value?.toLowerCase()
@@ -31,8 +31,8 @@ function TagsInput({ value = [], onChange }: TagsInputProps) {
         <div className="flex flex-col gap-3">
             <Input placeholder="Type tags separated by space..." onChange={handleInput} value={currentTag} />
             <div className="w-full flex-wrap flex flex-row gap-1">
-                {value.map((tag, index) => (
-                    <Badge variant="secondary" className="relative px-4" key={index}>{tag}
+                {value.map((tag) => (
+                    <Badge variant="secondary" className="relative px-4" key={tag}>{tag}
                         <X className="absolute top-0 right-0 bg-red-500 text-white rounded-full cursor-pointer h-3 w-3" onClick={() => handleRemove(tag)} />
                     </Badge>
                 ))}
