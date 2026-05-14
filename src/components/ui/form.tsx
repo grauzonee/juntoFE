@@ -5,7 +5,6 @@ import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
 import {
     Controller,
-    FormProvider,
     useFormContext,
     useFormState,
     type ControllerProps,
@@ -19,7 +18,7 @@ import { Label } from "@/components/ui/label"
 
 import { cn } from "@/lib/utils"
 
-export const Form = FormProvider
+export { FormProvider as Form } from "react-hook-form"
 
 type FormFieldContextValue<
     TFieldValues extends FieldValues = FieldValues,
@@ -28,16 +27,21 @@ type FormFieldContextValue<
     name: TName
 }
 
-const FormFieldContext = React.createContext<FormFieldContextValue>(
-    {} as FormFieldContextValue,
+const FormFieldContext = React.createContext<FormFieldContextValue | null>(
+    null,
 )
 
 export function FormField<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({ ...props }: ControllerProps<TFieldValues, TName>) {
+    const contextValue = React.useMemo(
+        () => ({ name: props.name }),
+        [props.name],
+    )
+
     return (
-        <FormFieldContext.Provider value={{ name: props.name }}>
+        <FormFieldContext.Provider value={contextValue}>
             <Controller {...props} />
         </FormFieldContext.Provider>
     )
@@ -46,14 +50,18 @@ export function FormField<
 const useFormField = () => {
     const fieldContext = React.useContext(FormFieldContext)
     const itemContext = React.useContext(FormItemContext)
-    const { getFieldState } = useFormContext()
-    const formState = useFormState({ name: fieldContext.name })
-    const fieldState = getFieldState(fieldContext.name, formState)
 
     if (!fieldContext) {
         throw new Error("useFormField should be used within <FormField>")
     }
 
+    if (!itemContext) {
+        throw new Error("useFormField should be used within <FormItem>")
+    }
+
+    const { getFieldState } = useFormContext()
+    const formState = useFormState({ name: fieldContext.name })
+    const fieldState = getFieldState(fieldContext.name, formState)
     const { id } = itemContext
 
     return {
@@ -70,15 +78,16 @@ type FormItemContextValue = {
     id: string
 }
 
-const FormItemContext = React.createContext<FormItemContextValue>(
-    {} as FormItemContextValue,
+const FormItemContext = React.createContext<FormItemContextValue | null>(
+    null,
 )
 
 export function FormItem({ className, ...props }: React.ComponentProps<"div">) {
     const id = React.useId()
+    const contextValue = React.useMemo(() => ({ id }), [id])
 
     return (
-        <FormItemContext.Provider value={{ id }}>
+        <FormItemContext.Provider value={contextValue}>
             <div
                 data-slot="form-item"
                 className={cn("grid gap-2", className)}
@@ -97,7 +106,7 @@ export function FormLabel({
     return (
         <Label
             data-slot="form-label"
-            data-error={!!error}
+            data-error={Boolean(error)}
             className={cn("font-heading data-[error=true]:text-coral", className)}
             htmlFor={formItemId}
             {...props}
@@ -113,11 +122,11 @@ export function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
             data-slot="form-control"
             id={formItemId}
             aria-describedby={
-                !error
-                    ? `${formDescriptionId}`
-                    : `${formDescriptionId} ${formMessageId}`
+                error
+                    ? `${formDescriptionId} ${formMessageId}`
+                    : formDescriptionId
             }
-            aria-invalid={!!error}
+            aria-invalid={Boolean(error)}
             {...props}
         />
     )

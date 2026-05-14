@@ -7,9 +7,9 @@ import { getUserInitials } from "@/components/event/event-utils"
 import { Link } from "react-router"
 import { testIds } from "@/testIds"
 
-type EventHostCardProps = {
+type EventHostCardProps = Readonly<{
     event: Event
-}
+}>
 
 export default function EventHostCard({ event }: EventHostCardProps) {
     return (

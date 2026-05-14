@@ -4,9 +4,9 @@ import EventSectionHeading from "@/components/event/EventSectionHeading"
 import { splitEventDescription } from "@/components/event/event-utils"
 import { testIds } from "@/testIds"
 
-type EventAboutSectionProps = {
+type EventAboutSectionProps = Readonly<{
     event: Event
-}
+}>
 
 export default function EventAboutSection({ event }: EventAboutSectionProps) {
     const paragraphs = splitEventDescription(event.description)

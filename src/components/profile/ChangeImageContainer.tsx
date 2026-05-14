@@ -3,7 +3,6 @@ import Cropper from "react-easy-crop"
 import ImageContainer from "@/components/ImageContainer"
 import { Button } from "@/components/ui/button"
 import { Pencil } from "lucide-react"
-import img_placeholder from "/img-placeholder.png"
 import {
     Dialog,
     DialogContent,
@@ -12,12 +11,14 @@ import {
 } from "@/components/ui/dialog"
 import type { Point, Area } from "react-easy-crop"
 
-type ChangeImageContainerProps = {
+const img_placeholder = new URL("../../../public/img-placeholder.png", import.meta.url).href
+
+type ChangeImageContainerProps = Readonly<{
     value?: File | null
     src?: string
     onChange: (file?: File) => void,
     aspect: number
-}
+}>
 
 function ChangeImageContainer({
     value = null,
@@ -46,7 +47,9 @@ function ChangeImageContainer({
 
         if (!file.type.startsWith("image/")) {
             alert("Please select a valid image file (jpg, png, gif, etc.)")
-            fileInputRef.current!.value = ""
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ""
+            }
             return
         }
 

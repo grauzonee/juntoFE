@@ -1,8 +1,8 @@
-interface SectionHeadingProps {
+type SectionHeadingProps = Readonly<{
     eyebrow: string
     actionLabel?: string
     actionHref?: string
-}
+}>
 
 export default function SectionHeading({ eyebrow, actionLabel, actionHref }: SectionHeadingProps) {
     return (

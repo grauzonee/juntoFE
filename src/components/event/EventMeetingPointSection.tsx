@@ -8,9 +8,9 @@ import {
 } from "@/components/event/event-utils"
 import { testIds } from "@/testIds"
 
-type EventMeetingPointSectionProps = {
+type EventMeetingPointSectionProps = Readonly<{
     event: Event
-}
+}>
 
 export default function EventMeetingPointSection({ event }: EventMeetingPointSectionProps) {
     const coordinates = getEventCoordinates(event)

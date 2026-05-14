@@ -7,6 +7,15 @@ import { useDiscoverCategories, useDiscoverEventTypes } from "@/hooks/event/useD
 import { useDiscoverEvents } from "@/hooks/event/useDiscoverEvents"
 import { useDiscoverFilters } from "@/hooks/event/useDiscoverFilters"
 
+const loadingCardKeys = [
+    "discover-skeleton-1",
+    "discover-skeleton-2",
+    "discover-skeleton-3",
+    "discover-skeleton-4",
+    "discover-skeleton-5",
+    "discover-skeleton-6",
+]
+
 function Events() {
     const [isNearMeOpen, setIsNearMeOpen] = useState(false)
     const { data: categories } = useDiscoverCategories()
@@ -67,8 +76,8 @@ function Events() {
             <section className="px-2 py-5 md:px-6 md:py-8">
                 {loading ? (
                     <div className="grid gap-6 lg:grid-cols-3">
-                        {Array.from({ length: 6 }).map((_, index) => (
-                            <div key={index} className="h-80 animate-pulse border-2 border-border bg-violet-light/60" />
+                        {loadingCardKeys.map((loadingCardKey) => (
+                            <div key={loadingCardKey} className="h-80 animate-pulse border-2 border-border bg-violet-light/60" />
                         ))}
                     </div>
                 ) : null}

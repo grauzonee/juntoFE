@@ -1,5 +1,4 @@
-import { Outlet } from "react-router"
-import { Link } from "react-router"
+import { Link, Outlet } from "react-router"
 import AuthShowcase from "@/components/auth/AuthShowcase"
 import mainLogo from "@/assets/logo.png"
 

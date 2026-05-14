@@ -3,15 +3,18 @@ import { isAxiosError, type AxiosResponse } from "axios";
 const genericServerErrorMessage = "Oops, something happened on our server!"
 
 export function normalizeApiDateValue(value: string | number): string {
-    const parsedValue = typeof value === "number"
-        ? value
-        : /^\d+$/.test(value.trim())
-            ? Number(value)
-            : value
+    let parsedValue: string | number = value
 
-    const date = typeof parsedValue === "number"
-        ? new Date(parsedValue < 1_000_000_000_000 ? parsedValue * 1000 : parsedValue)
-        : new Date(parsedValue)
+    if (typeof value !== "number" && /^\d+$/.test(value.trim())) {
+        parsedValue = Number(value)
+    }
+
+    let normalizedTimestamp: string | number = parsedValue
+    if (typeof parsedValue === "number" && parsedValue < 1_000_000_000_000) {
+        normalizedTimestamp = parsedValue * 1000
+    }
+
+    const date = new Date(normalizedTimestamp)
 
     if (Number.isNaN(date.getTime())) {
         return String(value)

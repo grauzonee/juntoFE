@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 
 export const isLoggedIn = (): boolean => {
-    const token = window.localStorage.getItem("token");
+    const token = globalThis.localStorage.getItem("token");
     if (!token) return false;
     const { exp } = jwtDecode(token);
     if (!exp) return false;
@@ -9,6 +9,6 @@ export const isLoggedIn = (): boolean => {
 }
 
 export const logout = () => {
-    window.localStorage.removeItem("token");
-    window.location.reload();
+    globalThis.localStorage.removeItem("token");
+    globalThis.location.reload();
 }

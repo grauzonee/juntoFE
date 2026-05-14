@@ -28,8 +28,10 @@ function useEventCardContext() {
 }
 
 function EventCard({ children, event, className }: EventCardProps) {
+    const contextValue = React.useMemo(() => ({ event }), [event])
+
     return (
-        <EventCardContext.Provider value={{ event }}>
+        <EventCardContext.Provider value={contextValue}>
             <Card className={cn("p-2 md:p-5", className)} >
                 {children}
             </Card >

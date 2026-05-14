@@ -12,11 +12,15 @@ import EventRsvpCard, {
 } from "@/components/event/EventRsvpCard"
 import { testIds } from "@/testIds"
 
-type EventPageProps = {
+type EventPageProps = Readonly<{
     id: string
-}
+}>
 
-export function EventPageContent({ event }: { event: Event }) {
+type EventPageContentProps = Readonly<{
+    event: Event
+}>
+
+export function EventPageContent({ event }: EventPageContentProps) {
     return (
         <main data-testid={testIds.event.page} className="pb-[calc(12rem+env(safe-area-inset-bottom))] lg:pb-16">
             <EventHero event={event} />
