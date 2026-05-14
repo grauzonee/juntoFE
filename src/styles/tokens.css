@@ -2,8 +2,8 @@
    Design Tokens — single source of truth
    ============================================= */
 
-/* ---------- Palette ---------- */
 :root {
+  /* ---------- Palette ---------- */
   --violet: 236 100% 74%;
   --violet-light: 236 100% 94%;
   --mint: 145 63% 49%;
@@ -14,10 +14,8 @@
   --event-surface: 42 100% 95%;
   --black: 0 0% 0%;
   --white-card: 0 0% 100%;
-}
 
-/* ---------- Semantic tokens ---------- */
-:root {
+  /* ---------- Semantic tokens ---------- */
   --background: var(--violet-light);
   --secondary-background: 300 50% 100%;
   --foreground: var(--black);
@@ -41,30 +39,24 @@
   --secondary-foreground: 222.2 47.4% 11.2%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
-}
 
-/* ---------- Charts ---------- */
-:root {
+  /* ---------- Charts ---------- */
   --chart-1: #7A83FF;
   --chart-2: #FACC00;
   --chart-3: #FF4D50;
   --chart-4: #00D696;
   --chart-5: #0099FF;
   --chart-active-dot: #000;
-}
 
-/* ---------- Shadows & Borders ---------- */
-:root {
+  /* ---------- Shadows & Borders ---------- */
   --shadow: 4px 4px 0px 0px hsl(var(--border));
   --shadow-accent: 4px 4px 0px 0px hsl(var(--accent));
   --inset: inset 5px 5px 0px 0px hsl(var(--border));
   --shadow-offset: 4px;
   --border-w: 3px;
   --radius: 5px;
-}
 
-/* ---------- Typography ---------- */
-:root {
+  /* ---------- Typography ---------- */
   --font-display: 'Syne', sans-serif;
   --font-heading: 'Sora', sans-serif;
   --font-body: 'Public Sans', sans-serif;
