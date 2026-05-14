@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils"
 
-type EventSectionHeadingProps = {
+type EventSectionHeadingProps = Readonly<{
     label: string
     meta?: string
     className?: string
-}
+}>
 
 export default function EventSectionHeading({
     label,

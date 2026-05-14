@@ -1,11 +1,11 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { getUser } from "@/helpers/user";
-import type { User } from "@/types/User";
-import { UserContext } from "@/contexts/UserContext";
+import { useEffect, useMemo, useState, type ReactNode } from "react"
+import { getUser } from "@/helpers/user"
+import type { User } from "@/types/User"
+import { UserContext } from "@/contexts/UserContext"
 
-type UserProviderProps = {
-    children: ReactNode;
-};
+type UserProviderProps = Readonly<{
+    children: ReactNode
+}>
 
 export function UserProvider({ children }: UserProviderProps) {
     const [user, setUser] = useState<User | null>(null)
@@ -20,7 +20,8 @@ export function UserProvider({ children }: UserProviderProps) {
         refreshUser()
     }, [])
 
-    const value = { user, refreshUser }
+    const value = useMemo(() => ({ user, refreshUser }), [user])
+
     return (
         <UserContext value={value}>
             {children}

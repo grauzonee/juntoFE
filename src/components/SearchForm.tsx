@@ -3,12 +3,11 @@ import { Search } from 'lucide-react'
 import { useState } from 'react'
 
 type SearchFormProps = {
-    value?: string,
     onChange: (val: string) => void
 }
 
-function SearchForm({ onChange }: SearchFormProps) {
-    const [searchVal, setSearchVal] = useState('')
+function SearchForm({ onChange }: Readonly<SearchFormProps>) {
+    const [searchVal, setSearchVal] = useState("")
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && searchVal) {
             onChange(searchVal)

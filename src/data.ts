@@ -1,5 +1,5 @@
-import event_example from "/event_example.jpg"
-import avatar_placeholder from "/avatar-placeholder.png"
+const event_example = new URL("../public/event_example.jpg", import.meta.url).href
+const avatar_placeholder = new URL("../public/avatar-placeholder.png", import.meta.url).href
 
 const sampleAuthor = {
     id: "699d5e6b6a4c8dd863939258",

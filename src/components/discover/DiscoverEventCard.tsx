@@ -6,12 +6,12 @@ import { formatDiscoverDate, formatDiscoverFee } from "@/components/discover/dis
 import { Clock3, MapPin } from "lucide-react"
 import { testIds } from "@/testIds"
 
-type DiscoverEventCardProps = {
+type DiscoverEventCardProps = Readonly<{
     event: DiscoverEvent
     view: DiscoverViewMode
     typeTitle: string
     categoryTitles: string[]
-}
+}>
 
 export default function DiscoverEventCard({
     event,

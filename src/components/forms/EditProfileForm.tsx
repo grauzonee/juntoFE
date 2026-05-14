@@ -23,7 +23,7 @@ type EditProfileFormProps = {
     onSubmit?: () => void
 }
 
-function EditProfileForm({ onSubmit }: EditProfileFormProps) {
+function EditProfileForm({ onSubmit }: Readonly<EditProfileFormProps>) {
     const { user, refreshUser } = useContext(UserContext)
     const form = useForm<EditProfileSchema>({
         resolver: zodResolver(editProfileSchema),

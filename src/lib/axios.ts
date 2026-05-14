@@ -20,7 +20,7 @@ api.interceptors.response.use(
     response => response,
     error => {
         console.log(error);
-        if (error.response && error.response.status === 401) {
+        if (error.response?.status === 401) {
             cleanToken();
         }
         console.error('API error:', error);
@@ -37,5 +37,4 @@ export function cleanToken() {
 export function setToken(token: string) {
     localStorage.setItem('token', token);
 }
-
 

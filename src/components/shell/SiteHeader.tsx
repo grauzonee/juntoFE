@@ -12,7 +12,7 @@ type HeaderNavItem =
     | { label: string; href: string; to?: never }
     | { label: string; to: string; href?: never }
 
-type SiteHeaderProps = {
+type SiteHeaderProps = Readonly<{
     navItems?: HeaderNavItem[]
     dataTestId?: string
     mobileMenuTriggerTestId?: string
@@ -26,11 +26,11 @@ type SiteHeaderProps = {
         placeholder?: string
     }
     className?: string
-}
+}>
 
-type HeaderSearchProps = NonNullable<SiteHeaderProps["search"]> & {
+type HeaderSearchProps = Readonly<NonNullable<SiteHeaderProps["search"]> & {
     inputClassName?: string
-}
+}>
 
 const navLinkClassName =
     "border-2 border-transparent px-4 py-2 font-heading text-sm font-bold transition hover:border-border hover:bg-violet-light"
@@ -196,7 +196,7 @@ function HeaderSearch({
     )
 }
 
-function renderNavItem(item: HeaderNavItem, className: string, onClick?: () => void) {
+function renderNavItem(item: Readonly<HeaderNavItem>, className: string, onClick?: () => void) {
     if ("href" in item) {
         return (
             <a key={item.href} href={item.href} className={className} onClick={onClick}>

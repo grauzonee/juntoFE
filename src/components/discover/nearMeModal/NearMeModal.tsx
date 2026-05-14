@@ -13,11 +13,11 @@ import { getDiscoverEventPosition } from "@/components/discover/discover-utils"
 import { useNavigate } from "react-router"
 import type { MapWithGeocoderProps } from "@/components/MapWithGeocoder"
 
-type NearMeModalProps = {
+type NearMeModalProps = Readonly<{
     open: boolean
     onOpenChange: (value: boolean) => void
     MapComponent?: ComponentType<MapWithGeocoderProps>
-}
+}>
 
 const LazyMapWithGeocoder = lazy(() => import("@/components/MapWithGeocoder"))
 const nearMeMapMediaQuery = "(min-width: 1024px)"

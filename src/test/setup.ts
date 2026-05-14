@@ -70,13 +70,8 @@ const htmlElementPrototype = domWindow.HTMLElement.prototype as typeof domWindow
     detachEvent?: () => void
 }
 
-if (!htmlElementPrototype.attachEvent) {
-    htmlElementPrototype.attachEvent = () => {}
-}
-
-if (!htmlElementPrototype.detachEvent) {
-    htmlElementPrototype.detachEvent = () => {}
-}
+htmlElementPrototype.attachEvent ??= () => {}
+htmlElementPrototype.detachEvent ??= () => {}
 
 const { cleanup } = await import("@testing-library/react")
 

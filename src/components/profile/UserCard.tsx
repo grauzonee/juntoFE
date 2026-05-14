@@ -1,8 +1,7 @@
-import React, { useContext, lazy, createContext, type PropsWithChildren } from "react"
+import React, { useContext, lazy, createContext, useMemo, type PropsWithChildren } from "react"
 import { type User } from "@/types/User"
 import { Card } from "@/components/ui/card"
 const ChangeImageContainer = lazy(() => import("@/components/profile/ChangeImageContainer"))
-import avatar_placeholder from '/avatar-placeholder.png'
 import { updateUser } from "@/helpers/user";
 import { uploadMedia } from "@/helpers/media";
 import { Link } from "react-router"
@@ -11,6 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { type VariantProps } from "class-variance-authority"
 import { cardVariants } from "@/components/ui/card-variants"
 import { cn } from "@/lib/utils"
+
+const avatar_placeholder = new URL("../../../public/avatar-placeholder.png", import.meta.url).href
 
 type UserCardContext = {
     user: User;
@@ -21,6 +22,16 @@ const UserCardContext = createContext<UserCardContext | undefined>(undefined)
 type UserCardProps = PropsWithChildren & React.ComponentProps<'div'> & VariantProps<typeof cardVariants> & {
     user: User;
 }
+
+async function updateProfileImage(file?: File) {
+    if (!file) {
+        return
+    }
+
+    const avatarUrl = await uploadMedia(file)
+    await updateUser({ avatarUrl })
+}
+
 function useUserCardContext() {
     const context = useContext(UserCardContext)
     if (!context) {
@@ -30,9 +41,11 @@ function useUserCardContext() {
 }
 
 function UserCard({ user, className, children, variant = 'default' }: UserCardProps) {
+    const contextValue = useMemo(() => ({ user }), [user])
+
     return (
         <Card className={className} variant={variant}>
-            <UserCardContext.Provider value={{ user }}>
+            <UserCardContext.Provider value={contextValue}>
                 {children}
             </UserCardContext.Provider>
         </Card>
@@ -50,17 +63,9 @@ UserCard.Image = function UserCardImage() {
 }
 UserCard.EditableImage = function UserCardEditableImage() {
     const { user } = useUserCardContext()
-    async function onImageChange(file?: File) {
-        if (file) {
-            const avatarUrl = await uploadMedia(file);
-            await updateUser({ avatarUrl })
-            // TODO: Dispatch event
-            //refreshUser()
-        }
-    }
 
     return (
-        <ChangeImageContainer src={user?.avatarUrl ?? avatar_placeholder} onChange={onImageChange} aspect={3 / 4} />
+        <ChangeImageContainer src={user?.avatarUrl ?? avatar_placeholder} onChange={updateProfileImage} aspect={3 / 4} />
 
     )
 }
@@ -99,8 +104,8 @@ UserCard.Interests = function UserCardInterests() {
             )}
             {user?.interests.length > 0 && (
                 <div className="flex flex-row">
-                    {user?.interests.map((interest: string, index: number) => (
-                        <Badge variant="secondary" key={index}>{interest}</Badge>
+                    {user?.interests.map((interest: string) => (
+                        <Badge variant="secondary" key={interest}>{interest}</Badge>
                     ))}
                 </div>
             )}

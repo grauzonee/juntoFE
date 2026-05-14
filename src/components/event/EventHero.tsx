@@ -9,9 +9,9 @@ import {
 } from "@/components/event/event-utils"
 import { testIds } from "@/testIds"
 
-type EventHeroProps = {
+type EventHeroProps = Readonly<{
     event: Event
-}
+}>
 
 const categoryTones = ["white", "mint", "yellow"] as const
 
