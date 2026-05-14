@@ -6,7 +6,7 @@ import { formatCommentTimestamp, getUserInitials } from "@/components/event/even
 import { testIds } from "@/testIds"
 import type { EventComment } from "@/types/Comment"
 
-type CommentListProps = {
+type CommentListProps = Readonly<{
     comments: EventComment[]
     total: number
     loading: boolean
@@ -16,19 +16,21 @@ type CommentListProps = {
     deletingId: string | null
     onDelete: (commentId: string) => void
     onLoadMore: () => void
-}
+}>
+
+type CommentRowProps = Readonly<{
+    comment: EventComment
+    currentUserId: string | null
+    deletingId: string | null
+    onDelete: (commentId: string) => void
+}>
 
 function CommentRow({
     comment,
     currentUserId,
     deletingId,
     onDelete,
-}: {
-    comment: EventComment
-    currentUserId: string | null
-    deletingId: string | null
-    onDelete: (commentId: string) => void
-}) {
+}: CommentRowProps) {
     const isAuthor = currentUserId === comment.author.id
     const isDeleting = deletingId === comment.id
 
@@ -87,37 +89,48 @@ export default function CommentList({
 }: CommentListProps) {
     const hasComments = comments.length > 0
     const hasMoreComments = comments.length < total
+    let content: React.ReactNode
+
+    if (loading) {
+        content = (
+            <div className="border-2 border-border bg-card px-5 py-6 text-center shadow-brutal-sm">
+                <p className="text-sm font-bold text-foreground/70">Loading comments...</p>
+            </div>
+        )
+    } else if (error) {
+        content = (
+            <div className="border-2 border-border bg-[#FFD9D9] px-5 py-6 text-center shadow-brutal-sm">
+                <p className="text-sm font-bold text-foreground">{error}</p>
+            </div>
+        )
+    } else if (hasComments) {
+        content = (
+            <div data-testid={testIds.event.commentsList} className="space-y-3">
+                {comments.map((comment) => (
+                    <CommentRow
+                        key={comment.id}
+                        comment={comment}
+                        currentUserId={currentUserId}
+                        deletingId={deletingId}
+                        onDelete={onDelete}
+                    />
+                ))}
+            </div>
+        )
+    } else {
+        content = (
+            <div className="border-2 border-border bg-card px-5 py-6 text-center shadow-brutal-sm">
+                <p className="text-sm font-bold text-foreground">No comments yet.</p>
+                <p className="mt-2 text-sm leading-7 text-foreground/75">
+                    Start the thread with a quick question or note for the host.
+                </p>
+            </div>
+        )
+    }
 
     return (
         <>
-            {loading ? (
-                <div className="border-2 border-border bg-card px-5 py-6 text-center shadow-brutal-sm">
-                    <p className="text-sm font-bold text-foreground/70">Loading comments...</p>
-                </div>
-            ) : error ? (
-                <div className="border-2 border-border bg-[#FFD9D9] px-5 py-6 text-center shadow-brutal-sm">
-                    <p className="text-sm font-bold text-foreground">{error}</p>
-                </div>
-            ) : hasComments ? (
-                <div data-testid={testIds.event.commentsList} className="space-y-3">
-                    {comments.map((comment) => (
-                        <CommentRow
-                            key={comment.id}
-                            comment={comment}
-                            currentUserId={currentUserId}
-                            deletingId={deletingId}
-                            onDelete={onDelete}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <div className="border-2 border-border bg-card px-5 py-6 text-center shadow-brutal-sm">
-                    <p className="text-sm font-bold text-foreground">No comments yet.</p>
-                    <p className="mt-2 text-sm leading-7 text-foreground/75">
-                        Start the thread with a quick question or note for the host.
-                    </p>
-                </div>
-            )}
+            {content}
 
             {hasMoreComments ? (
                 <BrutalButton

@@ -10,9 +10,9 @@ import WindowCard from "@/components/ui/window-card"
 
 const MAX_COMMENT_LENGTH = 500
 
-type EventDiscussionSectionProps = {
+type EventDiscussionSectionProps = Readonly<{
     eventId: string
-}
+}>
 
 function getCurrentUserId(user: { id?: string; _id?: string } | null) {
     return user?.id ?? user?._id ?? null

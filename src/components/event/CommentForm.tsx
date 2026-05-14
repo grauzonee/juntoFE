@@ -4,14 +4,14 @@ import BrutalButton from "@/components/ui/brutal-button"
 import { Textarea } from "@/components/ui/textarea"
 import { testIds } from "@/testIds"
 
-type CommentFormProps = {
+type CommentFormProps = Readonly<{
     canComment: boolean
     content: string
     maxCommentLength: number
     submitting: boolean
     onContentChange: (value: string) => void
     onSubmit: (event: FormEvent<HTMLFormElement>) => void
-}
+}>
 
 export default function CommentForm({
     canComment,
