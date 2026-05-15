@@ -9,23 +9,29 @@ import {
 import { Settings2 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator";
 import ResponsiveComponent from "@/components/helpers/ResponsiveComponent";
-import { Button } from "@/components/ui/button";
+import BrutalButton from "@/components/ui/brutal-button";
 const ChangePasswordForm = lazy(() => import("@/components/forms/ChangePasswordForm"))
 const EditProfileForm = lazy(() => import("@/components/forms/EditProfileForm"))
 
+type EditProfileDialogProps = Readonly<{
+    className?: string
+}>
 
-function EditProfileDialog() {
+function EditProfileDialog({ className }: EditProfileDialogProps) {
     const [open, setOpen] = useState<boolean>(false)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger>
-                <Button variant="accent" title="Edit profile"><Settings2 /></Button>
+            <DialogTrigger asChild>
+                <BrutalButton type="button" tone="violet" className={className} title="Edit profile">
+                    <span>Edit profile</span>
+                    <Settings2 />
+                </BrutalButton>
             </DialogTrigger>
-            <DialogContent className="px-4">
-                <DialogHeader>
-                    <DialogTitle>Edit profile</DialogTitle>
+            <DialogContent className="max-w-4xl rounded-none border-brutal border-border bg-cream px-5 py-6 shadow-brutal-xl">
+                <DialogHeader className="border-b-2 border-border pb-4">
+                    <DialogTitle className="font-heading text-2xl font-bold">Edit profile</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-3 md:flex-row justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <EditProfileForm onSubmit={() => setOpen(false)} />
                     <ChangePasswordForm className="row-span-2 order-4 md:order-none" />
                     <ResponsiveComponent isMobile={true} isTablet={true}><Separator className="my-2 order-3" /></ResponsiveComponent>

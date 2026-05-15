@@ -3,13 +3,14 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 interface PillBadgeProps extends ComponentProps<typeof Badge> {
-    tone?: "mint" | "yellow" | "white"
+    tone?: "mint" | "yellow" | "white" | "violet"
 }
 
 const toneClasses: Record<NonNullable<PillBadgeProps["tone"]>, string> = {
     mint: "bg-mint-light",
     yellow: "bg-yellow",
     white: "bg-card",
+    violet: "bg-violet-light",
 }
 
 export default function PillBadge({ className, tone = "white", ...props }: Readonly<PillBadgeProps>) {

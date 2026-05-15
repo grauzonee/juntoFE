@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from "react"
 import Cropper from "react-easy-crop"
-import ImageContainer from "@/components/ImageContainer"
 import { Button } from "@/components/ui/button"
 import { Pencil } from "lucide-react"
 import {
@@ -86,36 +85,41 @@ function ChangeImageContainer({
 
     return (
         <>
-            <ImageContainer src={currentSrc} className="aspect-[1/2]">
-                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-b from-transparent to-gray-800/80 flex items-end justify-end p-2">
-                    <div className="flex flex-row text-sm items-center gap-1">
-                        <Button
-                            type="button"
-                            variant="link"
-                            className="text-primary-foreground text-xs"
-                            onClick={openFileDialog}
-                        >
-                            <p>Change image</p>
-                            <Pencil className="h-2" />
-                        </Button>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            className="hidden"
-                            onChange={onSelectFile}
-                        />
-                    </div>
+            <div className="relative overflow-hidden border-2 border-border bg-violet-light shadow-brutal">
+                <div className="aspect-square">
+                    <img
+                        src={currentSrc}
+                        alt="Profile"
+                        className="h-full w-full object-cover object-center"
+                    />
                 </div>
-            </ImageContainer>
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-end bg-black/25 px-3 py-3 backdrop-blur-[2px]">
+                    <Button
+                        type="button"
+                        variant="neutral"
+                        className="h-auto rounded-none px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] shadow-brutal-sm"
+                        onClick={openFileDialog}
+                    >
+                        <span>Change image</span>
+                        <Pencil className="size-3" />
+                    </Button>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        className="hidden"
+                        onChange={onSelectFile}
+                    />
+                </div>
+            </div>
             <Dialog open={isCropping} onOpenChange={setIsCropping}>
-                <DialogContent className="px-4">
-                    <DialogHeader>
-                        <DialogTitle>Edit profile</DialogTitle>
+                <DialogContent className="max-w-2xl rounded-none border-brutal border-border bg-cream px-5 py-6 shadow-brutal-xl">
+                    <DialogHeader className="border-b-2 border-border pb-4">
+                        <DialogTitle className="font-heading text-2xl font-bold">Edit profile image</DialogTitle>
                     </DialogHeader>
 
-                    <div className="bg-white rounded-lg p-4 max-w-lg w-full flex flex-col items-center">
-                        <div className="relative w-full h-[400px]">
+                    <div className="flex w-full flex-col items-center gap-5">
+                        <div className="relative h-[400px] w-full overflow-hidden border-2 border-border bg-card">
                             {selectedImage && <Cropper
                                 image={selectedImage}
                                 crop={crop}
@@ -127,8 +131,8 @@ function ChangeImageContainer({
                             />}
                         </div>
 
-                        <div className="flex gap-2 mt-12">
-                            <Button type="button" onClick={onCropConfirm}>
+                        <div className="flex flex-wrap gap-3 self-end">
+                            <Button type="button" variant="neutral" onClick={onCropConfirm}>
                                 Confirm
                             </Button>
                             <Button type="button" variant="secondary" onClick={onCropCancel}>
